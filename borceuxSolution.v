@@ -6,11 +6,11 @@ Proph
 
 https://github.com/1337777/borceux/blob/master/borceuxSolution.v
 
-Short: This [1] solves some question of Ahrens [2] and Kan-Riehl [3], which is how to program Kelly's <<enriched categories>> and how <<naturality>> is cyclic with <<categories>>. Also This [4] attempts to clarify the contrast <<categorical algebra>> and its "internal logic", from <<categorial logic>> in the style of the <<enriched/encoded/programmed/recursion>> categories of Kelly-Dosen and as attempted in [5]. Now homotopy/knots/proof-nets may be held as (faithfull or almost-faithfull) semantical techniques (<<descent>>) to do this <<categorial logic>>, and the homotopy itself may be programmed in specialized grammars (for example [6] or HOTT).
+1. Short: This [1] solves some question of Ahrens [2] and Kan-Riehl [3], which is how to program Kelly's <<enriched categories>> and how the inter-dependence of <<naturality>> with <<category>> is cyclic. Also This [4] attempts to clarify the contrast <<categorical algebra>> (ring/locale-presentation and its "internal logic"), from <<categorial logic>> in the style of the <<enriched/encoded/programmed/recursion>> categories of Kelly-Dosen and as attempted in [5], for example : the yoneda lemma and most categorial lemmas are no-more-than Gentzen's constructive logic of re-arranging the input-output positions <<modulo naturality>>. Now homotopy/knots/proof-nets may be held as (faithfull or almost-faithfull) semantical techniques (<<descent>>) to do this <<categorial logic>>, and the homotopy itself may be programmed in specialized grammars (for example [6] or HOTT).
 
-Long: The common assumption that catC( - , X ) is dual to catC( Y , - ) is FALSIFIED. This falsification originates from the description of the composition as some binary form instead of as some functional form which is programmed/encoded/<<enriched>> onto the computer. Then get some new thing which is named <<polymorphism>> (some <<programmed naturality>>) from which to define any <<polymorph category>> and any <<polymorph functor>> and any <<polymorph transformation>>. Then immediately precisely describe and deduce the <<yoneda lemma>>, which says that the image of polyF (which is injective and contained in natural transformations ) also contains all natural transformations.
+2. The common assumption that catC( - , X ) is dual to catC( Y , - ) is FALSIFIED. This falsification originates from the description of the composition as some binary form instead of as some functional form which is programmed/encoded/enriched onto the computer. Then get some new thing which is named <<polymorphism>> from which to define <<polymorph category>>. This is the only-ever real description and deduction of the yoneda lemma, which says that the image of polyF (which is injective and contained in natural transformations) also contains all natural transformations.
 
-Some polymorph category is given by polyF, which is commonly ( _1 o> _2 ), polymorph in V and polymorph in A :
+3. Some polymorph category is given by polyF, which is commonly ( _1 o> _2 ), polymorph in V and polymorph in A :
 Variable obF : Type.
 Variable polyF00 : obF -> obF -> obV.
 Notation "F[0 A1 ~> A2 ]0" := (polyF00 A1 A2) (at level 25).
@@ -18,7 +18,10 @@ Parameter polyF : forall (B : obF), forall (V : obV) (A : obF),
                     V(0 V |- F[0 B ~> A ]0 )0 ->
                     forall X : obF, V(0 F[0 A ~> X ]0  |- [0 V ~> F[0 B ~> X ]0 ]0 )0.
 
-Stake for nondependent Solution Programme at FMCS2016 and ICMS2016 :
+4. And to get polymorph functor, instead of describing F : catA --> catB  then (contrast yoneda structures) describe catV[ V , catB[ B , F - ] ] : catA --> catV
+   And to get polymorph transformation, instead of describing phi A : G A -> H A  then a-la-dosen (contrast weighted colimiting Kan extension) describe phi _f : catV( V , catB[ B , G A ] ) ->  catV( V , catB[ B , H A ] )
+
+5. Stake for nondependent Solution Programme Seminary at FMCS2016 and ICMS2016 :
 paypal 1337777.OOO@gmail.com , wechatpay 2796386464 , irc #OOO1337777
 
 [1] 1337777.OOO, https://github.com/1337777/borceux/blob/master/borceuxSolution.v
@@ -27,6 +30,9 @@ paypal 1337777.OOO@gmail.com , wechatpay 2796386464 , irc #OOO1337777
 [4] 1337777.OOO, https://github.com/1337777/borceux/blob/master/chic05.pdf
 [5] 1337777.OOO, https://github.com/1337777/dosen/blob/master/itp.pdf
 [6] Ye, http://katherineye.com/post/129960474471/strange-loops-capturing-knots-with-powerful
+
+* use this geolocated-timed-tutoring tool to play these links as TV !
+http://1337777.link/o1/guJAHkwRZYYyuhrh4GyYWv7BPOwNEF-jSeQcYN9WxLk!Zw1GYSFfr6cheRhkPhTPCnsog7DFPZQUCcv7ZEKh22s
 
 ___SOLUTION PROGRAMME MEMO___
 (Errata: read "Lawvere-Lambek" in the precedent mail)
@@ -322,5 +328,5 @@ End Functor.
 
 Module Transformation.
   (** ** next : polymorph transformation **)
-  (** instead of describing φ A : G A -> H A  then a-la-dosen  describe φ _f : catV( V , catB[ B , G A ] ) ->  catV( V , catB[ B , H A ] ) **)
+  (** instead of describing φ A : G A -> H A  then a-la-dosen (contrast weighted colimiting Kan extension) describe φ _f : catV( V , catB[ B , G A ] ) ->  catV( V , catB[ B , H A ] ) **)
 End Transformation.
