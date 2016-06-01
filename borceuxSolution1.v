@@ -38,7 +38,7 @@ http://1337777.link/ooo/guJAHkwRZYYyuhrh4GyYWv7BPOwNEF-jSeQcYN9WxLk!Zw1GYSFfr6ch
 
 Set Implicit Arguments.
 
-(** ** put any category V **)
+(** ** put any ( may be written in polymorph-style ... ) category V **)
 
 Variable obV : Type.
 Variable arrV00 : obV -> obV -> Type.
@@ -47,9 +47,9 @@ Notation "V(0 V1 |- V2 )0" := (arrV00 V1 V2) (at level 35).
 Variable IdenV : forall {V : obV}, V(0 V |- V )0.
 Notation "1" := (@IdenV _) (at level 0).
 
-Variable ComV : forall UCom V3, V(0 UCom |- V3 )0 -> forall V1, V(0 V1 |-  UCom )0 -> V(0 V1 |- V3 )0.
-Notation "f2 <o f1" := (ComV f2 f1) (at level 33, right associativity).
-Notation "f1 o> f2" := (ComV f2 f1) (at level 34, right (*yes right*) associativity).
+Variable ComV : forall V1, forall UCom, V(0 V1 |-  UCom )0 -> forall V3, V(0 UCom |- V3 )0 -> V(0 V1 |- V3 )0.
+Notation "f1 o> f2" := (ComV f1 f2) (at level 34, right (*yes right*) associativity).
+Notation "f2 <o f1" := (ComV f1 f2) (at level 33, right associativity).
 
 Variable convV : forall V1 V2, V(0 V1 |- V2)0 -> V(0 V1 |- V2 )0 -> Prop.
 Notation "v2 ~~ v1" := (convV v2 v1)  (at level 70).
@@ -99,18 +99,18 @@ Hypothesis DesIn_Input : forall V : obV, forall (U0 U1 W : obV), forall (v : V(0
 
 Variable obF : Type.
 Variable polyF00 : obF -> obF -> obV.
-Notation "F[0 A1 ~> A2 ]0" := (polyF00 A1 A2) (at level 25).
+Notation "F[0 B ~> A ]0" := (polyF00 B A) (at level 25).
 
 Parameter polyF : forall (B : obF), forall (V : obV) (A : obF),
                     V(0 V |- F[0 B ~> A ]0 )0 ->
                     forall X : obF, V(0 F[0 A ~> X ]0  |- [0 V ~> F[0 B ~> X ]0 ]0 )0.
 
-(** therefore "F[1 f ~> X ]0" is similar to ( f o> _ ) **)
-Notation "F[1 f ~> X ]0" := (@polyF _ _ _ f X) (at level 25).
+(** therefore "F[1 b ~> X ]0" is similar to ( b o> _ ) **)
+Notation "F[1 b ~> X ]0" := (@polyF _ _ _ b X) (at level 25).
 
-(** therefore "F[0 X ~> g ]1" is similar to the common ( _ o> g ) ,   more precisely ( (id _) o> g )   **)
-Notation "F[0 X ~> g ]1" := (@polyF _ _ _ (@IdenV _) X <o (g : V(0 _ |- F[0 _ ~> X ]0 )0)) (at level 25).
-(** memo:   "F[1 f ~> g ]1" shall be similar to the common ( (f _) o> g ) 
+(** therefore "F[0 X ~> a ]1" is similar to the common ( _ o> a ) ,   more precisely ( (id _) o> a )   **)
+Notation "F[0 X ~> a ]1" := (@polyF _ _ _ (@IdenV _) X <o (a : V(0 _ |- F[0 _ ~> X ]0 )0)) (at level 25).
+(** memo: may attempt  "F[1 b ~> a ]1" ,  shall be similar to the common ( (b _i) o> a ) 
 therefore "F[1 _1 ~> _2 ]1 _3 shall be ( (_1 _3) o> _2 ) **)
 
 (** related to correspondence with the common representation **)
@@ -265,7 +265,7 @@ Hypothesis CongConsV10 : forall V1' V1 (v v' : arrV00 V1' V1), forall V2 : obV,
 (** related to non-variance when unit pull the input, commonly  ( 1 o> h ) ~~ h  **)
 Hypothesis polyF_unitF : forall (A : obF), forall X : obF, (@IdenV (F[0 A ~> X ]0)) ~~ DesIdenObR( F[1 (@unitF A) ~> X ]0 ) .
 
-(** related to non-variance when unit push the output, commonly  ( f o> 1 ) ~~ f  , 
+(** related to non-variance when unit push the output, commonly  ( (f _i) o> 1 ) ~~ (f _i)  , 
        therefore polyF is injective **)
 Hypothesis polyF_inputUnitF : forall (B : obF), forall (V : obV) (A : obF),
                               forall (f : V(0 V |- F[0 B ~> A ]0 )0),
@@ -324,9 +324,13 @@ Proof.
 Qed.
 
 
+(** ** polymorph category **)
+
 Module Functor.
-  (** ** next : polymorph functor **)
-  (** instead of describing F : catA --> catB  then (contrast yoneda structures) describe catV( V , catB[ B , F - ] ) : catA --> catV **)
+  
+  (** short : instead of describing F : catA --> catB  then (contrast yoneda structures) describe catV[ V , catB[ B , F - ] ] : catA --> catV **)
+
+  (** ** put some polymorph category A , note that unitA is lacked later**)
 
   Variable obA : Type.
   Variable polyA00 : obA -> obA -> obV.
@@ -347,6 +351,8 @@ Module Functor.
     := (fun B A X => @polyA B (A[0 B ~> A ]0) A (@IdenV (A[0 B ~> A ]0)) X).
   Notation "A[0 B ~> - ]1" := (@polyA_IdenV B) (at level 25).
 
+  (** ** put some polymorph category B , note that unitB is not lacked  **)
+
   Variable obB : Type.
   Variable polyB00 : obB -> obB -> obV.
   Notation "B[0 B1 ~> B2 ]0" := (polyB00 B1 B2) (at level 25).
@@ -366,30 +372,37 @@ Module Functor.
     := (fun B A X => @polyB B (B[0 B ~> A ]0) A (@IdenV (B[0 B ~> A ]0)) X).
   Notation "B[0 B ~> - ]1" := (@polyB_IdenV B) (at level 25).
 
+  (** ** get some polymorph funtor F **)
+
   Variable polyF0 : obA -> obB.
   Notation "F|0 A" := (polyF0 A) (at level 4, right associativity).
 
   (* want B[ B , F A1] -> forall A2, A[ A1 , A2] -> B[ B , F A2 ] *)
   (*       (F|1 _2 ) <o _1   ...   _1 o> (F|1 _2)      *)
+
   Parameter polyF : forall (V : obV) (B : obB) (A : obA),
                       V(0 V |- B[0 B ~> F|0 A ]0 )0 ->
                       forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> B[0 B ~> F|0 X ]0 ]0 )0.
 
+  (** :^) **)
   Notation "F[0 B ~> A ]0" := (B[0 B ~> F|0 A ]0) (at level 25).
   
-  (* therefore "F[1 f ~> X ]0" is similar to   ( f o> ( F|1 _ ) )   , alternatively   ( f o>F _ )   *)
-  Notation "F[1 f ~> X ]0" := (@polyF _ _ _ f X) (at level 25).
+  (** therefore "F[1 b ~> X ]0" is similar to   ( b o> ( F|1 _ ) )   , alternatively   ( b o>F _ )   **)
+  Notation "F[1 b ~> X ]0" := (@polyF _ _ _ b X) (at level 25).
 
-  (* therefore "F[0 X ~> g ]1" is similar to   ( B[0 B ~> ( F|1 g ) ]1 ) which is ( _ o> ( F|1 g ) )   , alternatively  ( _ o>F g )   *)
-  Notation "F[0 X ~> g ]1" := (@polyF _ _ _ (@IdenV _) X <o (g : V(0 _ |- A[0 _ ~> X ]0 )0)) (at level 25).
+  (** therefore "F[0 X ~> a ]1" is similar to   ( B[0 B ~> ( F|1 a ) ]1 ) which is ( _ o> ( F|1 a ) )   , alternatively  ( _ o>F a )   **)
+  Notation "F[0 X ~> a ]1" := (@polyF _ _ _ (@IdenV _) X <o (a : V(0 _ |- A[0 _ ~> X ]0 )0)) (at level 25).
 
+  (** NOT LACKED, may attempt
+  (* for now, unitB for this notation only *)
   Parameter unitB : forall {B : obB}, V(0 I |- B[0 B ~> B ]0 )0.
   Notation "'uB'" := (@unitB _) (at level 0).
   (* approximative notation, may require input (g : V(0 I |- A[0 A ~> X ]0 )0) but not really more progress,
       and may transform output to cancel ( [0 I ~>  _ ]0 ) and now more progress *)
-  Notation "F|1 g" := (DesIdenObR ([1 uB ~> _ ]0 <o F[0 _ ~> g ]1)) (at level 5, right associativity) .
-  Check (fun (W : obV) (A X : obA) (g : V(0 W |- A[0 A ~> X ]0 )0) => F|1 g).
-
+  Notation "F|1 a" := (DesIdenObR ([1 uB ~> _ ]0 <o F[0 _ ~> a ]1)) (at level 5, right associativity) .
+  Check (fun (W : obV) (A X : obA) (a : V(0 W |- A[0 A ~> X ]0 )0) => F|1 a).
+  **)
+        
   (** related to correspondence with the common representation **)
   Variable polyF_arrow : forall (B : obB) (A : obA),
                          forall (V V' : obV) (v : V(0 V' |- V )0),
@@ -418,7 +431,9 @@ which is, holding only f as parameter and running all the arguments,
                        forall (f f' : V(0 V |- F[0 B ~> A ]0 )0),
                          f' ~~ f -> forall X : obA, polyF f' X ~~ polyF f X.
 
-  (** for polymorph functor, get this same deduction as polymorph category **)
+  (** ** get that the image of polyF are contained in natural transformations **)
+
+  (** for polymorph functor, get this copy-paste same deduction as for polymorph category **)
   Lemma polyF_arrowIn : forall (B : obB) (A : obA),
                          forall (V W V' : obV) (v : V(0 W |- [0 V' ~> V ]0 )0),
                          forall (f : V(0 V |- F[0 B ~> A ]0 )0) (X : obA),
@@ -436,7 +451,7 @@ and this is codeductible with polyF_morphism above which says that, put the para
            (outer modification)    ( (f ) o>F _1 ) o>F _2  =  f o>F ( _1 o> _2 )    (inner modification)
 now memo that in the left hand sides there is permutation of inputs, and that in the right hand sides there is permutation of inputs,  **)
   (** written here :   (inner modification) ~~ (outer modification) **)
-  (** for polymorph functor, get this same deduction as polymorph category **)
+  (** for polymorph functor, get this copy-paste same deduction as for polymorph category **)
   Lemma polyF_natural : forall (V : obV) (B : obB) (A : obA) (f : V(0 V |- F[0 B ~> A ]0)0),
                         forall (C X : obA),
                           ( [0 A[0 A ~> C ]0 ~> F[1 f ~> X ]0 ]1
@@ -480,20 +495,94 @@ now memo that in the left hand sides there is permutation of inputs, and that in
     apply ReflV.
   Qed.
 
-  
+  Definition natural (V : obV) (B : obB) (A : obA) (β : forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> B[0 B ~> F|0 X ]0 ]0 )0) :=
+                        forall (C X : obA),
+                          ( [0 A[0 A ~> C ]0 ~> β X ]1
+                            <o A[0 A ~> - ]1 C X )
+                            ~~ ( [1 β C ~> [0 V ~> F[0 B ~> X ]0 ]0 ]0
+                                 <o ( V[0 V ~> - ]1 (F[0 B ~> C ]0) (F[0 B ~> X ]0) ) <o F[0 B ~> - ]1 C X ) .
 
+  Lemma polyF_natural_folded : forall (V : obV) (B : obB) (A : obA) (b : V(0 V |- F[0 B ~> A ]0)0),
+                                 natural (fun X : obA => F[1 b ~> X ]0).
+  Proof.
+    unfold natural.
+    exact polyF_natural.
+  Qed.
 
+  (** ** get that the image of polyF contains all natural transformations **)
 
+  Hypothesis CongPolyA : forall (B : obA), forall (V : obV) (A : obA),
+                       forall (f f' : V(0 V |- A[0 B ~> A ]0 )0),
+                         f' ~~ f -> forall X : obA, polyA f' X ~~ polyA f X.
 
+  Variable polyA_arrow :  forall (B : obA), forall (A : obA),
+                          forall (V V' : obV) (v : V(0 V' |- V )0),
+                          forall (f : V(0 V |- A[0 B ~> A ]0 )0) (X : obA),
+                            A[1 f <o v ~> X ]0
+                             ~~ [1 v ~> A[0 B ~> X ]0 ]0 <o A[1 f ~> X ]0 .
 
+  Parameter unitA : forall {A : obA}, V(0 I |- A[0 A ~> A ]0 )0.
+  Notation "'uA'" := (@unitA _) (at level 0).
 
+  Hypothesis polyA_unitA : forall (A : obA), forall X : obA, (@IdenV (A[0 A ~> X ]0)) ~~ DesIdenObR( A[1 (@unitA A) ~> X ]0 ) .
 
+  Hypothesis polyA_inputUnitA : forall (B : obA), forall (V : obV) (A : obA),
+                                forall (f : V(0 V |- A[0 B ~> A ]0 )0),
+                                  f  ~~ DesIdenObL( (A[1 f ~> A ]0) <o (@unitA A) ).
 
+  (** for polymorph functor, get this copy-paste same deduction as for polymorph category **)
+  Lemma natural_unitF_explicit : forall (V : obV) (B : obB) (A : obA) (φ : forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> B[0 B ~> F|0 X ]0 ]0 )0),
+                                   natural φ ->
+                                   forall (X : obA),
+                                     DesIdenObR( [1 φ A <o (@unitA A) ~> [0 V ~> F[0 B ~> X ]0 ]0 ]0
+                                                 <o ( V[0 V ~> - ]1 (F[0 B ~> A ]0) (F[0 B ~> X ]0) ) <o F[0 B ~> - ]1 A X )
+                                               ~~ ( φ X ) .
+  Proof.
+    intros; eapply TransV; [ | eapply CongDesIdenObR; eapply CongCom; [ | apply ReflV]; apply consV10_functorial ].
+    eapply TransV; [ | eapply CongDesIdenObR; eapply Cat2V ].
+    eapply TransV; [ | eapply CongDesIdenObR; eapply CongCom; [ apply ReflV | ]; apply SymV, H ].
+    eapply TransV; [ | eapply CongDesIdenObR; eapply SymV, Cat2V ].
+    eapply TransV; [ | eapply CongDesIdenObR; eapply CongCom; [ | apply ReflV ]; apply SymV, consV11_bifunctorial ].
+    eapply TransV; [ | eapply CongDesIdenObR; eapply Cat2V ].
+    eapply TransV; [ | eapply CongDesIdenObR; eapply CongCom; [ apply ReflV | ]; apply SymV, polyA_arrow ].
+    eapply TransV; [ | eapply CongDesIdenObR; eapply CongCom; [ apply ReflV | ]; apply CongPolyA, SymV, Cat1LeftV ].  
+    eapply TransV; [ | eapply DesIdenObR_output].
+    eapply TransV; [ | eapply CongCom; [ apply ReflV | ]; apply SymV, polyA_unitA ].
+    apply SymV, Cat1RightV.
+  Qed.
 
+  (** for polymorph functor, get this copy-paste same deduction as for polymorph category **)
+  Lemma natural_unitF : forall (V : obV) (B : obB) (A : obA) (φ φ' : forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> B[0 B ~> F|0 X ]0 ]0 )0),
+                          natural φ -> natural φ' ->
+                          φ' A <o (@unitA A)  ~~ φ A <o (@unitA A) ->
+                          forall X : obA, φ' X ~~ φ X.
+  Proof.
+    intros; eapply TransV; [ apply natural_unitF_explicit; assumption |
+                             eapply TransV; [ | apply SymV, natural_unitF_explicit; assumption ] ].
+    apply CongDesIdenObR, CongCom; [ | apply ReflV ]; apply CongConsV10.
+    assumption.
+  Qed.
 
+  (** related to non-variance when unit push the output, commonly  ( (f _i) o>F 1 ) ~~ (f _i)  , 
+       therefore polyF is injective **)
+  Hypothesis polyF_inputUnitF : forall (V : obV) (B : obB) (A : obA),
+                                  forall (f : V(0 V |- F[0 B ~> A ]0 )0),
+                                f ~~ DesIdenObL( (F[1 f ~> A ]0) <o (@unitA A) ).
 
-  
-  (** instead of describing F : catA --> catB  then (contrast yoneda structures) describe catV( V , catB[ B , F - ] ) : catA --> catV **)
+  (** for polymorph functor, get this copy-paste same deduction as for polymorph category **)
+  Lemma YONEDA : forall (V : obV) (B : obB) (A : obA) (φ φ' : forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> B[0 B ~> F|0 X ]0 ]0 )0),
+                   natural φ ->
+                   forall X : obA, φ X ~~ F[1 DesIdenObL( (φ A) <o (@unitA A) ) ~> X ]0 .
+  Proof.
+    intros; enough( φ A <o (@unitA A) ~~ F[1 DesIdenObL( (φ A) <o (@unitA A) ) ~> A ]0 <o (@unitA A) ).
+    apply natural_unitF; [ |  assumption | assumption ] .
+    unfold natural; intros; apply polyF_natural.
+    
+    eapply TransV; [ apply SymV, ConsIdenObL_DesIdenObL | ].
+    eapply TransV; [ | apply ConsIdenObL_DesIdenObL].
+    apply CongConsIdenObL.
+    eapply TransV; [ apply polyF_inputUnitF |  apply ReflV ].
+  Qed.
   
 End Functor.
 

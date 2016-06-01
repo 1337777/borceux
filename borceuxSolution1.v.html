@@ -120,7 +120,7 @@ http://1337777.link/ooo/guJAHkwRZYYyuhrh4GyYWv7BPOwNEF-jSeQcYN9WxLk!Zw1GYSFfr6ch
 
 <span class="keyword">Set Implicit Arguments</span>.
 
-<span class="doc">(** ** </span><span class="company-coq-coqdoc-h2"><span class="doc">put any category V</span></span><span class="doc"> **)</span>
+<span class="doc">(** ** </span><span class="company-coq-coqdoc-h2"><span class="doc">put any ( may be written in polymorph-style ... ) category V</span></span><span class="doc"> **)</span>
 
 <span class="keyword">Variable</span> <span class="variable-name">obV</span> : <span class="type">Type</span>.
 <span class="keyword">Variable</span> <span class="variable-name">arrV00</span> : obV -&gt; obV -&gt; <span class="type">Type</span>.
@@ -129,9 +129,9 @@ http://1337777.link/ooo/guJAHkwRZYYyuhrh4GyYWv7BPOwNEF-jSeQcYN9WxLk!Zw1GYSFfr6ch
 <span class="keyword">Variable</span> <span class="variable-name">IdenV</span> : <span class="type">forall</span> {<span class="variable-name">V</span> : obV}, V(0 V |- V )0.
 <span class="keyword">Notation</span> <span class="string">"1"</span> := (<span class="constant">@</span>IdenV _) (<span class="type">at</span> level 0).
 
-<span class="keyword">Variable</span> <span class="variable-name">ComV</span> : <span class="type">forall</span> <span class="variable-name">UCom V3</span>, V(0 UCom |- V3 )0 -&gt; <span class="type">forall</span> <span class="variable-name">V1</span>, V(0 V1 |-  UCom )0 -&gt; V(0 V1 |- V3 )0.
-<span class="keyword">Notation</span> <span class="string">"f2 &lt;o f1"</span> := (ComV f2 f1) (<span class="type">at</span> level 33, <span class="proof-tactics-name">right</span> associativity).
-<span class="keyword">Notation</span> <span class="string">"f1 o&gt; f2"</span> := (ComV f2 f1) (<span class="type">at</span> level 34, <span class="proof-tactics-name">right</span> <span class="comment-delimiter">(*</span><span class="comment">yes right</span><span class="comment-delimiter">*)</span> associativity).
+<span class="keyword">Variable</span> <span class="variable-name">ComV</span> : <span class="type">forall</span> <span class="variable-name">V1</span>, <span class="type">forall</span> <span class="variable-name">UCom</span>, V(0 V1 |-  UCom )0 -&gt; <span class="type">forall</span> <span class="variable-name">V3</span>, V(0 UCom |- V3 )0 -&gt; V(0 V1 |- V3 )0.
+<span class="keyword">Notation</span> <span class="string">"f1 o&gt; f2"</span> := (ComV f1 f2) (<span class="type">at</span> level 34, <span class="proof-tactics-name">right</span> <span class="comment-delimiter">(*</span><span class="comment">yes right</span><span class="comment-delimiter">*)</span> associativity).
+<span class="keyword">Notation</span> <span class="string">"f2 &lt;o f1"</span> := (ComV f1 f2) (<span class="type">at</span> level 33, <span class="proof-tactics-name">right</span> associativity).
 
 <span class="keyword">Variable</span> <span class="variable-name">convV</span> : <span class="type">forall</span> <span class="variable-name">V1 V2</span>, V(0 V1 |- V2)0 -&gt; V(0 V1 |- V2 )0 -&gt; <span class="type">Prop</span>.
 <span class="keyword">Notation</span> <span class="string">"v2 ~~ v1"</span> := (convV v2 v1)  (<span class="type">at</span> level 70).
@@ -181,18 +181,18 @@ http://1337777.link/ooo/guJAHkwRZYYyuhrh4GyYWv7BPOwNEF-jSeQcYN9WxLk!Zw1GYSFfr6ch
 
 <span class="keyword">Variable</span> <span class="variable-name">obF</span> : <span class="type">Type</span>.
 <span class="keyword">Variable</span> <span class="variable-name">polyF00</span> : obF -&gt; obF -&gt; obV.
-<span class="keyword">Notation</span> <span class="string">"F[0 A1 ~&gt; A2 ]0"</span> := (polyF00 A1 A2) (<span class="type">at</span> level 25).
+<span class="keyword">Notation</span> <span class="string">"F[0 B ~&gt; A ]0"</span> := (polyF00 B A) (<span class="type">at</span> level 25).
 
 <span class="keyword">Parameter</span> <span class="variable-name">polyF</span> : <span class="type">forall</span> (<span class="variable-name">B</span> : obF), <span class="type">forall</span> (<span class="variable-name">V</span> : obV) (<span class="variable-name">A</span> : obF),
                     V(0 V |- F[0 B ~&gt; A ]0 )0 -&gt;
                     <span class="type">forall</span> <span class="variable-name">X</span> : obF, V(0 F[0 A ~&gt; X ]0  |- [0 V ~&gt; F[0 B ~&gt; X ]0 ]0 )0.
 
-<span class="doc">(** therefore "F[1 f ~&gt; X ]0" is similar to ( f o&gt; _ ) **)</span>
-<span class="keyword">Notation</span> <span class="string">"F[1 f ~&gt; X ]0"</span> := (<span class="constant">@</span>polyF _ _ _ f X) (<span class="type">at</span> level 25).
+<span class="doc">(** therefore "F[1 b ~&gt; X ]0" is similar to ( b o&gt; _ ) **)</span>
+<span class="keyword">Notation</span> <span class="string">"F[1 b ~&gt; X ]0"</span> := (<span class="constant">@</span>polyF _ _ _ b X) (<span class="type">at</span> level 25).
 
-<span class="doc">(** therefore "F[0 X ~&gt; g ]1" is similar to the common ( _ o&gt; g ) ,   more precisely ( (id _) o&gt; g )   **)</span>
-<span class="keyword">Notation</span> <span class="string">"F[0 X ~&gt; g ]1"</span> := (<span class="constant">@</span>polyF _ _ _ (<span class="constant">@</span>IdenV _) X &lt;o (<span class="variable-name">g</span> : V(0 _ |- F[0 _ ~&gt; X ]0 )0)) (<span class="type">at</span> level 25).
-<span class="doc">(** memo:   "F[1 f ~&gt; g ]1" shall be similar to the common ( (f _) o&gt; g ) 
+<span class="doc">(** therefore "F[0 X ~&gt; a ]1" is similar to the common ( _ o&gt; a ) ,   more precisely ( (id _) o&gt; a )   **)</span>
+<span class="keyword">Notation</span> <span class="string">"F[0 X ~&gt; a ]1"</span> := (<span class="constant">@</span>polyF _ _ _ (<span class="constant">@</span>IdenV _) X &lt;o (<span class="variable-name">a</span> : V(0 _ |- F[0 _ ~&gt; X ]0 )0)) (<span class="type">at</span> level 25).
+<span class="doc">(** memo: may attempt  "F[1 b ~&gt; a ]1" ,  shall be similar to the common ( (b _i) o&gt; a ) 
 therefore "F[1 _1 ~&gt; _2 ]1 _3 shall be ( (_1 _3) o&gt; _2 ) **)</span>
 
 <span class="doc">(** related to correspondence with the common representation **)</span>
@@ -347,7 +347,7 @@ now memo that in the left hand sides there is permutation of inputs, and that in
 <span class="doc">(** related to non-variance when unit pull the input, commonly  ( 1 o&gt; h ) ~~ h  **)</span>
 <span class="keyword">Hypothesis</span> <span class="variable-name">polyF_unitF</span> : <span class="type">forall</span> (<span class="variable-name">A</span> : obF), <span class="type">forall</span> <span class="variable-name">X</span> : obF, (<span class="constant">@</span>IdenV (F[0 A ~&gt; X ]0)) ~~ DesIdenObR( F[1 (<span class="constant">@</span>unitF A) ~&gt; X ]0 ) .
 
-<span class="doc">(** related to non-variance when unit push the output, commonly  ( f o&gt; 1 ) ~~ f  , 
+<span class="doc">(** related to non-variance when unit push the output, commonly  ( (f _i) o&gt; 1 ) ~~ (f _i)  , 
        therefore polyF is injective **)</span>
 <span class="keyword">Hypothesis</span> <span class="variable-name">polyF_inputUnitF</span> : <span class="type">forall</span> (<span class="variable-name">B</span> : obF), <span class="type">forall</span> (<span class="variable-name">V</span> : obV) (<span class="variable-name">A</span> : obF),
                               <span class="type">forall</span> (<span class="variable-name">f</span> : V(0 V |- F[0 B ~&gt; A ]0 )0),
@@ -406,9 +406,13 @@ now memo that in the left hand sides there is permutation of inputs, and that in
 <span class="keyword">Qed</span>.
 
 
+<span class="doc">(** ** </span><span class="company-coq-coqdoc-h2"><span class="doc">polymorph category</span></span><span class="doc"> **)</span>
+
 <span class="keyword">Module</span> <span class="function-name">Functor</span>.
-  <span class="doc">(** ** </span><span class="company-coq-coqdoc-h2"><span class="doc">next : polymorph functor</span></span><span class="doc"> **)</span>
-  <span class="doc">(** instead of describing F : catA --&gt; catB  then (contrast yoneda structures) describe catV( V , catB[ B , F - ] ) : catA --&gt; catV **)</span>
+  
+  <span class="doc">(** short : instead of describing F : catA --&gt; catB  then (contrast yoneda structures) describe catV[ V , catB[ B , F - ] ] : catA --&gt; catV **)</span>
+
+  <span class="doc">(** ** </span><span class="company-coq-coqdoc-h2"><span class="doc">put some polymorph category A , note that unitA is lacked later</span></span><span class="doc">**)</span>
 
   <span class="keyword">Variable</span> <span class="variable-name">obA</span> : <span class="type">Type</span>.
   <span class="keyword">Variable</span> <span class="variable-name">polyA00</span> : obA -&gt; obA -&gt; obV.
@@ -429,6 +433,8 @@ now memo that in the left hand sides there is permutation of inputs, and that in
     := (<span class="type">fun</span> <span class="variable-name">B A X</span> =&gt; <span class="constant">@</span>polyA B (A[0 B ~&gt; A ]0) A (<span class="constant">@</span>IdenV (A[0 B ~&gt; A ]0)) X).
   <span class="keyword">Notation</span> <span class="string">"A[0 B ~&gt; - ]1"</span> := (<span class="constant">@</span>polyA_IdenV B) (<span class="type">at</span> level 25).
 
+  <span class="doc">(** ** </span><span class="company-coq-coqdoc-h2"><span class="doc">put some polymorph category B , note that unitB is not lacked</span></span><span class="doc">  **)</span>
+
   <span class="keyword">Variable</span> <span class="variable-name">obB</span> : <span class="type">Type</span>.
   <span class="keyword">Variable</span> <span class="variable-name">polyB00</span> : obB -&gt; obB -&gt; obV.
   <span class="keyword">Notation</span> <span class="string">"B[0 B1 ~&gt; B2 ]0"</span> := (polyB00 B1 B2) (<span class="type">at</span> level 25).
@@ -448,30 +454,37 @@ now memo that in the left hand sides there is permutation of inputs, and that in
     := (<span class="type">fun</span> <span class="variable-name">B A X</span> =&gt; <span class="constant">@</span>polyB B (B[0 B ~&gt; A ]0) A (<span class="constant">@</span>IdenV (B[0 B ~&gt; A ]0)) X).
   <span class="keyword">Notation</span> <span class="string">"B[0 B ~&gt; - ]1"</span> := (<span class="constant">@</span>polyB_IdenV B) (<span class="type">at</span> level 25).
 
+  <span class="doc">(** ** </span><span class="company-coq-coqdoc-h2"><span class="doc">get some polymorph funtor F</span></span><span class="doc"> **)</span>
+
   <span class="keyword">Variable</span> <span class="variable-name">polyF0</span> : obA -&gt; obB.
   <span class="keyword">Notation</span> <span class="string">"F|0 A"</span> := (polyF0 A) (<span class="type">at</span> level 4, <span class="proof-tactics-name">right</span> associativity).
 
   <span class="comment-delimiter">(*</span><span class="comment"> want B[ B , F A1] -&gt; forall A2, A[ A1 , A2] -&gt; B[ B , F A2 ] </span><span class="comment-delimiter">*)</span>
   <span class="comment-delimiter">(*</span><span class="comment">       (F|1 _2 ) &lt;o _1   ...   _1 o&gt; (F|1 _2)      </span><span class="comment-delimiter">*)</span>
+
   <span class="keyword">Parameter</span> <span class="variable-name">polyF</span> : <span class="type">forall</span> (<span class="variable-name">V</span> : obV) (<span class="variable-name">B</span> : obB) (<span class="variable-name">A</span> : obA),
                       V(0 V |- B[0 B ~&gt; F|0 A ]0 )0 -&gt;
                       <span class="type">forall</span> <span class="variable-name">X</span> : obA, V(0 A[0 A ~&gt; X ]0  |- [0 V ~&gt; B[0 B ~&gt; F|0 X ]0 ]0 )0.
 
+  <span class="doc">(** :^) **)</span>
   <span class="keyword">Notation</span> <span class="string">"F[0 B ~&gt; A ]0"</span> := (B[0 B ~&gt; F|0 A ]0) (<span class="type">at</span> level 25).
   
-  <span class="comment-delimiter">(*</span><span class="comment"> therefore "F[1 f ~&gt; X ]0" is similar to   ( f o&gt; ( F|1 _ ) )   , alternatively   ( f o&gt;F _ )   </span><span class="comment-delimiter">*)</span>
-  <span class="keyword">Notation</span> <span class="string">"F[1 f ~&gt; X ]0"</span> := (<span class="constant">@</span>polyF _ _ _ f X) (<span class="type">at</span> level 25).
+  <span class="doc">(** therefore "F[1 b ~&gt; X ]0" is similar to   ( b o&gt; ( F|1 _ ) )   , alternatively   ( b o&gt;F _ )   **)</span>
+  <span class="keyword">Notation</span> <span class="string">"F[1 b ~&gt; X ]0"</span> := (<span class="constant">@</span>polyF _ _ _ b X) (<span class="type">at</span> level 25).
 
-  <span class="comment-delimiter">(*</span><span class="comment"> therefore "F[0 X ~&gt; g ]1" is similar to   ( B[0 B ~&gt; ( F|1 g ) ]1 ) which is ( _ o&gt; ( F|1 g ) )   , alternatively  ( _ o&gt;F g )   </span><span class="comment-delimiter">*)</span>
-  <span class="keyword">Notation</span> <span class="string">"F[0 X ~&gt; g ]1"</span> := (<span class="constant">@</span>polyF _ _ _ (<span class="constant">@</span>IdenV _) X &lt;o (<span class="variable-name">g</span> : V(0 _ |- A[0 _ ~&gt; X ]0 )0)) (<span class="type">at</span> level 25).
+  <span class="doc">(** therefore "F[0 X ~&gt; a ]1" is similar to   ( B[0 B ~&gt; ( F|1 a ) ]1 ) which is ( _ o&gt; ( F|1 a ) )   , alternatively  ( _ o&gt;F a )   **)</span>
+  <span class="keyword">Notation</span> <span class="string">"F[0 X ~&gt; a ]1"</span> := (<span class="constant">@</span>polyF _ _ _ (<span class="constant">@</span>IdenV _) X &lt;o (<span class="variable-name">a</span> : V(0 _ |- A[0 _ ~&gt; X ]0 )0)) (<span class="type">at</span> level 25).
 
-  <span class="keyword">Parameter</span> <span class="variable-name">unitB</span> : <span class="type">forall</span> {<span class="variable-name">B</span> : obB}, V(0 I |- B[0 B ~&gt; B ]0 )0.
-  <span class="keyword">Notation</span> <span class="string">"'uB'"</span> := (<span class="constant">@</span>unitB _) (<span class="type">at</span> level 0).
-  <span class="comment-delimiter">(*</span><span class="comment"> approximative notation, may require input (g : V(0 I |- A[0 A ~&gt; X ]0 )0) but not really more progress,
-      and may transform output to cancel ( [0 I ~&gt;  _ ]0 ) and now more progress </span><span class="comment-delimiter">*)</span>
-  <span class="keyword">Notation</span> <span class="string">"F|1 g"</span> := (DesIdenObR ([1 uB ~&gt; _ ]0 &lt;o F[0 _ ~&gt; g ]1)) (<span class="type">at</span> level 5, <span class="proof-tactics-name">right</span> associativity) .
-  <span class="keyword">Check</span> (<span class="type">fun</span> (<span class="variable-name">W</span> : obV) (<span class="variable-name">A X</span> : obA) (<span class="variable-name">g</span> : V(0 W |- A[0 A ~&gt; X ]0 )0) =&gt; F|1 g).
-
+  <span class="doc">(** NOT LACKED, may attempt
+  (* for now, unitB for this notation only *)
+  Parameter unitB : forall {B : obB}, V(0 I |- B[0 B ~&gt; B ]0 )0.
+  Notation "'uB'" := (</span><span class="constant"><span class="doc">@</span></span><span class="doc">unitB _) (at level 0).
+  (* approximative notation, may require input (g : V(0 I |- A[0 A ~&gt; X ]0 )0) but not really more progress,
+      and may transform output to cancel ( [0 I ~&gt;  _ ]0 ) and now more progress *)
+  Notation "F|1 a" := (DesIdenObR ([1 uB ~&gt; _ ]0 &lt;o F[0 _ ~&gt; a ]1)) (at level 5, right associativity) .
+  Check (fun (W : obV) (A X : obA) (a : V(0 W |- A[0 A ~&gt; X ]0 )0) =&gt; F|1 a).
+  **)</span>
+        
   <span class="doc">(** related to correspondence with the common representation **)</span>
   <span class="keyword">Variable</span> <span class="variable-name">polyF_arrow</span> : <span class="type">forall</span> (<span class="variable-name">B</span> : obB) (<span class="variable-name">A</span> : obA),
                          <span class="type">forall</span> (<span class="variable-name">V V'</span> : obV) (<span class="variable-name">v</span> : V(0 V' |- V )0),
@@ -500,7 +513,9 @@ which is, holding only f as parameter and running all the arguments,
                        <span class="type">forall</span> (<span class="variable-name">f f'</span> : V(0 V |- F[0 B ~&gt; A ]0 )0),
                          f' ~~ f -&gt; <span class="type">forall</span> <span class="variable-name">X</span> : obA, polyF f' X ~~ polyF f X.
 
-  <span class="doc">(** for polymorph functor, get this same deduction as polymorph category **)</span>
+  <span class="doc">(** ** </span><span class="company-coq-coqdoc-h2"><span class="doc">get that the image of polyF are contained in natural transformations</span></span><span class="doc"> **)</span>
+
+  <span class="doc">(** for polymorph functor, get this copy-paste same deduction as for polymorph category **)</span>
   <span class="keyword">Lemma</span> <span class="function-name">polyF_arrowIn</span> : <span class="type">forall</span> (<span class="variable-name">B</span> : obB) (<span class="variable-name">A</span> : obA),
                          <span class="type">forall</span> (<span class="variable-name">V W V'</span> : obV) (<span class="variable-name">v</span> : V(0 W |- [0 V' ~&gt; V ]0 )0),
                          <span class="type">forall</span> (<span class="variable-name">f</span> : V(0 V |- F[0 B ~&gt; A ]0 )0) (<span class="variable-name">X</span> : obA),
@@ -518,7 +533,7 @@ and this is codeductible with polyF_morphism above which says that, put the para
            (outer modification)    ( (f ) o&gt;F _1 ) o&gt;F _2  =  f o&gt;F ( _1 o&gt; _2 )    (inner modification)
 now memo that in the left hand sides there is permutation of inputs, and that in the right hand sides there is permutation of inputs,  **)</span>
   <span class="doc">(** written here :   (inner modification) ~~ (outer modification) **)</span>
-  <span class="doc">(** for polymorph functor, get this same deduction as polymorph category **)</span>
+  <span class="doc">(** for polymorph functor, get this copy-paste same deduction as for polymorph category **)</span>
   <span class="keyword">Lemma</span> <span class="function-name">polyF_natural</span> : <span class="type">forall</span> (<span class="variable-name">V</span> : obV) (<span class="variable-name">B</span> : obB) (<span class="variable-name">A</span> : obA) (<span class="variable-name">f</span> : V(0 V |- F[0 B ~&gt; A ]0)0),
                         <span class="type">forall</span> (<span class="variable-name">C X</span> : obA),
                           ( [0 A[0 A ~&gt; C ]0 ~&gt; F[1 f ~&gt; X ]0 ]1
@@ -562,20 +577,94 @@ now memo that in the left hand sides there is permutation of inputs, and that in
     <span class="proof-tactics-name">apply</span> ReflV.
   <span class="keyword">Qed</span>.
 
-  
+  <span class="keyword">Definition</span> <span class="function-name">natural</span> (<span class="variable-name">V</span> : obV) (<span class="variable-name">B</span> : obB) (<span class="variable-name">A</span> : obA) (<span class="variable-name">&#946;</span> : <span class="type">forall</span> <span class="variable-name">X</span> : obA, V(0 A[0 A ~&gt; X ]0  |- [0 V ~&gt; B[0 B ~&gt; F|0 X ]0 ]0 )0) :=
+                        <span class="type">forall</span> (<span class="variable-name">C X</span> : obA),
+                          ( [0 A[0 A ~&gt; C ]0 ~&gt; &#946; X ]1
+                            &lt;o A[0 A ~&gt; - ]1 C X )
+                            ~~ ( [1 &#946; C ~&gt; [0 V ~&gt; F[0 B ~&gt; X ]0 ]0 ]0
+                                 &lt;o ( V[0 V ~&gt; - ]1 (F[0 B ~&gt; C ]0) (F[0 B ~&gt; X ]0) ) &lt;o F[0 B ~&gt; - ]1 C X ) .
 
+  <span class="keyword">Lemma</span> <span class="function-name">polyF_natural_folded</span> : <span class="type">forall</span> (<span class="variable-name">V</span> : obV) (<span class="variable-name">B</span> : obB) (<span class="variable-name">A</span> : obA) (<span class="variable-name">b</span> : V(0 V |- F[0 B ~&gt; A ]0)0),
+                                 natural (<span class="type">fun</span> <span class="variable-name">X</span> : obA =&gt; F[1 b ~&gt; X ]0).
+  <span class="keyword">Proof</span>.
+    <span class="proof-tactics-name">unfold</span> natural.
+    <span class="coq-solve-tactics">exact</span> polyF_natural.
+  <span class="keyword">Qed</span>.
 
+  <span class="doc">(** ** </span><span class="company-coq-coqdoc-h2"><span class="doc">get that the image of polyF contains all natural transformations</span></span><span class="doc"> **)</span>
 
+  <span class="keyword">Hypothesis</span> <span class="variable-name">CongPolyA</span> : <span class="type">forall</span> (<span class="variable-name">B</span> : obA), <span class="type">forall</span> (<span class="variable-name">V</span> : obV) (<span class="variable-name">A</span> : obA),
+                       <span class="type">forall</span> (<span class="variable-name">f f'</span> : V(0 V |- A[0 B ~&gt; A ]0 )0),
+                         f' ~~ f -&gt; <span class="type">forall</span> <span class="variable-name">X</span> : obA, polyA f' X ~~ polyA f X.
 
+  <span class="keyword">Variable</span> <span class="variable-name">polyA_arrow</span> :  <span class="type">forall</span> (<span class="variable-name">B</span> : obA), <span class="type">forall</span> (<span class="variable-name">A</span> : obA),
+                          <span class="type">forall</span> (<span class="variable-name">V V'</span> : obV) (<span class="variable-name">v</span> : V(0 V' |- V )0),
+                          <span class="type">forall</span> (<span class="variable-name">f</span> : V(0 V |- A[0 B ~&gt; A ]0 )0) (<span class="variable-name">X</span> : obA),
+                            A[1 f &lt;o v ~&gt; X ]0
+                             ~~ [1 v ~&gt; A[0 B ~&gt; X ]0 ]0 &lt;o A[1 f ~&gt; X ]0 .
 
+  <span class="keyword">Parameter</span> <span class="variable-name">unitA</span> : <span class="type">forall</span> {<span class="variable-name">A</span> : obA}, V(0 I |- A[0 A ~&gt; A ]0 )0.
+  <span class="keyword">Notation</span> <span class="string">"'uA'"</span> := (<span class="constant">@</span>unitA _) (<span class="type">at</span> level 0).
 
+  <span class="keyword">Hypothesis</span> <span class="variable-name">polyA_unitA</span> : <span class="type">forall</span> (<span class="variable-name">A</span> : obA), <span class="type">forall</span> <span class="variable-name">X</span> : obA, (<span class="constant">@</span>IdenV (A[0 A ~&gt; X ]0)) ~~ DesIdenObR( A[1 (<span class="constant">@</span>unitA A) ~&gt; X ]0 ) .
 
+  <span class="keyword">Hypothesis</span> <span class="variable-name">polyA_inputUnitA</span> : <span class="type">forall</span> (<span class="variable-name">B</span> : obA), <span class="type">forall</span> (<span class="variable-name">V</span> : obV) (<span class="variable-name">A</span> : obA),
+                                <span class="type">forall</span> (<span class="variable-name">f</span> : V(0 V |- A[0 B ~&gt; A ]0 )0),
+                                  f  ~~ DesIdenObL( (A[1 f ~&gt; A ]0) &lt;o (<span class="constant">@</span>unitA A) ).
 
+  <span class="doc">(** for polymorph functor, get this copy-paste same deduction as for polymorph category **)</span>
+  <span class="keyword">Lemma</span> <span class="function-name">natural_unitF_explicit</span> : <span class="type">forall</span> (<span class="variable-name">V</span> : obV) (<span class="variable-name">B</span> : obB) (<span class="variable-name">A</span> : obA) (<span class="variable-name">&#966;</span> : <span class="type">forall</span> <span class="variable-name">X</span> : obA, V(0 A[0 A ~&gt; X ]0  |- [0 V ~&gt; B[0 B ~&gt; F|0 X ]0 ]0 )0),
+                                   natural &#966; -&gt;
+                                   <span class="type">forall</span> (<span class="variable-name">X</span> : obA),
+                                     DesIdenObR( [1 &#966; A &lt;o (<span class="constant">@</span>unitA A) ~&gt; [0 V ~&gt; F[0 B ~&gt; X ]0 ]0 ]0
+                                                 &lt;o ( V[0 V ~&gt; - ]1 (F[0 B ~&gt; A ]0) (F[0 B ~&gt; X ]0) ) &lt;o F[0 B ~&gt; - ]1 A X )
+                                               ~~ ( &#966; X ) .
+  <span class="keyword">Proof</span>.
+    <span class="proof-tactics-name">intros</span>; <span class="proof-tactics-name">eapply</span> TransV; [ | <span class="proof-tactics-name">eapply</span> CongDesIdenObR; <span class="proof-tactics-name">eapply</span> CongCom; [ | <span class="proof-tactics-name">apply</span> ReflV]; <span class="proof-tactics-name">apply</span> consV10_functorial ].
+    <span class="proof-tactics-name">eapply</span> TransV; [ | <span class="proof-tactics-name">eapply</span> CongDesIdenObR; <span class="proof-tactics-name">eapply</span> Cat2V ].
+    <span class="proof-tactics-name">eapply</span> TransV; [ | <span class="proof-tactics-name">eapply</span> CongDesIdenObR; <span class="proof-tactics-name">eapply</span> CongCom; [ <span class="proof-tactics-name">apply</span> ReflV | ]; <span class="proof-tactics-name">apply</span> SymV, H ].
+    <span class="proof-tactics-name">eapply</span> TransV; [ | <span class="proof-tactics-name">eapply</span> CongDesIdenObR; <span class="proof-tactics-name">eapply</span> SymV, Cat2V ].
+    <span class="proof-tactics-name">eapply</span> TransV; [ | <span class="proof-tactics-name">eapply</span> CongDesIdenObR; <span class="proof-tactics-name">eapply</span> CongCom; [ | <span class="proof-tactics-name">apply</span> ReflV ]; <span class="proof-tactics-name">apply</span> SymV, consV11_bifunctorial ].
+    <span class="proof-tactics-name">eapply</span> TransV; [ | <span class="proof-tactics-name">eapply</span> CongDesIdenObR; <span class="proof-tactics-name">eapply</span> Cat2V ].
+    <span class="proof-tactics-name">eapply</span> TransV; [ | <span class="proof-tactics-name">eapply</span> CongDesIdenObR; <span class="proof-tactics-name">eapply</span> CongCom; [ <span class="proof-tactics-name">apply</span> ReflV | ]; <span class="proof-tactics-name">apply</span> SymV, polyA_arrow ].
+    <span class="proof-tactics-name">eapply</span> TransV; [ | <span class="proof-tactics-name">eapply</span> CongDesIdenObR; <span class="proof-tactics-name">eapply</span> CongCom; [ <span class="proof-tactics-name">apply</span> ReflV | ]; <span class="proof-tactics-name">apply</span> CongPolyA, SymV, Cat1LeftV ].  
+    <span class="proof-tactics-name">eapply</span> TransV; [ | <span class="proof-tactics-name">eapply</span> DesIdenObR_output].
+    <span class="proof-tactics-name">eapply</span> TransV; [ | <span class="proof-tactics-name">eapply</span> CongCom; [ <span class="proof-tactics-name">apply</span> ReflV | ]; <span class="proof-tactics-name">apply</span> SymV, polyA_unitA ].
+    <span class="proof-tactics-name">apply</span> SymV, Cat1RightV.
+  <span class="keyword">Qed</span>.
 
+  <span class="doc">(** for polymorph functor, get this copy-paste same deduction as for polymorph category **)</span>
+  <span class="keyword">Lemma</span> <span class="function-name">natural_unitF</span> : <span class="type">forall</span> (<span class="variable-name">V</span> : obV) (<span class="variable-name">B</span> : obB) (<span class="variable-name">A</span> : obA) (<span class="variable-name">&#966; &#966;'</span> : <span class="type">forall</span> <span class="variable-name">X</span> : obA, V(0 A[0 A ~&gt; X ]0  |- [0 V ~&gt; B[0 B ~&gt; F|0 X ]0 ]0 )0),
+                          natural &#966; -&gt; natural &#966;' -&gt;
+                          &#966;' A &lt;o (<span class="constant">@</span>unitA A)  ~~ &#966; A &lt;o (<span class="constant">@</span>unitA A) -&gt;
+                          <span class="type">forall</span> <span class="variable-name">X</span> : obA, &#966;' X ~~ &#966; X.
+  <span class="keyword">Proof</span>.
+    <span class="proof-tactics-name">intros</span>; <span class="proof-tactics-name">eapply</span> TransV; [ <span class="proof-tactics-name">apply</span> natural_unitF_explicit; <span class="coq-solve-tactics">assumption</span> |
+                             <span class="proof-tactics-name">eapply</span> TransV; [ | <span class="proof-tactics-name">apply</span> SymV, natural_unitF_explicit; <span class="coq-solve-tactics">assumption</span> ] ].
+    <span class="proof-tactics-name">apply</span> CongDesIdenObR, CongCom; [ | <span class="proof-tactics-name">apply</span> ReflV ]; <span class="proof-tactics-name">apply</span> CongConsV10.
+    <span class="coq-solve-tactics">assumption</span>.
+  <span class="keyword">Qed</span>.
 
+  <span class="doc">(** related to non-variance when unit push the output, commonly  ( (f _i) o&gt;F 1 ) ~~ (f _i)  , 
+       therefore polyF is injective **)</span>
+  <span class="keyword">Hypothesis</span> <span class="variable-name">polyF_inputUnitF</span> : <span class="type">forall</span> (<span class="variable-name">V</span> : obV) (<span class="variable-name">B</span> : obB) (<span class="variable-name">A</span> : obA),
+                                  <span class="type">forall</span> (<span class="variable-name">f</span> : V(0 V |- F[0 B ~&gt; A ]0 )0),
+                                f ~~ DesIdenObL( (F[1 f ~&gt; A ]0) &lt;o (<span class="constant">@</span>unitA A) ).
 
-  
-  <span class="doc">(** instead of describing F : catA --&gt; catB  then (contrast yoneda structures) describe catV( V , catB[ B , F - ] ) : catA --&gt; catV **)</span>
+  <span class="doc">(** for polymorph functor, get this copy-paste same deduction as for polymorph category **)</span>
+  <span class="keyword">Lemma</span> <span class="function-name">YONEDA</span> : <span class="type">forall</span> (<span class="variable-name">V</span> : obV) (<span class="variable-name">B</span> : obB) (<span class="variable-name">A</span> : obA) (<span class="variable-name">&#966; &#966;'</span> : <span class="type">forall</span> <span class="variable-name">X</span> : obA, V(0 A[0 A ~&gt; X ]0  |- [0 V ~&gt; B[0 B ~&gt; F|0 X ]0 ]0 )0),
+                   natural &#966; -&gt;
+                   <span class="type">forall</span> <span class="variable-name">X</span> : obA, &#966; X ~~ F[1 DesIdenObL( (&#966; A) &lt;o (<span class="constant">@</span>unitA A) ) ~&gt; X ]0 .
+  <span class="keyword">Proof</span>.
+    <span class="proof-tactics-name">intros</span>; enough( &#966; A &lt;o (<span class="constant">@</span>unitA A) ~~ F[1 DesIdenObL( (&#966; A) &lt;o (<span class="constant">@</span>unitA A) ) ~&gt; A ]0 &lt;o (<span class="constant">@</span>unitA A) ).
+    <span class="proof-tactics-name">apply</span> natural_unitF; [ |  <span class="coq-solve-tactics">assumption</span> | <span class="coq-solve-tactics">assumption</span> ] .
+    <span class="proof-tactics-name">unfold</span> natural; <span class="proof-tactics-name">intros</span>; <span class="proof-tactics-name">apply</span> polyF_natural.
+    
+    <span class="proof-tactics-name">eapply</span> TransV; [ <span class="proof-tactics-name">apply</span> SymV, ConsIdenObL_DesIdenObL | ].
+    <span class="proof-tactics-name">eapply</span> TransV; [ | <span class="proof-tactics-name">apply</span> ConsIdenObL_DesIdenObL].
+    <span class="proof-tactics-name">apply</span> CongConsIdenObL.
+    <span class="proof-tactics-name">eapply</span> TransV; [ <span class="proof-tactics-name">apply</span> polyF_inputUnitF |  <span class="proof-tactics-name">apply</span> ReflV ].
+  <span class="keyword">Qed</span>.
   
 <span class="keyword">End</span> <span class="function-name">Functor</span>.
 
