@@ -324,7 +324,7 @@ Proof.
 Qed.
 
 
-(** ** polymorph category **)
+(** ** polymorph functor **)
 
 Module Functor.
   
@@ -416,7 +416,7 @@ which is, holding only f as parameter and running all the arguments,
            (outer modification)    ( (f ) o>F _1 ) o>F _2  =  f o>F ( _1 o> _2 )    (inner modification)
    **)
   (** written here :   (outer modification) ~~ (inner modification) **)
-  Variable polyF_morphism : forall (B : obB) (V : obV),
+  Variable polyF_morphism : forall (V : obV) (B : obB),
                             forall (A : obA) (W : obV) (A' : obA) (g : V(0 W |- A[0 A ~> A']0 )0),
                             forall (f : V(0 V |-F[0 B ~> A ]0 )0) (X : obA),
                               F[1 Des( [1 f ~> F[0 B ~> A' ]0 ]0 <o F[0 A' ~> g ]1 ) ~> X]0
@@ -495,7 +495,7 @@ now memo that in the left hand sides there is permutation of inputs, and that in
     apply ReflV.
   Qed.
 
-  Definition natural (V : obV) (B : obB) (A : obA) (β : forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> B[0 B ~> F|0 X ]0 ]0 )0) :=
+  Definition natural (V : obV) (B : obB) (A : obA) (β : forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> F[0 B ~> X ]0 ]0 )0) :=
                         forall (C X : obA),
                           ( [0 A[0 A ~> C ]0 ~> β X ]1
                             <o A[0 A ~> - ]1 C X )
@@ -531,7 +531,7 @@ now memo that in the left hand sides there is permutation of inputs, and that in
                                   f  ~~ DesIdenObL( (A[1 f ~> A ]0) <o (@unitA A) ).
 
   (** for polymorph functor, get this copy-paste same deduction as for polymorph category **)
-  Lemma natural_unitF_explicit : forall (V : obV) (B : obB) (A : obA) (φ : forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> B[0 B ~> F|0 X ]0 ]0 )0),
+  Lemma natural_unitF_explicit : forall (V : obV) (B : obB) (A : obA) (φ : forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> F[0 B ~> X ]0 ]0 )0),
                                    natural φ ->
                                    forall (X : obA),
                                      DesIdenObR( [1 φ A <o (@unitA A) ~> [0 V ~> F[0 B ~> X ]0 ]0 ]0
@@ -552,7 +552,7 @@ now memo that in the left hand sides there is permutation of inputs, and that in
   Qed.
 
   (** for polymorph functor, get this copy-paste same deduction as for polymorph category **)
-  Lemma natural_unitF : forall (V : obV) (B : obB) (A : obA) (φ φ' : forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> B[0 B ~> F|0 X ]0 ]0 )0),
+  Lemma natural_unitF : forall (V : obV) (B : obB) (A : obA) (φ φ' : forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> F[0 B ~> X ]0 ]0 )0),
                           natural φ -> natural φ' ->
                           φ' A <o (@unitA A)  ~~ φ A <o (@unitA A) ->
                           forall X : obA, φ' X ~~ φ X.
@@ -570,7 +570,7 @@ now memo that in the left hand sides there is permutation of inputs, and that in
                                 f ~~ DesIdenObL( (F[1 f ~> A ]0) <o (@unitA A) ).
 
   (** for polymorph functor, get this copy-paste same deduction as for polymorph category **)
-  Lemma YONEDA : forall (V : obV) (B : obB) (A : obA) (φ φ' : forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> B[0 B ~> F|0 X ]0 ]0 )0),
+  Lemma YONEDA : forall (V : obV) (B : obB) (A : obA) (φ φ' : forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> F[0 B ~> X ]0 ]0 )0),
                    natural φ ->
                    forall X : obA, φ X ~~ F[1 DesIdenObL( (φ A) <o (@unitA A) ) ~> X ]0 .
   Proof.
@@ -583,11 +583,96 @@ now memo that in the left hand sides there is permutation of inputs, and that in
     apply CongConsIdenObL.
     eapply TransV; [ apply polyF_inputUnitF |  apply ReflV ].
   Qed.
-  
+
+
+  (** ** polymorph polytransformation **)
+
+  Module Transformation.
+
+    (** short : instead of describing φ A : G A -> H A  then a-la-dosen (contrast weighted colimiting Kan extension) describe φ _f : catV( V , catB[ B , G A ] ) ->  catV( V , catB[ B , H A ] ) **)
+
+    (** ** put some polymorph funtor G **)
+
+    Variable polyG0 : obA -> obB.
+    Notation "G|0 A" := (polyG0 A) (at level 4, right associativity).
+
+    Parameter polyG : forall (V : obV) (B : obB) (A : obA),
+                        V(0 V |- B[0 B ~> G|0 A ]0 )0 ->
+                        forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> B[0 B ~> G|0 X ]0 ]0 )0.
+
+    Notation "G[0 B ~> A ]0" := (B[0 B ~> G|0 A ]0) (at level 25).
+    Notation "G[1 b ~> X ]0" := (@polyG _ _ _ b X) (at level 25).
+    Notation "G[0 X ~> a ]1" := (@polyG _ _ _ (@IdenV _) X <o (a : V(0 _ |- A[0 _ ~> X ]0 )0)) (at level 25).
+
+    Variable polyG_arrow : forall (B : obB) (A : obA),
+                           forall (V V' : obV) (v : V(0 V' |- V )0),
+                           forall (f : V(0 V |- G[0 B ~> A ]0 )0) (X : obA),
+                             G[1 f <o v ~> X ]0
+                              ~~ [1 v ~> G[0 B ~> X ]0 ]0 <o G[1 f ~> X ]0 .
+
+    Variable polyG_morphism : forall (B : obB) (V : obV),
+                              forall (A : obA) (W : obV) (A' : obA) (g : V(0 W |- A[0 A ~> A']0 )0),
+                              forall (f : V(0 V |-G[0 B ~> A ]0 )0) (X : obA),
+                                G[1 Des( [1 f ~> G[0 B ~> A' ]0 ]0 <o G[0 A' ~> g ]1 ) ~> X]0
+                                 ~~  DesIn( [0 W ~> G[1 f ~> X ]0 ]1 <o A[1 g ~> X ]0 ).
+
+    Definition polyG_IdenV : forall (B : obB) (A : obA),
+                             forall X : obA, V(0 A[0 A ~> X ]0  |- [0 G[0 B ~> A ]0 ~> G[0 B ~> X ]0 ]0 )0
+      := (fun B A X => @polyG (G[0 B ~> A ]0) B A (@IdenV (G[0 B ~> A ]0)) X).
+    Notation "G[0 B ~> - ]1" := (@polyG_IdenV B) (at level 25).
+
+    Hypothesis CongPolyG : forall (V : obV) (B : obB) (A : obA),
+                           forall (f f' : V(0 V |- G[0 B ~> A ]0 )0),
+                             f' ~~ f -> forall X : obA, polyG f' X ~~ polyG f X.
+    
+    (** ** get some polymorph polytransformation β **)
+    
+    Parameter polyβ : forall (V : obV) (B : obB) (A : obA),
+                        V(0 V |- F[0 B ~> A ]0 )0 ->
+                        V(0 V |- G[0 B ~> A ]0 )0 .
+
+    (** :^) **)
+    Notation "β|1 f" := (@polyβ _ _ _ f) (at level 5, right associativity).
+    Notation "β|0 A" := (@polyβ _ _ A (@IdenV _)) (at level 4, right associativity).
+
+    Variable polyβ_arrow : forall (B : obB) (A : obA),
+                           forall (V V' : obV) (v : V(0 V' |- V )0),
+                           forall (f : V(0 V |- F[0 B ~> A ]0 )0) (X : obA),
+                             β|1 (f <o v)
+                                 ~~ β|1 f <o v .
+
+    (** written here : (inner modification) ~~ (outer modification)**)
+    Variable polyβ_morphism : forall (V : obV) (B : obB),
+                              forall (A : obA) (W : obV) (A' : obA) (a : V(0 W |- A[0 A ~> A']0 )0),
+                              forall (f : V(0 V |- F[0 B ~> A ]0 )0) (X : obA),
+                                β|1 (Des( [1 f ~> F[0 B ~> A' ]0 ]0 <o F[0 A' ~> a ]1 ))
+                                    ~~ (Des( [1 β|1 f ~> G[0 B ~> A' ]0 ]0 <o G[0 A' ~> a ]1 )) .
+
+    Variable polyβ_morphism_codomain : forall (V : obV),
+                                       forall (B : obB) (W : obV) (B' : obB) (b : V(0 W |- B[0 B' ~> B]0 )0),
+                                       forall (A : obA),
+                                       forall (f : V(0 V |-F[0 B ~> A ]0 )0),
+                                         β|1 (Des( B[1 b ~> F|0 A ]0 <o f ))
+                                             ~~  Des( B[1 b ~> G|0 A ]0 <o β|1 f ).
+
+    (** next :
+     1. define naturality of any transformation of polymorph functors into catV
+     2. show codeductibility of naturality for this transformation in catV with polymorphism (polymorph in V , B is easy) for the corresponding polytransformation
+     3. define composition of polymorph functors, view [0 V0 ~> F[0 B0 ~> - ]0 ]0 as coming from composite polymorph functors
+     4. confirm old naturality signify new naturality of the transformation F[1 (f0 : V(0 V0 |- F[0 B0 ~> A0 ]0 )0) ~> - ]0 between these polymorph functors on top of A[0 A0 ~> - ]0 (which is polyA) and on top of [0 V0 ~> F[0 B0 ~> - ]0 ]0 (which is composite of polyV with polyF)
+     5. rewrite the yoneda lemma as saying that the image is precisely any transformation whose corresponding polytransformation is polymorph
+     **)
+
+    (** alternatively, more immediately and particularly, show that poly_of_this_transf below satisfies polyβ_arrow (easy) and polyβ_morphism_codomain (easy) and polyβ_morphism (from old naturality) **)
+    Definition poly_of_this_transf : forall (A0 : obA) (V0 : obV) (B0 : obB) (f0 : V(0 V0 |- F[0 B0 ~> A0 ]0 )0),
+                              forall (V : obV) (U : obV) (A : obA),
+                                V(0 V |- V[0 U ~> A[0 A0 ~> A ]0 ]0 )0 ->
+                                V(0 V |- V[0 U ~> [0 V0 ~> F[0 B0 ~> A ]0 ]0 ]0 )0
+      := fun (A0 : obA) (V0 : obV) (B0 : obB) (f0 : V(0 V0 |- F[0 B0 ~> A0 ]0 )0)
+         => fun (V : obV) (U : obV) (A : obA)
+           => fun (f : V(0 V |- V[0 U ~> A[0 A0 ~> A ]0 ]0 )0)
+             => [0 U ~> F[1 f0 ~> A ]0 ]1 <o f .
+
+  End Transformation.
+
 End Functor.
-
-
-Module Transformation.
-  (** ** next : polymorph transformation **)
-  (** instead of describing φ A : G A -> H A  then a-la-dosen (contrast weighted colimiting Kan extension) describe φ _f : catV( V , catB[ B , G A ] ) ->  catV( V , catB[ B , H A ] ) **)
-End Transformation.
