@@ -1,0 +1,94 @@
+%% LyX 2.1.4 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{wasysym}
+
+\makeatletter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+%  CATEGORY THEORY 2016
+%
+%  LaTeX format for the abstracts
+%
+%  January, 2016
+
+
+
+\hoffset=-10.5mm
+\addtolength{\textwidth}{16mm}
+\voffset=-20mm
+\addtolength{\textheight}{35mm}
+
+\renewcommand{\baselinestretch}{1.2}
+
+\def\thefootnote{\fnsymbol{footnote}}
+
+\makeatother
+
+\begin{document}
+\setcounter{page}{1}
+
+\begin{center}
+\textsf{\LARGE{}Polymorphism} \textsf{\setcounter{footnote}{0}}
+\par\end{center}
+
+\textit{Short}. 1. This \texttt{https://github.com/1337777/borceux/}
+solves some question of Ahrens and Kan-Riehl, which is how to program
+Kelly's «enriched categories» and how the inter-dependence of «naturality»
+with «category» is cyclic. Also this attempts to clarify the contrast
+«categorical algebra» (ring\slash locale-presentation and its ``internal
+logic''), from «categorial logic» in the style of the «enriched\slash
+encoded\slash programmed\slash recursion» categories of Kelly-Dosen
+or Lawvere-Lambek, for example : the yoneda lemma and most categorial
+lemmas are no-more-than Gentzen's constructive logic of re-arranging
+the input-output positions «modulo naturality». Now homotopy\slash
+knots\slash proof-nets may be held as (faithfull or almost-faithfull)
+semantical techniques \\ («descent») to do this «categorial logic»,
+and the homotopy itself may be programmed in specialized grammars
+(for example \texttt{HOTT} or else). \ \ \ \ 2. The common assumption
+that \texttt{catC( $-$ , X )} is dual to \texttt{catC( Y , $-$ )}
+is FALSIFIED. This falsification originates from the description of
+the composition as some binary form instead of as some functional
+form which is programmed\slash encoded\slash enriched onto the computer.
+Then get some new thing which is named «polymorphism» from which to
+define «polymorph category». This is the only-ever real description
+and deduction of the yoneda lemma, which says that the image of \texttt{polyF}
+(which is injective and contained in natural transformations) also
+contains all natural transformations. \ \ \ \ 3. Some polymorph category
+(functor) is given by \texttt{polyF}, which is commonl\texttt{y (
+(\_1 \_3) o>F \_2 )} , polymorph in \texttt{V} and polymorph in \texttt{A}
+:
+
+\texttt{Variable obF : Type. Variable polyF00 : obF $\to$ obF $\to$
+obV.}
+
+\texttt{Notation \textquotedbl{}F{[}0 B $\leadsto$ A {]}0\textquotedbl{}
+:= (polyF00 B A) (at level 25).}
+
+\texttt{Parameter polyF : forall (B : obF), forall (V : oybV) (A : obF),}
+
+\texttt{V(0 V $\vdash$ F{[}0 B $\leadsto$ A {]}0 )0 }$\to$
+
+\texttt{forall X : obF, V(0 F{[}0 A $\leadsto$ X {]}0 $\vdash$ {[}0
+V $\leadsto$ F{[}0 B $\leadsto$ X {]}0 {]}0 )0.}
+
+4. And to get polymorph functor, \texttt{catV{[} V , catB{[} B , F
+$-$ {]} {]} : catA $\to$ catV} . And to get polymorph transformation
+a-la-dosen, \texttt{phi \_f : catV( V , catB{[} B , G A {]} ) $\to$
+catV( V , catB{[} B , H A {]} )} . \ \ \ \ 5. And finally one shall
+relate the earlier «naturality of this particular metatransformation
+inside \texttt{catV}» to this new general «polymorphism» for the corresponding
+polytransformation. This requires to define composition of polyfunctors,
+where one discovers that any functor is in reality alone \texttt{polyF}
+for some sequence of any length of mappings on objects, \texttt{catA
+$\to$ catB $\to$ catC $\to$ ...} , where \texttt{catA} is encoded
+(enriched) in \texttt{catB}, and \texttt{catB} is encoded in \texttt{catC},
+... and \texttt{catC} is encoded in \texttt{catV} which finally exits
+into sets/types/classifiers; this may solve the \texttt{n}-category
+yoneda question...\ \ \ \ 6. These earlier texts referring to Maclane
+associativity coherence and Dosen semiassociativity coherence and
+Dosen cut elimination for adjunctions and Chlipala ur/web database
+programming are all related to this present text of the «\texttt{1337777.OOO
+Solution Programme}».
+\end{document}
