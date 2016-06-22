@@ -1295,25 +1295,25 @@ NEXT4: rewrite natural as above
 
       (** Cons et al was here , Des_Input was here **)
 
-      Definition polyβ_of_metaβ : forall (V : obV) (B : obV) (A : obA),
+      Definition poly_of_metaβ : forall (V : obV) (B : obV) (A : obA),
                                     V(0 V |- P[0 B ~> A ]0 )0 ->
                                     V(0 V |- Q[0 B ~> A ]0 )0
         := fun (V B : obV) (A : obA) (b : V(0 V |- P[0 B ~> A ]0 )0) =>
              Cons (β||0 A <o Des b) .
       
       (** :^) **)
-      Notation "β|1 f" := (@polyβ_of_metaβ _ _ _ f) (at level 5, right associativity).
+      Notation "β|1 f" := (@poly_of_metaβ _ _ _ f) (at level 5, right associativity).
       (** this Notation "β|0 A" is not held below **)
-      Notation "β|0 A" := (@polyβ_of_metaβ _ _ A (@IdenV _)) (at level 4, right associativity).
+      Notation "β|0 A" := (@poly_of_metaβ _ _ A (@IdenV _)) (at level 4, right associativity).
 
-      Lemma polyβ_of_metaβ_arrow : forall (B : obV) (A : obA),
+      Lemma poly_of_metaβ_arrow : forall (B : obV) (A : obA),
                              forall (V V' : obV) (v : V(0 V' |- V )0),
                              forall (f : V(0 V |- P[0 B ~> A ]0 )0) (X : obA),
                                β|1 (f <o v)
                                    ~~ β|1 f <o v .
       Proof.
         intros.
-        unfold polyβ_of_metaβ.
+        unfold poly_of_metaβ.
         eapply TransV; [ eapply Cons_Input  |] .
         eapply TransV; [ eapply CongCons; eapply SymV, Cat2V  |] .
         eapply TransV; [ eapply CongCons; eapply CongCom; [ eapply ReflV |  eapply Des_Input  ] |] .
@@ -1335,14 +1335,14 @@ NEXT4: rewrite natural as above
       
       (** ?? may change def of funtor into V because now extra decoding while already in V ?? **)
       (** written here : (inner modification) ~~ (outer modification)**)
-      Lemma polyβ_of_metaβ_morphism : forall (V : obV) (B : obV),
+      Lemma poly_of_metaβ_morphism : forall (V : obV) (B : obV),
                                       forall (A : obA) (W : obV) (A' : obA) (a : V(0 W |- A[0 A ~> A']0 )0),
-                                      forall (f : V(0 V |- P[0 B ~> A ]0 )0) (X : obA),
+                                      forall (f : V(0 V |- P[0 B ~> A ]0 )0),
                                         β|1 (Des( [1 f ~> P[0 B ~> A' ]0 ]0 <o P[0 A' ~> a ]1 ))
                                             ~~ (Des( [1 β|1 f ~> Q[0 B ~> A' ]0 ]0 <o Q[0 A' ~> a ]1 )) .
       Proof.
         (** LHS **)
-        intros. unfold polyβ_of_metaβ. unfold polyP_of_metaP. unfold polyQ_of_metaQ.
+        intros. unfold poly_of_metaβ. unfold polyP_of_metaP. unfold polyQ_of_metaQ.
         eapply TransV; [| eapply SymV, Cons_Output ].
         eapply TransV; [| eapply CongCom; [eapply ReflV| eapply Cons_Des] ].
         eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply CongConsIn, CongMetaP, Cat1LeftV ].
@@ -1381,7 +1381,7 @@ NEXT4: rewrite natural as above
         eapply ConsIn_consV10_functorial.
       Qed.
 
-      Lemma polyβ_of_metaβ_morphism_codomain : forall (V : obV),
+      Lemma poly_of_metaβ_morphism_codomain : forall (V : obV),
                                                forall (B : obV) (W : obV) (B' : obV) (b : V(0 W |- V[0 B' ~> B]0 )0),
                                                forall (A : obA),
                                                forall (f : V(0 V |-P[0 B ~> A ]0 )0),
@@ -1389,7 +1389,7 @@ NEXT4: rewrite natural as above
                                                      ~~  Des( V[1 b ~> Q|0 A ]0 <o β|1 f ).
       Proof.
         (** LHS **)
-        intros. unfold polyβ_of_metaβ.
+        intros. unfold poly_of_metaβ.
         eapply TransV; [| eapply SymV, Cons_Output ].
         eapply TransV; [| eapply CongCom; [eapply ReflV| eapply Cons_Des] ].
 
@@ -1415,7 +1415,67 @@ NEXT4: rewrite natural as above
 
         eapply ReflV.
       Qed.
-        
+
+      Hypothesis Des_I_Iso : forall (A : obV),
+                            forall (Y X : obV) (f g : V(0 Y |-  [0  A ~> X ]0 )0 ), 
+                              [1 Des (@IdenV ([0 I ~> A ]0)) ~> X ]0 <o f ~~ [1  Des (@IdenV ([0 I ~> A ]0))  ~> X ]0 <o g -> f ~~ g .
+
+      Lemma meta_morphism_of_poly_of_metaβ : ( forall (V : obV) (B : obV),
+                                        forall (A : obA) (W : obV) (A' : obA) (a : V(0 W |- A[0 A ~> A']0 )0),
+                                        forall (f : V(0 V |- P[0 B ~> A ]0 )0),
+                                          β|1 (Des( [1 f ~> P[0 B ~> A' ]0 ]0 <o P[0 A' ~> a ]1 ))
+                                              ~~ (Des( [1 β|1 f ~> Q[0 B ~> A' ]0 ]0 <o Q[0 A' ~> a ]1 )) )
+                                      -> ( forall (A : obA)  (A' : obA),
+                                            [0 P|0 A ~>  β||0 A' ]1 <o P||1
+                                                                      ~~ [1 β||0 A ~> Q|0 A' ]0 <o Q||1 ) .
+      Proof.
+        intro H_poly_morphism. intros.
+        specialize H_poly_morphism with (B := I) (A := A) (A' := A') (a := 1) (f := 1).
+        unfold poly_of_metaβ in H_poly_morphism. unfold polyP_of_metaP in H_poly_morphism. unfold polyQ_of_metaQ in H_poly_morphism.
+        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply SymV, Cons_Output ].
+        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply Cons_Des ].
+        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongCom; [|eapply ReflV]; eapply SymV, consV10_functorial_fun1 ].
+        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, SymV, Cat1LeftV ].
+        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, SymV, Cat1RightV ]. 
+        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongConsIn, CongMetaP, Cat1LeftV ].
+        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongConsIn, metaP_arrow ].
+        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, ConsIn_Input ].
+        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply SymV, Des_Output ].
+        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongDes, SymV, Cat2V ].
+        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongDes, CongCom; [|eapply ReflV]; eapply SymV, ConsIn_Output2   ].
+        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongDes, SymV, ConsIn_Input   ].
+
+        (** RHS **)
+        eapply CongCons in H_poly_morphism.
+        eapply SymV, TransV, SymV in H_poly_morphism; [|eapply Cons_Des]. eapply TransV in H_poly_morphism; [|eapply Cons_Des].
+        eapply  TransV in H_poly_morphism; [|eapply CongCom; [eapply ReflV|]; eapply SymV, Cat1RightV ].
+        eapply TransV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|];  eapply CongConsIn, CongMetaQ, Cat1LeftV ].
+        eapply TransV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|];  eapply CongConsIn, metaQ_arrow].
+        eapply TransV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|];  eapply ConsIn_Input].
+        eapply TransV in H_poly_morphism; [| eapply SymV, Cat2V ].
+        eapply TransV in H_poly_morphism; [| eapply CongCom; [|eapply ReflV]; eapply SymV, ConsIn_consV10_functorial ].
+        eapply TransV in H_poly_morphism; [| eapply SymV, ConsIn_Input].
+        eapply CongDesIn in H_poly_morphism.
+        eapply SymV, TransV, SymV in H_poly_morphism; [|eapply DesIn_ConsIn]. eapply TransV in H_poly_morphism; [|eapply DesIn_ConsIn].        
+        eapply TransV in H_poly_morphism; [| eapply CongCom; [|eapply ReflV];  eapply CongConsV10, CongDes, SymV, Cat1LeftV].
+        eapply TransV in H_poly_morphism; [| eapply CongCom; [|eapply ReflV];  eapply CongConsV10, Des_Cons].
+        eapply TransV in H_poly_morphism; [| eapply CongCom; [|eapply ReflV];  eapply consV10_functorial].
+        eapply TransV in H_poly_morphism; [| eapply Cat2V].
+        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [|eapply ReflV]; eapply consV11_bifunctorial ].
+        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply Cat2V ].
+        (*
+        Notation  "'MID' x" := (@IdenV x ) (at level 3).
+        Show.
+        (** really is iso [1Des MID (P[0 I ~> A ]0) ~> Q|0 A' ]0 **)
+        Notation  "'DES' x y" := (@Des x _ _ y) (at level 3).
+        Show.
+        (** really is iso   [1DES I (MID (P[0 I ~> A ]0)) ~> Q|0 A' ]0  **)
+        Show.
+         *)
+        eapply Des_I_Iso in H_poly_morphism.
+        exact H_poly_morphism.
+      Qed.
+      
       End Poly_of_meta.
 
     End MetaTransformation.

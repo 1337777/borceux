@@ -2,7 +2,7 @@
 <!-- Created by htmlize-1.47 in css mode. -->
 <html>
   <head>
-    <title>borceuxSolution1.v</title>
+    <title>borceuxSolution2.v</title>
     <style type="text/css">
     <!--
       body {
@@ -1377,25 +1377,25 @@ NEXT4: rewrite natural as above
 
       <span class="doc">(** Cons et al was here , Des_Input was here **)</span>
 
-      <span class="keyword">Definition</span> <span class="function-name">poly&#946;_of_meta&#946;</span> : <span class="type">forall</span> (<span class="variable-name">V</span> : obV) (<span class="variable-name">B</span> : obV) (<span class="variable-name">A</span> : obA),
+      <span class="keyword">Definition</span> <span class="function-name">poly_of_meta&#946;</span> : <span class="type">forall</span> (<span class="variable-name">V</span> : obV) (<span class="variable-name">B</span> : obV) (<span class="variable-name">A</span> : obA),
                                     V(0 V |- P[0 B ~&gt; A ]0 )0 -&gt;
                                     V(0 V |- Q[0 B ~&gt; A ]0 )0
         := <span class="type">fun</span> (<span class="variable-name">V B</span> : obV) (<span class="variable-name">A</span> : obA) (<span class="variable-name">b</span> : V(0 V |- P[0 B ~&gt; A ]0 )0) =&gt;
              Cons (&#946;||0 A &lt;o Des b) .
       
       <span class="doc">(** :^) **)</span>
-      <span class="keyword">Notation</span> <span class="string">"&#946;|1 f"</span> := (<span class="constant">@</span>poly&#946;_of_meta&#946; _ _ _ f) (<span class="type">at</span> level 5, <span class="proof-tactics-name">right</span> associativity).
+      <span class="keyword">Notation</span> <span class="string">"&#946;|1 f"</span> := (<span class="constant">@</span>poly_of_meta&#946; _ _ _ f) (<span class="type">at</span> level 5, <span class="proof-tactics-name">right</span> associativity).
       <span class="doc">(** this Notation "&#946;|0 A" is not held below **)</span>
-      <span class="keyword">Notation</span> <span class="string">"&#946;|0 A"</span> := (<span class="constant">@</span>poly&#946;_of_meta&#946; _ _ A (<span class="constant">@</span>IdenV _)) (<span class="type">at</span> level 4, <span class="proof-tactics-name">right</span> associativity).
+      <span class="keyword">Notation</span> <span class="string">"&#946;|0 A"</span> := (<span class="constant">@</span>poly_of_meta&#946; _ _ A (<span class="constant">@</span>IdenV _)) (<span class="type">at</span> level 4, <span class="proof-tactics-name">right</span> associativity).
 
-      <span class="keyword">Lemma</span> <span class="function-name">poly&#946;_of_meta&#946;_arrow</span> : <span class="type">forall</span> (<span class="variable-name">B</span> : obV) (<span class="variable-name">A</span> : obA),
+      <span class="keyword">Lemma</span> <span class="function-name">poly_of_meta&#946;_arrow</span> : <span class="type">forall</span> (<span class="variable-name">B</span> : obV) (<span class="variable-name">A</span> : obA),
                              <span class="type">forall</span> (<span class="variable-name">V V'</span> : obV) (<span class="variable-name">v</span> : V(0 V' |- V )0),
                              <span class="type">forall</span> (<span class="variable-name">f</span> : V(0 V |- P[0 B ~&gt; A ]0 )0) (<span class="variable-name">X</span> : obA),
                                &#946;|1 (f &lt;o v)
                                    ~~ &#946;|1 f &lt;o v .
       <span class="keyword">Proof</span>.
         <span class="proof-tactics-name">intros</span>.
-        <span class="proof-tactics-name">unfold</span> poly&#946;_of_meta&#946;.
+        <span class="proof-tactics-name">unfold</span> poly_of_meta&#946;.
         <span class="proof-tactics-name">eapply</span> TransV; [ <span class="proof-tactics-name">eapply</span> Cons_Input  |] .
         <span class="proof-tactics-name">eapply</span> TransV; [ <span class="proof-tactics-name">eapply</span> CongCons; <span class="proof-tactics-name">eapply</span> SymV, Cat2V  |] .
         <span class="proof-tactics-name">eapply</span> TransV; [ <span class="proof-tactics-name">eapply</span> CongCons; <span class="proof-tactics-name">eapply</span> CongCom; [ <span class="proof-tactics-name">eapply</span> ReflV |  <span class="proof-tactics-name">eapply</span> Des_Input  ] |] .
@@ -1417,14 +1417,14 @@ NEXT4: rewrite natural as above
       
       <span class="doc">(** ?? may change def of funtor into V because now extra decoding while already in V ?? **)</span>
       <span class="doc">(** written here : (inner modification) ~~ (outer modification)**)</span>
-      <span class="keyword">Lemma</span> <span class="function-name">poly&#946;_of_meta&#946;_morphism</span> : <span class="type">forall</span> (<span class="variable-name">V</span> : obV) (<span class="variable-name">B</span> : obV),
+      <span class="keyword">Lemma</span> <span class="function-name">poly_of_meta&#946;_morphism</span> : <span class="type">forall</span> (<span class="variable-name">V</span> : obV) (<span class="variable-name">B</span> : obV),
                                       <span class="type">forall</span> (<span class="variable-name">A</span> : obA) (<span class="variable-name">W</span> : obV) (<span class="variable-name">A'</span> : obA) (<span class="variable-name">a</span> : V(0 W |- A[0 A ~&gt; A']0 )0),
-                                      <span class="type">forall</span> (<span class="variable-name">f</span> : V(0 V |- P[0 B ~&gt; A ]0 )0) (<span class="variable-name">X</span> : obA),
+                                      <span class="type">forall</span> (<span class="variable-name">f</span> : V(0 V |- P[0 B ~&gt; A ]0 )0),
                                         &#946;|1 (Des( [1 f ~&gt; P[0 B ~&gt; A' ]0 ]0 &lt;o P[0 A' ~&gt; a ]1 ))
                                             ~~ (Des( [1 &#946;|1 f ~&gt; Q[0 B ~&gt; A' ]0 ]0 &lt;o Q[0 A' ~&gt; a ]1 )) .
       <span class="keyword">Proof</span>.
         <span class="doc">(** LHS **)</span>
-        <span class="proof-tactics-name">intros</span>. <span class="proof-tactics-name">unfold</span> poly&#946;_of_meta&#946;. <span class="proof-tactics-name">unfold</span> polyP_of_metaP. <span class="proof-tactics-name">unfold</span> polyQ_of_metaQ.
+        <span class="proof-tactics-name">intros</span>. <span class="proof-tactics-name">unfold</span> poly_of_meta&#946;. <span class="proof-tactics-name">unfold</span> polyP_of_metaP. <span class="proof-tactics-name">unfold</span> polyQ_of_metaQ.
         <span class="proof-tactics-name">eapply</span> TransV; [| <span class="proof-tactics-name">eapply</span> SymV, Cons_Output ].
         <span class="proof-tactics-name">eapply</span> TransV; [| <span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV| <span class="proof-tactics-name">eapply</span> Cons_Des] ].
         <span class="proof-tactics-name">eapply</span> TransV; [| <span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV|]; <span class="proof-tactics-name">eapply</span> CongDes, CongCom; [<span class="proof-tactics-name">eapply</span> ReflV|]; <span class="proof-tactics-name">eapply</span> CongCom; [|<span class="proof-tactics-name">eapply</span> ReflV]; <span class="proof-tactics-name">eapply</span> CongConsIn, CongMetaP, Cat1LeftV ].
@@ -1463,7 +1463,7 @@ NEXT4: rewrite natural as above
         <span class="proof-tactics-name">eapply</span> ConsIn_consV10_functorial.
       <span class="keyword">Qed</span>.
 
-      <span class="keyword">Lemma</span> <span class="function-name">poly&#946;_of_meta&#946;_morphism_codomain</span> : <span class="type">forall</span> (<span class="variable-name">V</span> : obV),
+      <span class="keyword">Lemma</span> <span class="function-name">poly_of_meta&#946;_morphism_codomain</span> : <span class="type">forall</span> (<span class="variable-name">V</span> : obV),
                                                <span class="type">forall</span> (<span class="variable-name">B</span> : obV) (<span class="variable-name">W</span> : obV) (<span class="variable-name">B'</span> : obV) (<span class="variable-name">b</span> : V(0 W |- V[0 B' ~&gt; B]0 )0),
                                                <span class="type">forall</span> (<span class="variable-name">A</span> : obA),
                                                <span class="type">forall</span> (<span class="variable-name">f</span> : V(0 V |-P[0 B ~&gt; A ]0 )0),
@@ -1471,7 +1471,7 @@ NEXT4: rewrite natural as above
                                                      ~~  Des( V[1 b ~&gt; Q|0 A ]0 &lt;o &#946;|1 f ).
       <span class="keyword">Proof</span>.
         <span class="doc">(** LHS **)</span>
-        <span class="proof-tactics-name">intros</span>. <span class="proof-tactics-name">unfold</span> poly&#946;_of_meta&#946;.
+        <span class="proof-tactics-name">intros</span>. <span class="proof-tactics-name">unfold</span> poly_of_meta&#946;.
         <span class="proof-tactics-name">eapply</span> TransV; [| <span class="proof-tactics-name">eapply</span> SymV, Cons_Output ].
         <span class="proof-tactics-name">eapply</span> TransV; [| <span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV| <span class="proof-tactics-name">eapply</span> Cons_Des] ].
 
@@ -1497,7 +1497,67 @@ NEXT4: rewrite natural as above
 
         <span class="proof-tactics-name">eapply</span> ReflV.
       <span class="keyword">Qed</span>.
-        
+
+      <span class="keyword">Hypothesis</span> <span class="variable-name">Des_I_Iso</span> : <span class="type">forall</span> (<span class="variable-name">A</span> : obV),
+                            <span class="type">forall</span> (<span class="variable-name">Y X</span> : obV) (<span class="variable-name">f g</span> : V(0 Y |-  [0  A ~&gt; X ]0 )0 ), 
+                              [1 Des (<span class="constant">@</span>IdenV ([0 I ~&gt; A ]0)) ~&gt; X ]0 &lt;o f ~~ [1  Des (<span class="constant">@</span>IdenV ([0 I ~&gt; A ]0))  ~&gt; X ]0 &lt;o g -&gt; f ~~ g .
+
+      <span class="keyword">Lemma</span> <span class="function-name">meta_morphism_of_poly_of_meta&#946;</span> : ( <span class="type">forall</span> (<span class="variable-name">V</span> : obV) (<span class="variable-name">B</span> : obV),
+                                        <span class="type">forall</span> (<span class="variable-name">A</span> : obA) (<span class="variable-name">W</span> : obV) (<span class="variable-name">A'</span> : obA) (<span class="variable-name">a</span> : V(0 W |- A[0 A ~&gt; A']0 )0),
+                                        <span class="type">forall</span> (<span class="variable-name">f</span> : V(0 V |- P[0 B ~&gt; A ]0 )0),
+                                          &#946;|1 (Des( [1 f ~&gt; P[0 B ~&gt; A' ]0 ]0 &lt;o P[0 A' ~&gt; a ]1 ))
+                                              ~~ (Des( [1 &#946;|1 f ~&gt; Q[0 B ~&gt; A' ]0 ]0 &lt;o Q[0 A' ~&gt; a ]1 )) )
+                                      -&gt; ( <span class="type">forall</span> (<span class="variable-name">A</span> : obA)  (<span class="variable-name">A'</span> : obA),
+                                            [0 P|0 A ~&gt;  &#946;||0 A' ]1 &lt;o P||1
+                                                                      ~~ [1 &#946;||0 A ~&gt; Q|0 A' ]0 &lt;o Q||1 ) .
+      <span class="keyword">Proof</span>.
+        <span class="proof-tactics-name">intro</span> H_poly_morphism. <span class="proof-tactics-name">intros</span>.
+        <span class="proof-tactics-name">specialize</span> H_poly_morphism <span class="type">with</span> (B := I) (A := A) (A' := A') (a := 1) (f := 1).
+        <span class="proof-tactics-name">unfold</span> poly_of_meta&#946; <span class="type">in</span> H_poly_morphism. <span class="proof-tactics-name">unfold</span> polyP_of_metaP <span class="type">in</span> H_poly_morphism. <span class="proof-tactics-name">unfold</span> polyQ_of_metaQ <span class="type">in</span> H_poly_morphism.
+        <span class="proof-tactics-name">eapply</span> SymV, TransV, SymV <span class="type">in</span> H_poly_morphism; [| <span class="proof-tactics-name">eapply</span> SymV, Cons_Output ].
+        <span class="proof-tactics-name">eapply</span> SymV, TransV, SymV <span class="type">in</span> H_poly_morphism; [| <span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV|]; <span class="proof-tactics-name">eapply</span> Cons_Des ].
+        <span class="proof-tactics-name">eapply</span> SymV, TransV, SymV <span class="type">in</span> H_poly_morphism; [| <span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV|]; <span class="proof-tactics-name">eapply</span> CongDes, CongCom; [|<span class="proof-tactics-name">eapply</span> ReflV]; <span class="proof-tactics-name">eapply</span> SymV, consV10_functorial_fun1 ].
+        <span class="proof-tactics-name">eapply</span> SymV, TransV, SymV <span class="type">in</span> H_poly_morphism; [| <span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV|]; <span class="proof-tactics-name">eapply</span> CongDes, SymV, Cat1LeftV ].
+        <span class="proof-tactics-name">eapply</span> SymV, TransV, SymV <span class="type">in</span> H_poly_morphism; [| <span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV|]; <span class="proof-tactics-name">eapply</span> CongDes, SymV, Cat1RightV ]. 
+        <span class="proof-tactics-name">eapply</span> SymV, TransV, SymV <span class="type">in</span> H_poly_morphism; [| <span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV|]; <span class="proof-tactics-name">eapply</span> CongDes, CongConsIn, CongMetaP, Cat1LeftV ].
+        <span class="proof-tactics-name">eapply</span> SymV, TransV, SymV <span class="type">in</span> H_poly_morphism; [| <span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV|]; <span class="proof-tactics-name">eapply</span> CongDes, CongConsIn, metaP_arrow ].
+        <span class="proof-tactics-name">eapply</span> SymV, TransV, SymV <span class="type">in</span> H_poly_morphism; [| <span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV|]; <span class="proof-tactics-name">eapply</span> CongDes, ConsIn_Input ].
+        <span class="proof-tactics-name">eapply</span> SymV, TransV, SymV <span class="type">in</span> H_poly_morphism; [| <span class="proof-tactics-name">eapply</span> SymV, Des_Output ].
+        <span class="proof-tactics-name">eapply</span> SymV, TransV, SymV <span class="type">in</span> H_poly_morphism; [| <span class="proof-tactics-name">eapply</span> CongDes, SymV, Cat2V ].
+        <span class="proof-tactics-name">eapply</span> SymV, TransV, SymV <span class="type">in</span> H_poly_morphism; [| <span class="proof-tactics-name">eapply</span> CongDes, CongCom; [|<span class="proof-tactics-name">eapply</span> ReflV]; <span class="proof-tactics-name">eapply</span> SymV, ConsIn_Output2   ].
+        <span class="proof-tactics-name">eapply</span> SymV, TransV, SymV <span class="type">in</span> H_poly_morphism; [| <span class="proof-tactics-name">eapply</span> CongDes, SymV, ConsIn_Input   ].
+
+        <span class="doc">(** RHS **)</span>
+        <span class="proof-tactics-name">eapply</span> CongCons <span class="type">in</span> H_poly_morphism.
+        <span class="proof-tactics-name">eapply</span> SymV, TransV, SymV <span class="type">in</span> H_poly_morphism; [|<span class="proof-tactics-name">eapply</span> Cons_Des]. <span class="proof-tactics-name">eapply</span> TransV <span class="type">in</span> H_poly_morphism; [|<span class="proof-tactics-name">eapply</span> Cons_Des].
+        <span class="proof-tactics-name">eapply</span>  TransV <span class="type">in</span> H_poly_morphism; [|<span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV|]; <span class="proof-tactics-name">eapply</span> SymV, Cat1RightV ].
+        <span class="proof-tactics-name">eapply</span> TransV <span class="type">in</span> H_poly_morphism; [| <span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV|];  <span class="proof-tactics-name">eapply</span> CongConsIn, CongMetaQ, Cat1LeftV ].
+        <span class="proof-tactics-name">eapply</span> TransV <span class="type">in</span> H_poly_morphism; [| <span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV|];  <span class="proof-tactics-name">eapply</span> CongConsIn, metaQ_arrow].
+        <span class="proof-tactics-name">eapply</span> TransV <span class="type">in</span> H_poly_morphism; [| <span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV|];  <span class="proof-tactics-name">eapply</span> ConsIn_Input].
+        <span class="proof-tactics-name">eapply</span> TransV <span class="type">in</span> H_poly_morphism; [| <span class="proof-tactics-name">eapply</span> SymV, Cat2V ].
+        <span class="proof-tactics-name">eapply</span> TransV <span class="type">in</span> H_poly_morphism; [| <span class="proof-tactics-name">eapply</span> CongCom; [|<span class="proof-tactics-name">eapply</span> ReflV]; <span class="proof-tactics-name">eapply</span> SymV, ConsIn_consV10_functorial ].
+        <span class="proof-tactics-name">eapply</span> TransV <span class="type">in</span> H_poly_morphism; [| <span class="proof-tactics-name">eapply</span> SymV, ConsIn_Input].
+        <span class="proof-tactics-name">eapply</span> CongDesIn <span class="type">in</span> H_poly_morphism.
+        <span class="proof-tactics-name">eapply</span> SymV, TransV, SymV <span class="type">in</span> H_poly_morphism; [|<span class="proof-tactics-name">eapply</span> DesIn_ConsIn]. <span class="proof-tactics-name">eapply</span> TransV <span class="type">in</span> H_poly_morphism; [|<span class="proof-tactics-name">eapply</span> DesIn_ConsIn].        
+        <span class="proof-tactics-name">eapply</span> TransV <span class="type">in</span> H_poly_morphism; [| <span class="proof-tactics-name">eapply</span> CongCom; [|<span class="proof-tactics-name">eapply</span> ReflV];  <span class="proof-tactics-name">eapply</span> CongConsV10, CongDes, SymV, Cat1LeftV].
+        <span class="proof-tactics-name">eapply</span> TransV <span class="type">in</span> H_poly_morphism; [| <span class="proof-tactics-name">eapply</span> CongCom; [|<span class="proof-tactics-name">eapply</span> ReflV];  <span class="proof-tactics-name">eapply</span> CongConsV10, Des_Cons].
+        <span class="proof-tactics-name">eapply</span> TransV <span class="type">in</span> H_poly_morphism; [| <span class="proof-tactics-name">eapply</span> CongCom; [|<span class="proof-tactics-name">eapply</span> ReflV];  <span class="proof-tactics-name">eapply</span> consV10_functorial].
+        <span class="proof-tactics-name">eapply</span> TransV <span class="type">in</span> H_poly_morphism; [| <span class="proof-tactics-name">eapply</span> Cat2V].
+        <span class="proof-tactics-name">eapply</span> SymV, TransV, SymV <span class="type">in</span> H_poly_morphism; [| <span class="proof-tactics-name">eapply</span> CongCom; [|<span class="proof-tactics-name">eapply</span> ReflV]; <span class="proof-tactics-name">eapply</span> consV11_bifunctorial ].
+        <span class="proof-tactics-name">eapply</span> SymV, TransV, SymV <span class="type">in</span> H_poly_morphism; [| <span class="proof-tactics-name">eapply</span> Cat2V ].
+        <span class="comment-delimiter">(*</span><span class="comment">
+        Notation  "'MID' x" := (</span><span class="constant"><span class="comment">@</span></span><span class="comment">IdenV x ) (at level 3).
+        Show.
+        (** really is iso [1Des MID (P[0 I ~&gt; A ]0) ~&gt; Q|0 A' ]0 **)
+        Notation  "'DES' x y" := (</span><span class="constant"><span class="comment">@</span></span><span class="comment">Des x _ _ y) (at level 3).
+        Show.
+        (** really is iso   [1DES I (MID (P[0 I ~&gt; A ]0)) ~&gt; Q|0 A' ]0  **)
+        Show.
+         </span><span class="comment-delimiter">*)</span>
+        <span class="proof-tactics-name">eapply</span> Des_I_Iso <span class="type">in</span> H_poly_morphism.
+        <span class="coq-solve-tactics">exact</span> H_poly_morphism.
+      <span class="keyword">Qed</span>.
+      
       <span class="keyword">End</span> <span class="function-name">Poly_of_meta</span>.
 
     <span class="keyword">End</span> <span class="function-name">MetaTransformation</span>.
