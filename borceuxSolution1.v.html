@@ -147,13 +147,14 @@ http://1337777.link/ooo/guJAHkwRZYYyuhrh4GyYWv7BPOwNEF-jSeQcYN9WxLk!Zw1GYSFfr6ch
 <span class="keyword">Hypothesis</span> <span class="variable-name">TransV</span> : <span class="type">forall</span> <span class="variable-name">A1 A2</span>, <span class="type">forall</span> (<span class="variable-name">uTrans f</span> : V(0 A1 |- A2)0), uTrans ~~ f -&gt; <span class="type">forall</span> (<span class="variable-name">f'</span> : V(0 A1 |- A2)0), f' ~~ uTrans -&gt; f' ~~ f.
 <span class="keyword">Hypothesis</span> <span class="variable-name">SymV</span> : <span class="type">forall</span> <span class="variable-name">A1 A2</span>,  <span class="type">forall</span> (<span class="variable-name">f' f</span> : V(0 A1 |- A2)0), f ~~ f' -&gt; f' ~~ f.
 
-<span class="keyword">Parameter</span> <span class="variable-name">monoV_identitary</span> : <span class="type">forall</span> (<span class="variable-name">B</span> : obV), <span class="type">forall</span> (<span class="variable-name">A</span> : obV),
-                    <span class="type">forall</span> <span class="variable-name">X</span> : obV, V(0 A |- X )0  -&gt; V(0 B |- A )0 -&gt; V(0 B |- X )0 .
-<span class="keyword">Definition</span> <span class="function-name">monoV_unitary</span> : <span class="type">forall</span> (<span class="variable-name">B</span> : obV), <span class="type">forall</span> (<span class="variable-name">A</span> : obV),
-                             V(0 B |- A )0 -&gt; <span class="type">forall</span> <span class="variable-name">X</span> : obV, V(0 A |- X )0  -&gt; V(0 B |- X )0
+<span class="keyword">Parameter</span> <span class="variable-name">monoV_unitary</span> : <span class="type">forall</span> (<span class="variable-name">B</span> : obV), <span class="type">forall</span> (<span class="variable-name">A</span> : obV),
+                             V(0 B |- A )0 -&gt; <span class="type">forall</span> <span class="variable-name">X</span> : obV, V(0 A |- X )0  -&gt; V(0 B |- X )0.
+
+<span class="keyword">Definition</span> <span class="function-name">monoV_identitary</span> : <span class="type">forall</span> (<span class="variable-name">B</span> : obV), <span class="type">forall</span> (<span class="variable-name">A</span> : obV),
+                    <span class="type">forall</span> <span class="variable-name">X</span> : obV, V(0 A |- X )0  -&gt; V(0 B |- A )0 -&gt; V(0 B |- X )0
   :=  <span class="type">fun</span> (<span class="variable-name">B</span> : obV) =&gt; <span class="type">fun</span> (<span class="variable-name">A</span> : obV) =&gt;
-                      <span class="type">fun</span> (<span class="variable-name">b</span> : V(0 B |- A )0) =&gt; <span class="type">fun</span> <span class="variable-name">X</span> : obV =&gt; <span class="type">fun</span> (<span class="variable-name">a</span> : V(0 A |- X )0) =&gt;
-                                                           (<span class="constant">@</span>monoV_identitary B A X a b).
+                     <span class="type">fun</span> <span class="variable-name">X</span> : obV =&gt;  <span class="type">fun</span> (<span class="variable-name">a</span> : V(0 A |- X )0) =&gt; <span class="type">fun</span> (<span class="variable-name">b</span> : V(0 B |- A )0) =&gt;
+                                                           (<span class="constant">@</span>monoV_unitary B A b X a).
 
 <span class="keyword">Notation</span> <span class="string">"V(1 b |- - )0"</span> := (<span class="constant">@</span>monoV_unitary _ _ b) (<span class="type">at</span> level 35).
 <span class="doc">(**  more precisely ( ( b 0 ) o&gt; _ )   **)</span>
@@ -190,15 +191,15 @@ http://1337777.link/ooo/guJAHkwRZYYyuhrh4GyYWv7BPOwNEF-jSeQcYN9WxLk!Zw1GYSFfr6ch
   := <span class="type">fun</span>  U1 U2 V1 V2 (<span class="variable-name">w' w</span> : (V(0 U1 |- U2)0 -&gt; V(0 V1 |- V2)0)) =&gt;
        <span class="type">forall</span> <span class="variable-name">u1 u2</span>, u1 ~~ u2 -&gt; w' u1 ~~ w u2 .
 <span class="keyword">Notation</span> <span class="string">"w' ~~~ w"</span> := (convV_fun w' w)  (<span class="type">at</span> level 70).
-
-<span class="comment-delimiter">(*</span><span class="comment"> ALT
+<span class="doc">(** ALT 
 Hypothesis CongMonoV : forall (B : obV), forall (A : obV),
-                       forall (f f' : V(0 B |- A )0),
-                         f' ~~ f -&gt; forall X : obV, </span><span class="constant"><span class="comment">@</span></span><span class="comment">monoV_unitary B A f' X ~~~ </span><span class="constant"><span class="comment">@</span></span><span class="comment">monoV_unitary B A f X.
-</span><span class="comment-delimiter">*)</span>
+                       forall X : obV, forall (a a' : V(0 A |- X )0),
+                         a' ~~ a -&gt; </span><span class="constant"><span class="doc">@</span></span><span class="doc">monoV_identitary B A X a' ~~~ </span><span class="constant"><span class="doc">@</span></span><span class="doc">monoV_identitary B A X a .
+**)</span>
 <span class="keyword">Hypothesis</span> <span class="variable-name">CongMonoV</span> : <span class="type">forall</span> (<span class="variable-name">B</span> : obV), <span class="type">forall</span> (<span class="variable-name">A</span> : obV),
-                       <span class="type">forall</span> <span class="variable-name">X</span> : obV, <span class="type">forall</span> (<span class="variable-name">a a'</span> : V(0 A |- X )0),
-                         a' ~~ a -&gt; <span class="constant">@</span>monoV_identitary B A X a' ~~~ <span class="constant">@</span>monoV_identitary B A X a .
+                       <span class="type">forall</span> (<span class="variable-name">f f'</span> : V(0 B |- A )0),
+                         f' ~~ f -&gt; <span class="type">forall</span> <span class="variable-name">X</span> : obV, <span class="constant">@</span>monoV_unitary B A f' X ~~~ <span class="constant">@</span>monoV_unitary B A f X.
+
 
 <span class="keyword">Lemma</span> <span class="function-name">CongCom</span> : <span class="type">forall</span> <span class="variable-name">A2 A3</span>, <span class="type">forall</span> (<span class="variable-name">f2 f2'</span> : V(0 A2 |- A3 )0), f2 ~~ f2' -&gt; <span class="type">forall</span> <span class="variable-name">A1</span>, <span class="type">forall</span> (<span class="variable-name">f1 f1'</span> : V(0 A1 |- A2 )0), f1 ~~ f1' -&gt; f2 &lt;o f1 ~~ f2' &lt;o f1'.
 <span class="keyword">Proof</span>.
@@ -231,20 +232,25 @@ Hypothesis CongMonoV : forall (B : obV), forall (A : obV),
   <span class="proof-tactics-name">intros</span>. <span class="proof-tactics-name">apply</span> monoV_inputUnitV.
 <span class="keyword">Qed</span>.
 
+<span class="keyword">Definition</span> <span class="function-name">ComV</span> : <span class="type">forall</span> <span class="variable-name">V1</span>, <span class="type">forall</span> <span class="variable-name">UCom</span>, V(0 V1 |-  UCom )0 -&gt; <span class="type">forall</span> <span class="variable-name">V3</span>, V(0 UCom |- V3 )0 -&gt; V(0 V1 |- V3 )0.
+  <span class="proof-tactics-name">intros</span>. <span class="proof-tactics-name">eapply</span> monoV_unitary. <span class="coq-solve-tactics">eassumption</span>. <span class="coq-solve-tactics">eassumption</span>.
+<span class="keyword">Defined</span>.
+
+
 <span class="doc">(** ** </span><span class="company-coq-coqdoc-h2"><span class="doc">put functional monoidal logic onto V</span></span><span class="doc"> **)</span>
 
 <span class="keyword">Variable</span> <span class="variable-name">desV00</span> : <span class="type">forall</span> <span class="variable-name">V2</span> : obV, <span class="type">forall</span> <span class="variable-name">V1</span> : obV, obV.
 <span class="keyword">Notation</span>  <span class="string">"(0 V1 * V2 )0"</span> := (desV00 V2 V1) (<span class="type">at</span> level 30, V1 <span class="type">at</span> next level).
 <span class="keyword">Check</span> ( <span class="type">fun</span> <span class="variable-name">V2 V1</span> =&gt; (0 V1 *  V2 )0  ).
-<span class="keyword">Variable</span> <span class="variable-name">desV10</span> : <span class="type">forall</span> <span class="variable-name">V2</span> : obV, <span class="type">forall</span> V1 V1' (<span class="variable-name">v</span> : arrV00 V1 V1'),  V(0 (0 V1* V2 )0 |- (0 V1' * V2 )0 )0.
+<span class="keyword">Variable</span> <span class="variable-name">desV10</span> : <span class="type">forall</span> <span class="variable-name">V2</span> : obV, <span class="type">forall</span> V1 V1' (<span class="variable-name">v</span> : V(0 V1 |- V1' )0),  V(0 (0 V1* V2 )0 |- (0 V1' * V2 )0 )0.
 <span class="keyword">Notation</span>  <span class="string">"(1 v * V2 )0"</span> := (desV10 V2 v) (<span class="type">at</span> level 30, v <span class="type">at</span> next level).
 <span class="keyword">Check</span> ( <span class="type">fun</span> <span class="variable-name">V2 v</span> =&gt; (1 v *  V2 )0  ).
 
 <span class="keyword">Variable</span> <span class="variable-name">consV00</span> : obV -&gt; obV -&gt; obV.
 <span class="keyword">Notation</span> <span class="string">"[0 V1 ~&gt; V2 ]0"</span> := (consV00 V1 V2) (<span class="type">at</span> level 30).
-<span class="keyword">Variable</span> <span class="variable-name">consV01</span> : <span class="type">forall</span> <span class="variable-name">V1</span> : obV, <span class="type">forall</span> V2 V2' (<span class="variable-name">v</span> : arrV00 V2 V2'), V(0 [0 V1 ~&gt; V2 ]0 |- [0 V1 ~&gt; V2' ]0 )0.
+<span class="keyword">Variable</span> <span class="variable-name">consV01</span> : <span class="type">forall</span> <span class="variable-name">V1</span> : obV, <span class="type">forall</span> V2 V2' (<span class="variable-name">v</span> : V(0 V2 |- V2' )0), V(0 [0 V1 ~&gt; V2 ]0 |- [0 V1 ~&gt; V2' ]0 )0.
 <span class="keyword">Notation</span> <span class="string">"[0 V1 ~&gt; v ]1"</span> := (consV01 V1 v) (<span class="type">at</span> level 30).
-<span class="keyword">Variable</span> <span class="variable-name">consV10</span> : <span class="type">forall</span> V1' V1 (<span class="variable-name">v</span> : arrV00 V1' V1), <span class="type">forall</span> <span class="variable-name">V2</span> : obV, V(0 [0 V1 ~&gt; V2 ]0 |- [0 V1' ~&gt; V2 ]0 )0.
+<span class="keyword">Variable</span> <span class="variable-name">consV10</span> : <span class="type">forall</span> V1' V1 (<span class="variable-name">v</span> : V(0 V1' |- V1)0), <span class="type">forall</span> <span class="variable-name">V2</span> : obV, V(0 [0 V1 ~&gt; V2 ]0 |- [0 V1' ~&gt; V2 ]0 )0.
 <span class="keyword">Notation</span> <span class="string">"[1 v ~&gt; V2 ]0"</span> := (consV10 v V2) (<span class="type">at</span> level 30).
 
 <span class="keyword">Variable</span> <span class="variable-name">Des</span> : <span class="type">forall</span> <span class="variable-name">V</span> : obV, <span class="type">forall</span> (<span class="variable-name">U W</span> : obV), V(0 U |- [0 V ~&gt; W ]0 )0 -&gt; V(0 (0 U * V )0  |- W )0.
@@ -422,11 +428,11 @@ now memo that in the left hand sides there is permutation of inputs, and that in
 <span class="keyword">Hypothesis</span> <span class="variable-name">CongConsIdenObL</span> : <span class="type">forall</span> <span class="variable-name">V</span> : obV, <span class="type">forall</span> (<span class="variable-name">W</span> : obV), <span class="type">forall</span> (<span class="variable-name">v v'</span> : V(0 V |- W )0),
                                v' ~~ v -&gt; ConsIdenObL v' ~~ ConsIdenObL v.
 
-<span class="keyword">Hypothesis</span> <span class="variable-name">consV10_functorial</span> : <span class="type">forall</span> V1' V1 (<span class="variable-name">v</span> : arrV00 V1' V1), <span class="type">forall</span> V1'' (<span class="variable-name">v'</span> : arrV00 V1'' V1'), <span class="type">forall</span> <span class="variable-name">V2</span> : obV,
+<span class="keyword">Hypothesis</span> <span class="variable-name">consV10_functorial</span> : <span class="type">forall</span> V1' V1 (<span class="variable-name">v</span> :  V(0 V1' |- V1 )0), <span class="type">forall</span> V1'' (<span class="variable-name">v'</span> : V(0 V1'' |- V1' )0), <span class="type">forall</span> <span class="variable-name">V2</span> : obV,
                                   [1 v &lt;o v' ~&gt; V2 ]0 ~~  [1 v' ~&gt; V2 ]0 &lt;o  [1 v ~&gt; V2 ]0 .
-<span class="keyword">Hypothesis</span> <span class="variable-name">consV11_bifunctorial</span> : <span class="type">forall</span> V1' V1 (<span class="variable-name">v</span> : arrV00 V1' V1), <span class="type">forall</span> W1 W1' (<span class="variable-name">w</span> : arrV00 W1 W1'),
+<span class="keyword">Hypothesis</span> <span class="variable-name">consV11_bifunctorial</span> : <span class="type">forall</span> V1' V1 (<span class="variable-name">v</span> : V(0 V1' |- V1 )0), <span class="type">forall</span> W1 W1' (<span class="variable-name">w</span> : V(0 W1 |- W1' )0),
                                     [0 V1' ~&gt; w ]1 &lt;o  [1 v ~&gt; W1 ]0 ~~ [1 v ~&gt; W1' ]0 &lt;o [0 V1 ~&gt; w ]1 .
-<span class="keyword">Hypothesis</span> <span class="variable-name">CongConsV10</span> : <span class="type">forall</span> V1' V1 (<span class="variable-name">v v'</span> : arrV00 V1' V1), <span class="type">forall</span> <span class="variable-name">V2</span> : obV,
+<span class="keyword">Hypothesis</span> <span class="variable-name">CongConsV10</span> : <span class="type">forall</span> V1' V1 (<span class="variable-name">v v'</span> : V(0 V1' |- V1)0), <span class="type">forall</span> <span class="variable-name">V2</span> : obV,
                            v' ~~ v -&gt; [1 v' ~&gt; V2 ]0 ~~ [1 v ~&gt; V2 ]0 .
 
 <span class="doc">(** related to non-variance when unit pull the input, commonly  ( 1 o&gt; h ) ~~ h  **)</span>
@@ -1168,11 +1174,11 @@ NEXT4: rewrite natural as above
           <span class="proof-tactics-name">intros</span>. <span class="proof-tactics-name">unfold</span> poly_of_metaP.  <span class="proof-tactics-name">apply</span> CongConsIn, CongMetaP, CongDes. <span class="coq-solve-tactics">assumption</span>.
         <span class="keyword">Qed</span>.
 
-        <span class="keyword">Hypothesis</span> <span class="variable-name">CongConsV01</span> : <span class="type">forall</span> <span class="variable-name">V1</span> : obV, <span class="type">forall</span> (<span class="variable-name">V2 V2'</span> : obV) (<span class="variable-name">v v'</span> : arrV00 V2 V2'),
+        <span class="keyword">Hypothesis</span> <span class="variable-name">CongConsV01</span> : <span class="type">forall</span> <span class="variable-name">V1</span> : obV, <span class="type">forall</span> (<span class="variable-name">V2 V2'</span> : obV) (<span class="variable-name">v v'</span> : V(0 V2 |- V2' )0),
                                    v' ~~ v -&gt; [0 V1 ~&gt; v' ]1 ~~ [0 V1 ~&gt; v ]1 .
         <span class="keyword">Hypothesis</span> <span class="variable-name">ConsIn_Input</span> : <span class="type">forall</span> <span class="variable-name">V</span> : obV, <span class="type">forall</span> (<span class="variable-name">U0 U1 W</span> : obV), <span class="type">forall</span> (<span class="variable-name">v</span> : V(0 U0 |- [0 (0 U1 * V )0 ~&gt; W ]0 )0), <span class="type">forall</span> (<span class="variable-name">U0'</span> : obV) (<span class="variable-name">i</span> : V(0 U0' |- U0 )0),
                                     ConsIn( v &lt;o i ) ~~ (ConsIn v) &lt;o i .
-        <span class="keyword">Hypothesis</span> <span class="variable-name">consV01_functorial</span> : <span class="type">forall</span> <span class="variable-name">V1</span> : obV, <span class="type">forall</span> V2 V2' (<span class="variable-name">v</span> : arrV00 V2 V2'), <span class="type">forall</span> V2'' (<span class="variable-name">v'</span> : arrV00 V2' V2''),
+        <span class="keyword">Hypothesis</span> <span class="variable-name">consV01_functorial</span> : <span class="type">forall</span> <span class="variable-name">V1</span> : obV, <span class="type">forall</span> V2 V2' (<span class="variable-name">v</span> : V(0 V2 |- V2' )0), <span class="type">forall</span> V2'' (<span class="variable-name">v'</span> : V(0 V2' |- V2'' )0),
                                           [0 V1 ~&gt; v' &lt;o v ]1 ~~  [0 V1 ~&gt; v' ]1 &lt;o  [0 V1  ~&gt; v ]1 .
         <span class="keyword">Parameter</span> <span class="variable-name">Cons</span> : <span class="type">forall</span> <span class="variable-name">V</span> : obV, <span class="type">forall</span> (<span class="variable-name">U W</span> : obV), V(0 (0 U * V )0 |-  W )0 -&gt; V(0 U |-  [0 V ~&gt; W ]0 )0.
         <span class="keyword">Hypothesis</span> <span class="variable-name">CongCons</span> : <span class="type">forall</span> <span class="variable-name">V</span> : obV, <span class="type">forall</span> (<span class="variable-name">U W</span> : obV), <span class="type">forall</span> (<span class="variable-name">v v'</span> : V(0 (0 U * V )0 |- W )0 ),
@@ -1779,11 +1785,11 @@ NEXT4: rewrite natural as above
           <span class="proof-tactics-name">intros</span>. <span class="proof-tactics-name">unfold</span> poly_of_metaP.  <span class="proof-tactics-name">apply</span> CongConsIn, CongMetaP, CongDes. <span class="coq-solve-tactics">assumption</span>.
         <span class="keyword">Qed</span>.
 
-        <span class="keyword">Hypothesis</span> <span class="variable-name">CongConsV01</span> : <span class="type">forall</span> <span class="variable-name">V1</span> : obV, <span class="type">forall</span> (<span class="variable-name">V2 V2'</span> : obV) (<span class="variable-name">v v'</span> : arrV00 V2 V2'),
+        <span class="keyword">Hypothesis</span> <span class="variable-name">CongConsV01</span> : <span class="type">forall</span> <span class="variable-name">V1</span> : obV, <span class="type">forall</span> (<span class="variable-name">V2 V2'</span> : obV) (<span class="variable-name">v v'</span> : V(0 V2 |- V2' )0),
                                    v' ~~ v -&gt; [0 V1 ~&gt; v' ]1 ~~ [0 V1 ~&gt; v ]1 .
         <span class="keyword">Hypothesis</span> <span class="variable-name">ConsIn_Input</span> : <span class="type">forall</span> <span class="variable-name">V</span> : obV, <span class="type">forall</span> (<span class="variable-name">U0 U1 W</span> : obV), <span class="type">forall</span> (<span class="variable-name">v</span> : V(0 U0 |- [0 (0 U1 * V )0 ~&gt; W ]0 )0), <span class="type">forall</span> (<span class="variable-name">U0'</span> : obV) (<span class="variable-name">i</span> : V(0 U0' |- U0 )0),
                                     ConsIn( v &lt;o i ) ~~ (ConsIn v) &lt;o i .
-        <span class="keyword">Hypothesis</span> <span class="variable-name">consV01_functorial</span> : <span class="type">forall</span> <span class="variable-name">V1</span> : obV, <span class="type">forall</span> V2 V2' (<span class="variable-name">v</span> : arrV00 V2 V2'), <span class="type">forall</span> V2'' (<span class="variable-name">v'</span> : arrV00 V2' V2''),
+        <span class="keyword">Hypothesis</span> <span class="variable-name">consV01_functorial</span> : <span class="type">forall</span> <span class="variable-name">V1</span> : obV, <span class="type">forall</span> V2 V2' (<span class="variable-name">v</span> : V(0 V2 |- V2' )0), <span class="type">forall</span> V2'' (<span class="variable-name">v'</span> : V(0 V2' |- V2'' )0),
                                           [0 V1 ~&gt; v' &lt;o v ]1 ~~  [0 V1 ~&gt; v' ]1 &lt;o  [0 V1  ~&gt; v ]1 .
 
         <span class="keyword">Hypothesis</span> <span class="variable-name">CongCons</span> : <span class="type">forall</span> <span class="variable-name">V</span> : obV, <span class="type">forall</span> (<span class="variable-name">U W</span> : obV), <span class="type">forall</span> (<span class="variable-name">v v'</span> : V(0 (0 U * V )0 |- W )0 ),

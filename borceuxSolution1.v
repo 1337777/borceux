@@ -65,13 +65,14 @@ Hypothesis ReflV : forall A1 A2 (f : V(0 A1 |- A2 )0), f ~~ f.
 Hypothesis TransV : forall A1 A2, forall (uTrans f : V(0 A1 |- A2)0), uTrans ~~ f -> forall (f' : V(0 A1 |- A2)0), f' ~~ uTrans -> f' ~~ f.
 Hypothesis SymV : forall A1 A2,  forall (f' f : V(0 A1 |- A2)0), f ~~ f' -> f' ~~ f.
 
-Parameter monoV_identitary : forall (B : obV), forall (A : obV),
-                    forall X : obV, V(0 A |- X )0  -> V(0 B |- A )0 -> V(0 B |- X )0 .
-Definition monoV_unitary : forall (B : obV), forall (A : obV),
-                             V(0 B |- A )0 -> forall X : obV, V(0 A |- X )0  -> V(0 B |- X )0
+Parameter monoV_unitary : forall (B : obV), forall (A : obV),
+                             V(0 B |- A )0 -> forall X : obV, V(0 A |- X )0  -> V(0 B |- X )0.
+
+Definition monoV_identitary : forall (B : obV), forall (A : obV),
+                    forall X : obV, V(0 A |- X )0  -> V(0 B |- A )0 -> V(0 B |- X )0
   :=  fun (B : obV) => fun (A : obV) =>
-                      fun (b : V(0 B |- A )0) => fun X : obV => fun (a : V(0 A |- X )0) =>
-                                                           (@monoV_identitary B A X a b).
+                     fun X : obV =>  fun (a : V(0 A |- X )0) => fun (b : V(0 B |- A )0) =>
+                                                           (@monoV_unitary B A b X a).
 
 Notation "V(1 b |- - )0" := (@monoV_unitary _ _ b) (at level 35).
 (**  more precisely ( ( b 0 ) o> _ )   **)
@@ -108,15 +109,15 @@ Definition convV_fun : forall U1 U2 V1 V2, (V(0 U1 |- U2)0 -> V(0 V1 |- V2)0) ->
   := fun  U1 U2 V1 V2 (w' w : (V(0 U1 |- U2)0 -> V(0 V1 |- V2)0)) =>
        forall u1 u2, u1 ~~ u2 -> w' u1 ~~ w u2 .
 Notation "w' ~~~ w" := (convV_fun w' w)  (at level 70).
-
-(* ALT
-Hypothesis CongMonoV : forall (B : obV), forall (A : obV),
-                       forall (f f' : V(0 B |- A )0),
-                         f' ~~ f -> forall X : obV, @monoV_unitary B A f' X ~~~ @monoV_unitary B A f X.
-*)
+(** ALT 
 Hypothesis CongMonoV : forall (B : obV), forall (A : obV),
                        forall X : obV, forall (a a' : V(0 A |- X )0),
                          a' ~~ a -> @monoV_identitary B A X a' ~~~ @monoV_identitary B A X a .
+**)
+Hypothesis CongMonoV : forall (B : obV), forall (A : obV),
+                       forall (f f' : V(0 B |- A )0),
+                         f' ~~ f -> forall X : obV, @monoV_unitary B A f' X ~~~ @monoV_unitary B A f X.
+
 
 Lemma CongCom : forall A2 A3, forall (f2 f2' : V(0 A2 |- A3 )0), f2 ~~ f2' -> forall A1, forall (f1 f1' : V(0 A1 |- A2 )0), f1 ~~ f1' -> f2 <o f1 ~~ f2' <o f1'.
 Proof.
@@ -149,20 +150,25 @@ Proof.
   intros. apply monoV_inputUnitV.
 Qed.
 
+Definition ComV : forall V1, forall UCom, V(0 V1 |-  UCom )0 -> forall V3, V(0 UCom |- V3 )0 -> V(0 V1 |- V3 )0.
+  intros. eapply monoV_unitary. eassumption. eassumption.
+Defined.
+
+
 (** ** put functional monoidal logic onto V **)
 
 Variable desV00 : forall V2 : obV, forall V1 : obV, obV.
 Notation  "(0 V1 * V2 )0" := (desV00 V2 V1) (at level 30, V1 at next level).
 Check ( fun V2 V1 => (0 V1 *  V2 )0  ).
-Variable desV10 : forall V2 : obV, forall V1 V1' (v : arrV00 V1 V1'),  V(0 (0 V1* V2 )0 |- (0 V1' * V2 )0 )0.
+Variable desV10 : forall V2 : obV, forall V1 V1' (v : V(0 V1 |- V1' )0),  V(0 (0 V1* V2 )0 |- (0 V1' * V2 )0 )0.
 Notation  "(1 v * V2 )0" := (desV10 V2 v) (at level 30, v at next level).
 Check ( fun V2 v => (1 v *  V2 )0  ).
 
 Variable consV00 : obV -> obV -> obV.
 Notation "[0 V1 ~> V2 ]0" := (consV00 V1 V2) (at level 30).
-Variable consV01 : forall V1 : obV, forall V2 V2' (v : arrV00 V2 V2'), V(0 [0 V1 ~> V2 ]0 |- [0 V1 ~> V2' ]0 )0.
+Variable consV01 : forall V1 : obV, forall V2 V2' (v : V(0 V2 |- V2' )0), V(0 [0 V1 ~> V2 ]0 |- [0 V1 ~> V2' ]0 )0.
 Notation "[0 V1 ~> v ]1" := (consV01 V1 v) (at level 30).
-Variable consV10 : forall V1' V1 (v : arrV00 V1' V1), forall V2 : obV, V(0 [0 V1 ~> V2 ]0 |- [0 V1' ~> V2 ]0 )0.
+Variable consV10 : forall V1' V1 (v : V(0 V1' |- V1)0), forall V2 : obV, V(0 [0 V1 ~> V2 ]0 |- [0 V1' ~> V2 ]0 )0.
 Notation "[1 v ~> V2 ]0" := (consV10 v V2) (at level 30).
 
 Variable Des : forall V : obV, forall (U W : obV), V(0 U |- [0 V ~> W ]0 )0 -> V(0 (0 U * V )0  |- W )0.
@@ -340,11 +346,11 @@ Hypothesis ConsIdenObL_DesIdenObL : forall V : obV, forall (W : obV), forall v :
 Hypothesis CongConsIdenObL : forall V : obV, forall (W : obV), forall (v v' : V(0 V |- W )0),
                                v' ~~ v -> ConsIdenObL v' ~~ ConsIdenObL v.
 
-Hypothesis consV10_functorial : forall V1' V1 (v : arrV00 V1' V1), forall V1'' (v' : arrV00 V1'' V1'), forall V2 : obV,
+Hypothesis consV10_functorial : forall V1' V1 (v :  V(0 V1' |- V1 )0), forall V1'' (v' : V(0 V1'' |- V1' )0), forall V2 : obV,
                                   [1 v <o v' ~> V2 ]0 ~~  [1 v' ~> V2 ]0 <o  [1 v ~> V2 ]0 .
-Hypothesis consV11_bifunctorial : forall V1' V1 (v : arrV00 V1' V1), forall W1 W1' (w : arrV00 W1 W1'),
+Hypothesis consV11_bifunctorial : forall V1' V1 (v : V(0 V1' |- V1 )0), forall W1 W1' (w : V(0 W1 |- W1' )0),
                                     [0 V1' ~> w ]1 <o  [1 v ~> W1 ]0 ~~ [1 v ~> W1' ]0 <o [0 V1 ~> w ]1 .
-Hypothesis CongConsV10 : forall V1' V1 (v v' : arrV00 V1' V1), forall V2 : obV,
+Hypothesis CongConsV10 : forall V1' V1 (v v' : V(0 V1' |- V1)0), forall V2 : obV,
                            v' ~~ v -> [1 v' ~> V2 ]0 ~~ [1 v ~> V2 ]0 .
 
 (** related to non-variance when unit pull the input, commonly  ( 1 o> h ) ~~ h  **)
@@ -1086,11 +1092,11 @@ NEXT4: rewrite natural as above
           intros. unfold poly_of_metaP.  apply CongConsIn, CongMetaP, CongDes. assumption.
         Qed.
 
-        Hypothesis CongConsV01 : forall V1 : obV, forall (V2 V2' : obV) (v v' : arrV00 V2 V2'),
+        Hypothesis CongConsV01 : forall V1 : obV, forall (V2 V2' : obV) (v v' : V(0 V2 |- V2' )0),
                                    v' ~~ v -> [0 V1 ~> v' ]1 ~~ [0 V1 ~> v ]1 .
         Hypothesis ConsIn_Input : forall V : obV, forall (U0 U1 W : obV), forall (v : V(0 U0 |- [0 (0 U1 * V )0 ~> W ]0 )0), forall (U0' : obV) (i : V(0 U0' |- U0 )0),
                                     ConsIn( v <o i ) ~~ (ConsIn v) <o i .
-        Hypothesis consV01_functorial : forall V1 : obV, forall V2 V2' (v : arrV00 V2 V2'), forall V2'' (v' : arrV00 V2' V2''),
+        Hypothesis consV01_functorial : forall V1 : obV, forall V2 V2' (v : V(0 V2 |- V2' )0), forall V2'' (v' : V(0 V2' |- V2'' )0),
                                           [0 V1 ~> v' <o v ]1 ~~  [0 V1 ~> v' ]1 <o  [0 V1  ~> v ]1 .
         Parameter Cons : forall V : obV, forall (U W : obV), V(0 (0 U * V )0 |-  W )0 -> V(0 U |-  [0 V ~> W ]0 )0.
         Hypothesis CongCons : forall V : obV, forall (U W : obV), forall (v v' : V(0 (0 U * V )0 |- W )0 ),
@@ -1697,11 +1703,11 @@ NEXT4: rewrite natural as above
           intros. unfold poly_of_metaP.  apply CongConsIn, CongMetaP, CongDes. assumption.
         Qed.
 
-        Hypothesis CongConsV01 : forall V1 : obV, forall (V2 V2' : obV) (v v' : arrV00 V2 V2'),
+        Hypothesis CongConsV01 : forall V1 : obV, forall (V2 V2' : obV) (v v' : V(0 V2 |- V2' )0),
                                    v' ~~ v -> [0 V1 ~> v' ]1 ~~ [0 V1 ~> v ]1 .
         Hypothesis ConsIn_Input : forall V : obV, forall (U0 U1 W : obV), forall (v : V(0 U0 |- [0 (0 U1 * V )0 ~> W ]0 )0), forall (U0' : obV) (i : V(0 U0' |- U0 )0),
                                     ConsIn( v <o i ) ~~ (ConsIn v) <o i .
-        Hypothesis consV01_functorial : forall V1 : obV, forall V2 V2' (v : arrV00 V2 V2'), forall V2'' (v' : arrV00 V2' V2''),
+        Hypothesis consV01_functorial : forall V1 : obV, forall V2 V2' (v : V(0 V2 |- V2' )0), forall V2'' (v' : V(0 V2' |- V2'' )0),
                                           [0 V1 ~> v' <o v ]1 ~~  [0 V1 ~> v' ]1 <o  [0 V1  ~> v ]1 .
 
         Hypothesis CongCons : forall V : obV, forall (U W : obV), forall (v v' : V(0 (0 U * V )0 |- W )0 ),
