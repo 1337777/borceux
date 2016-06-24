@@ -2,6 +2,8 @@
 
 (******************************************
 
+TODO: in polyF_morphism, change DesIn( [0 W ~> F[1 f ~> X ]0 ]1 <o F[1 g ~> X ]0 ) to DesIn( [0 W ~> F[1 f ~> X ]0 ]1 ) <o F[1 g ~> X ]0 
+
 Proph
 
 https://github.com/1337777/borceux/blob/master/borceuxSolution.v
@@ -47,35 +49,105 @@ paypal 1337777.OOO@gmail.com , wechatpay 2796386464 , irc #OOO1337777
 * use this authorizing-geolocated-timed-tutoring tool to play these links as TV !
 http://1337777.link/ooo/guJAHkwRZYYyuhrh4GyYWv7BPOwNEF-jSeQcYN9WxLk!Zw1GYSFfr6cheRhkPhTPCnsog7DFPZQUCcv7ZEKh22s
 
-******************************************)
+ ******************************************)
 
 Set Implicit Arguments.
 
-(** ** put any ( may be written in polymorph-style ... ) category V **)
+(** ** put any ( may be written in polymorph-style ... ) `arrows :^) logic'   V **)
 
 Variable obV : Type.
-Variable arrV00 : obV -> obV -> Type.
-Notation "V(0 V1 |- V2 )0" := (arrV00 V1 V2) (at level 35).
+Parameter monoV00 : obV -> obV -> Type.
+Notation "V(0 B |- A )0" := (monoV00 B A) (at level 35).
 
-Variable IdenV : forall {V : obV}, V(0 V |- V )0.
-Notation "1" := (@IdenV _) (at level 0).
-
-Variable ComV : forall V1, forall UCom, V(0 V1 |-  UCom )0 -> forall V3, V(0 UCom |- V3 )0 -> V(0 V1 |- V3 )0.
-Notation "f1 o> f2" := (ComV f1 f2) (at level 34, right (*yes right*) associativity).
-Notation "f2 <o f1" := (ComV f1 f2) (at level 33, right associativity).
-
-Variable convV : forall V1 V2, V(0 V1 |- V2)0 -> V(0 V1 |- V2 )0 -> Prop.
+Parameter convV : forall V1 V2, V(0 V1 |- V2)0 -> V(0 V1 |- V2 )0 -> Prop.
 Notation "v2 ~~ v1" := (convV v2 v1)  (at level 70).
-
-Hypothesis CongCom : forall A2 A3, forall (f2 f2' : V(0 A2 |- A3 )0), f2 ~~ f2' -> forall A1, forall (f1 f1' : V(0 A1 |- A2 )0), f1 ~~ f1' -> f2 <o f1 ~~ f2' <o f1'.
 Hypothesis ReflV : forall A1 A2 (f : V(0 A1 |- A2 )0), f ~~ f.
 Hypothesis TransV : forall A1 A2, forall (uTrans f : V(0 A1 |- A2)0), uTrans ~~ f -> forall (f' : V(0 A1 |- A2)0), f' ~~ uTrans -> f' ~~ f.
 Hypothesis SymV : forall A1 A2,  forall (f' f : V(0 A1 |- A2)0), f ~~ f' -> f' ~~ f.
-Hypothesis Cat1RightV : forall A1 A2, forall f : V(0 A1 |- A2)0,  f ~~ f <o 1.
-Hypothesis Cat1LeftV : forall A1 A2, forall f : V(0 A1 |- A2)0,  f ~~ 1 <o f.
-Hypothesis Cat2V : forall A3 A4 (f3 : V(0 A3 |- A4)0), forall A2 (f2 : V(0 A2 |- A3)0), forall A1 (f1 : V(0 A1 |- A2)0),
-                     (f3 <o f2) <o f1 ~~ f3 <o (f2 <o f1).
 
+Parameter monoV_identitary : forall (B : obV), forall (A : obV),
+                    forall X : obV, V(0 A |- X )0  -> V(0 B |- A )0 -> V(0 B |- X )0 .
+Definition monoV_unitary : forall (B : obV), forall (A : obV),
+                             V(0 B |- A )0 -> forall X : obV, V(0 A |- X )0  -> V(0 B |- X )0
+  :=  fun (B : obV) => fun (A : obV) =>
+                      fun (b : V(0 B |- A )0) => fun X : obV => fun (a : V(0 A |- X )0) =>
+                                                           (@monoV_identitary B A X a b).
+
+Notation "V(1 b |- - )0" := (@monoV_unitary _ _ b) (at level 35).
+(**  more precisely ( ( b 0 ) o> _ )   **)
+Notation "V(1 b |- X )0" := (@monoV_unitary _ _ b X) (at level 35).
+(**  more precisely ( ( b 0 ) o> a )  **)
+Notation "b o> a" := (@monoV_unitary _ _ b _ a) (at level 33, right associativity).
+
+Notation "V(1 'id' |- X )0" := (@monoV_identitary _ _ X) (at level 35).
+Notation "V(0 X |- - )1" := (@monoV_identitary _ _ X) (at level 35).
+(**  more precisely ( ( id _ ) o> a )  **)
+Notation "V(0 X |- a )1" := (@monoV_identitary _ _ X a) (at level 35).
+(**  more precisely ( ( id b ) o> a )  **)
+Notation "a <o b" := (@monoV_identitary _ _ _ a b) (at level 33, right associativity).
+
+(** written here :   (outer modification) ~~ (inner modification) **)
+Hypothesis monoV_morphism :  forall (B : obV), 
+                           forall (A : obV) (A' : obV) (g : V(0 A |- A')0),
+                           forall (X : obV), forall (pull : V(0 B |- A)0), forall (push : V(0 A'  |- X )0 ),
+                             V(1 V(0 A' |- g )1 pull |- X )0 push
+                              ~~  V(0 X |- V(1 g |- X )0 push )1 pull .
+
+Check monoV_morphism : forall (B A A' : obV) (g : V(0 A |- A' )0) (X : obV) 
+                         (pull : V(0 B |- A )0) (push : V(0 A' |- X )0),
+                         (g <o pull) o> push ~~ (g o> push) <o pull .
+About monoV_morphism.
+
+Lemma Cat2V : forall A3 A4 (f3 : V(0 A3 |- A4)0), forall A2 (f2 : V(0 A2 |- A3)0), forall A1 (f1 : V(0 A1 |- A2)0),
+                (f3 <o f2) <o f1 ~~ f3 <o (f2 <o f1).
+Proof.
+  intros. apply SymV, monoV_morphism.
+Qed.
+
+Definition convV_fun : forall U1 U2 V1 V2, (V(0 U1 |- U2)0 -> V(0 V1 |- V2)0) -> (V(0 U1 |- U2)0 -> V(0 V1 |- V2 )0) -> Prop
+  := fun  U1 U2 V1 V2 (w' w : (V(0 U1 |- U2)0 -> V(0 V1 |- V2)0)) =>
+       forall u1 u2, u1 ~~ u2 -> w' u1 ~~ w u2 .
+Notation "w' ~~~ w" := (convV_fun w' w)  (at level 70).
+
+(* ALT
+Hypothesis CongMonoV : forall (B : obV), forall (A : obV),
+                       forall (f f' : V(0 B |- A )0),
+                         f' ~~ f -> forall X : obV, @monoV_unitary B A f' X ~~~ @monoV_unitary B A f X.
+*)
+Hypothesis CongMonoV : forall (B : obV), forall (A : obV),
+                       forall X : obV, forall (a a' : V(0 A |- X )0),
+                         a' ~~ a -> @monoV_identitary B A X a' ~~~ @monoV_identitary B A X a .
+
+Lemma CongCom : forall A2 A3, forall (f2 f2' : V(0 A2 |- A3 )0), f2 ~~ f2' -> forall A1, forall (f1 f1' : V(0 A1 |- A2 )0), f1 ~~ f1' -> f2 <o f1 ~~ f2' <o f1'.
+Proof.
+  intros. apply CongMonoV.
+  assumption.
+  assumption.
+Qed.
+
+Parameter IdenV : forall {V : obV}, V(0 V |- V )0.
+Notation "1" := (@IdenV _) (at level 0).
+
+(** related to non-variance when unit pull the input, commonly  ( 1 o> h ) ~~ h  **)
+Definition idT : forall T : Type, T -> T := fun T : Type => fun x : T => x .
+Hypothesis monoV_unitV : forall (A : obV), forall X : obV, ( @idT (V(0 A |- X )0)  ) ~~~ ( V(1 (@IdenV A) |- X )0 ) .
+
+(** related to non-variance when unit push the output, commonly  ( (f _i) o> 1 ) ~~ (f _i)  , 
+       therefore polyV is injective **)
+Hypothesis monoV_inputUnitV : forall (B : obV), forall (A : obV),
+                              forall (b : V(0 B |- A )0),
+                                b  ~~ ( (V(1 b |- A )0)  (@IdenV A) ).
+
+Lemma Cat1RightV : forall A1 A2, forall f : V(0 A1 |- A2)0,  f ~~ f <o 1.
+Proof.
+  intros. apply monoV_unitV.
+  apply ReflV.
+Qed.
+  
+Lemma Cat1LeftV : forall A1 A2, forall f : V(0 A1 |- A2)0,  f ~~ 1 <o f.
+Proof.
+  intros. apply monoV_inputUnitV.
+Qed.
 
 (** ** put functional monoidal logic onto V **)
 
@@ -95,17 +167,17 @@ Notation "[1 v ~> V2 ]0" := (consV10 v V2) (at level 30).
 
 Variable Des : forall V : obV, forall (U W : obV), V(0 U |- [0 V ~> W ]0 )0 -> V(0 (0 U * V )0  |- W )0.
 Hypothesis CongDes : forall V : obV, forall (U W : obV), forall (f f' : V(0 U |- [0 V ~> W ]0 )0),
-                     f' ~~ f -> Des f' ~~ Des f.
+                       f' ~~ f -> Des f' ~~ Des f.
 Variable DesIn : forall V : obV, forall (U0 U1 W : obV), V(0 U0 |- [0 U1 ~> [0 V ~> W ]0 ]0 )0 -> V(0 U0 |- [0 (0 U1 * V )0 ~> W ]0 )0.
 Variable CongDesIn : forall V : obV, forall (U0 U1 W : obV), forall (v v' : V(0 U0 |- [0 U1 ~> [0 V ~> W ]0 ]0 )0),
                        v' ~~ v -> DesIn v' ~~ DesIn v.
 Variable ConsIn : forall V : obV, forall (U0 U1 W : obV), V(0 U0 |- [0 (0 U1 * V )0 ~> W ]0 )0 -> V(0 U0 |- [0 U1 ~> [0 V ~> W ]0 ]0 )0.
 Hypothesis CongConsIn : forall V : obV, forall (U0 U1 W : obV), forall (v v' : V(0 U0 |- [0 (0 U1 * V )0 ~> W ]0 )0),
-                         v' ~~ v -> ConsIn v' ~~ ConsIn v.
+                          v' ~~ v -> ConsIn v' ~~ ConsIn v.
 Hypothesis ConsIn_DesIn : forall V : obV, forall (U0 U1 W : obV), forall (f : V(0 U0 |- [0 U1 ~> [0 V ~> W ]0 ]0 )0),
-                           ConsIn (DesIn f) ~~ f.
+                            ConsIn (DesIn f) ~~ f.
 Hypothesis DesIn_Input : forall V : obV, forall (U0 U1 W : obV), forall (v : V(0 U0 |- [0 U1 ~> [0 V ~> W ]0 ]0 )0), forall (U0' : obV) (i : V(0 U0' |- U0 )0),
-                     (DesIn v) <o i ~~ DesIn( v <o i ).
+                           (DesIn v) <o i ~~ DesIn( v <o i ).
 
 
 (** ** get the definition of polymorph category F **)
@@ -169,24 +241,24 @@ Notation "V[0 X ~> w ]1" := (@polyV _ _ _ 1 X <o w) (at level 25).
 Notation "V[0 W ~> - ]1" := (fun V X => @polyV _ _ _ (@IdenV ([0 W ~> V ]0)) X) (at level 25). 
 
 Hypothesis polyV_monoV : forall (W : obV), forall (U : obV) (V : obV),
-                       forall (v : V(0 U |- [0 W ~> V ]0 )0), forall X : obV,
-                         [1 Des v ~> X]0
-                                       ~~ DesIn( V[1 v ~> X ]0 ) .
+                         forall (v : V(0 U |- [0 W ~> V ]0 )0), forall X : obV,
+                           [1 Des v ~> X]0
+                                         ~~ DesIn( V[1 v ~> X ]0 ) .
 
 Hypothesis polyV_arrow :  forall (B : obV) (A : obV) (V : obV),
-                        forall (V' : obV) (v : V(0 V' |- V )0),
-                        forall (f : V(0 V |- V[0 B ~> A ]0 )0) (X : obV),
-                          V[1 f <o v ~> X ]0
-                           ~~ [1 v ~> V[0 B ~> X ]0 ]0 <o V[1 f ~> X ]0 .
+                          forall (V' : obV) (v : V(0 V' |- V )0),
+                          forall (f : V(0 V |- V[0 B ~> A ]0 )0) (X : obV),
+                            V[1 f <o v ~> X ]0
+                             ~~ [1 v ~> V[0 B ~> X ]0 ]0 <o V[1 f ~> X ]0 .
 
 
 (** ** get that the image of polyF are contained in natural transformations **)
 
 Lemma polyF_arrowIn :  forall (B : obF) (A : obF) (V : obV),
-                        forall (W V' : obV) (v : V(0 W |- [0 V' ~> V ]0 )0),
-                        forall (f : V(0 V |- F[0 B ~> A ]0 )0) (X : obF),
-                          F[1 f <o (Des v) ~> X ]0
-                           ~~ DesIn( V[1 v ~> F[0 B ~> X ]0 ]0 <o F[1 f ~> X ]0 ) .
+                       forall (W V' : obV) (v : V(0 W |- [0 V' ~> V ]0 )0),
+                       forall (f : V(0 V |- F[0 B ~> A ]0 )0) (X : obF),
+                         F[1 f <o (Des v) ~> X ]0
+                          ~~ DesIn( V[1 v ~> F[0 B ~> X ]0 ]0 <o F[1 f ~> X ]0 ) .
 Proof.
   intros; eapply TransV; [ apply DesIn_Input | ].
   eapply TransV; [ | apply polyF_arrow ].
@@ -264,16 +336,16 @@ Hypothesis DesIdenObR_output : forall (U : obV) (W W' : obV) (w : V(0 W |- W' )0
 Variable DesIdenObL : forall V : obV, forall (W : obV), V(0 I |- [0 V ~> W ]0 )0 -> V(0 V |- W )0.
 Variable ConsIdenObL : forall V : obV, forall (W : obV), V(0 V |- W )0 -> V(0 I |- [0 V ~> W ]0 )0.
 Hypothesis ConsIdenObL_DesIdenObL : forall V : obV, forall (W : obV), forall v : V(0 I |- [0 V ~> W ]0 )0,
-                                       v ~~ ConsIdenObL( DesIdenObL v).
+                                      v ~~ ConsIdenObL( DesIdenObL v).
 Hypothesis CongConsIdenObL : forall V : obV, forall (W : obV), forall (v v' : V(0 V |- W )0),
-                                v' ~~ v -> ConsIdenObL v' ~~ ConsIdenObL v.
+                               v' ~~ v -> ConsIdenObL v' ~~ ConsIdenObL v.
 
 Hypothesis consV10_functorial : forall V1' V1 (v : arrV00 V1' V1), forall V1'' (v' : arrV00 V1'' V1'), forall V2 : obV,
-                                 [1 v <o v' ~> V2 ]0 ~~  [1 v' ~> V2 ]0 <o  [1 v ~> V2 ]0 .
+                                  [1 v <o v' ~> V2 ]0 ~~  [1 v' ~> V2 ]0 <o  [1 v ~> V2 ]0 .
 Hypothesis consV11_bifunctorial : forall V1' V1 (v : arrV00 V1' V1), forall W1 W1' (w : arrV00 W1 W1'),
-                                   [0 V1' ~> w ]1 <o  [1 v ~> W1 ]0 ~~ [1 v ~> W1' ]0 <o [0 V1 ~> w ]1 .
+                                    [0 V1' ~> w ]1 <o  [1 v ~> W1 ]0 ~~ [1 v ~> W1' ]0 <o [0 V1 ~> w ]1 .
 Hypothesis CongConsV10 : forall V1' V1 (v v' : arrV00 V1' V1), forall V2 : obV,
-                          v' ~~ v -> [1 v' ~> V2 ]0 ~~ [1 v ~> V2 ]0 .
+                           v' ~~ v -> [1 v' ~> V2 ]0 ~~ [1 v ~> V2 ]0 .
 
 (** related to non-variance when unit pull the input, commonly  ( 1 o> h ) ~~ h  **)
 Hypothesis polyF_unitF : forall (A : obF), forall X : obF, (@IdenV (F[0 A ~> X ]0)) ~~ DesIdenObR( F[1 (@unitF A) ~> X ]0 ) .
@@ -317,7 +389,7 @@ Lemma natural_unitF : forall (B : obF) (V : obV) (A : obF) (φ φ' : forall X : 
                         forall X : obF, φ' X ~~ φ X.
 Proof.
   intros; eapply TransV; [ apply natural_unitF_explicit; assumption |
-                          eapply TransV; [ | apply SymV, natural_unitF_explicit; assumption ] ].
+                           eapply TransV; [ | apply SymV, natural_unitF_explicit; assumption ] ].
   apply CongDesIdenObR, CongCom; [ | apply ReflV ]; apply CongConsV10.
   assumption.
 Qed.
@@ -414,14 +486,14 @@ Module Functor.
       and may transform output to cancel ( [0 I ~>  _ ]0 ) and now more progress *)
   Notation "F|1 a" := (DesIdenObR ([1 uB ~> _ ]0 <o F[0 _ ~> a ]1)) (at level 5, right associativity) .
   Check (fun (W : obV) (A X : obA) (a : V(0 W |- A[0 A ~> X ]0 )0) => F|1 a).
-  **)
-        
+   **)
+  
   (** related to correspondence with the common representation **)
   Variable polyF_arrow : forall (B : obB) (A : obA),
                          forall (V V' : obV) (v : V(0 V' |- V )0),
                          forall (f : V(0 V |- F[0 B ~> A ]0 )0) (X : obA),
-                            F[1 f <o v ~> X ]0
-                             ~~ [1 v ~> F[0 B ~> X ]0 ]0 <o F[1 f ~> X ]0 .
+                           F[1 f <o v ~> X ]0
+                            ~~ [1 v ~> F[0 B ~> X ]0 ]0 <o F[1 f ~> X ]0 .
 
   (** related to associativity, polyF_morphism says that, put the parameter f and the modifier argument g, then get
            (outer modification)    ( (f ) o>F g ) o>F _  =  f o>F ( g o> _ )    (inner modification)
@@ -441,17 +513,17 @@ which is, holding only f as parameter and running all the arguments,
   Notation "F[0 B ~> - ]1" := (@polyF_IdenV B) (at level 25).
 
   Hypothesis CongPolyF : forall (V : obV) (B : obB) (A : obA),
-                       forall (f f' : V(0 V |- F[0 B ~> A ]0 )0),
-                         f' ~~ f -> forall X : obA, polyF f' X ~~ polyF f X.
+                         forall (f f' : V(0 V |- F[0 B ~> A ]0 )0),
+                           f' ~~ f -> forall X : obA, polyF f' X ~~ polyF f X.
 
   (** ** get that the image of polyF are contained in natural transformations **)
 
   (** for polymorph functor, get this copy-paste same deduction as for polymorph category **)
   Lemma polyF_arrowIn : forall (B : obB) (A : obA),
-                         forall (V W V' : obV) (v : V(0 W |- [0 V' ~> V ]0 )0),
-                         forall (f : V(0 V |- F[0 B ~> A ]0 )0) (X : obA),
-                           F[1 f <o (Des v) ~> X ]0
-                            ~~ DesIn( V[1 v ~> F[0 B ~> X ]0 ]0 <o F[1 f ~> X ]0 ) .
+                        forall (V W V' : obV) (v : V(0 W |- [0 V' ~> V ]0 )0),
+                        forall (f : V(0 V |- F[0 B ~> A ]0 )0) (X : obA),
+                          F[1 f <o (Des v) ~> X ]0
+                           ~~ DesIn( V[1 v ~> F[0 B ~> X ]0 ]0 <o F[1 f ~> X ]0 ) .
   Proof.
     intros; eapply TransV; [ apply DesIn_Input | ].
     eapply TransV; [ | apply polyF_arrow ].
@@ -509,11 +581,11 @@ now memo that in the left hand sides there is permutation of inputs, and that in
   Qed.
 
   Definition natural (V : obV) (B : obB) (A : obA) (β : forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> F[0 B ~> X ]0 ]0 )0) :=
-                        forall (C X : obA),
-                          ( [0 A[0 A ~> C ]0 ~> β X ]1
-                            <o A[0 A ~> - ]1 C X )
-                            ~~ ( [1 β C ~> [0 V ~> F[0 B ~> X ]0 ]0 ]0
-                                 <o ( V[0 V ~> - ]1 (F[0 B ~> C ]0) (F[0 B ~> X ]0) ) <o F[0 B ~> - ]1 C X ) .
+    forall (C X : obA),
+      ( [0 A[0 A ~> C ]0 ~> β X ]1
+        <o A[0 A ~> - ]1 C X )
+        ~~ ( [1 β C ~> [0 V ~> F[0 B ~> X ]0 ]0 ]0
+             <o ( V[0 V ~> - ]1 (F[0 B ~> C ]0) (F[0 B ~> X ]0) ) <o F[0 B ~> - ]1 C X ) .
 
   Lemma polyF_natural_folded : forall (V : obV) (B : obB) (A : obA) (b : V(0 V |- F[0 B ~> A ]0)0),
                                  natural (fun X : obA => F[1 b ~> X ]0).
@@ -525,8 +597,8 @@ now memo that in the left hand sides there is permutation of inputs, and that in
   (** ** get that the image of polyF contains all natural transformations **)
 
   Hypothesis CongPolyA : forall (B : obA), forall (V : obV) (A : obA),
-                       forall (f f' : V(0 V |- A[0 B ~> A ]0 )0),
-                         f' ~~ f -> forall X : obA, polyA f' X ~~ polyA f X.
+                         forall (f f' : V(0 V |- A[0 B ~> A ]0 )0),
+                           f' ~~ f -> forall X : obA, polyA f' X ~~ polyA f X.
 
   Variable polyA_arrow :  forall (B : obA), forall (A : obA),
                           forall (V V' : obV) (v : V(0 V' |- V )0),
@@ -579,8 +651,8 @@ now memo that in the left hand sides there is permutation of inputs, and that in
   (** related to non-variance when unit push the output, commonly  ( (f _i) o>F 1 ) ~~ (f _i)  , 
        therefore polyF is injective **)
   Hypothesis polyF_inputUnitA : forall (V : obV) (B : obB) (A : obA),
-                                  forall (f : V(0 V |- F[0 B ~> A ]0 )0),
-                                f ~~ DesIdenObL( (F[1 f ~> A ]0) <o (@unitA A) ).
+                                forall (f : V(0 V |- F[0 B ~> A ]0 )0),
+                                  f ~~ DesIdenObL( (F[1 f ~> A ]0) <o (@unitA A) ).
 
   (** for polymorph functor, get this copy-paste same deduction as for polymorph category **)
   Lemma YONEDA : forall (V : obV) (B : obB) (A : obA) (φ φ' : forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> F[0 B ~> X ]0 ]0 )0),
@@ -678,9 +750,9 @@ now memo that in the left hand sides there is permutation of inputs, and that in
 
     (** alternatively, more immediately and particularly, show that poly_of_this_transf below satisfies polyβ_arrow (easy) and polyβ_morphism_codomain (easy) and polyβ_morphism (from old naturality) **)
     Definition poly_of_this_transf : forall (A0 : obA) (V0 : obV) (B0 : obB) (f0 : V(0 V0 |- F[0 B0 ~> A0 ]0 )0),
-                              forall (V : obV) (U : obV) (A : obA),
-                                V(0 V |- V[0 U ~> A[0 A0 ~> A ]0 ]0 )0 ->
-                                V(0 V |- V[0 U ~> [0 V0 ~> F[0 B0 ~> A ]0 ]0 ]0 )0
+                                     forall (V : obV) (U : obV) (A : obA),
+                                       V(0 V |- V[0 U ~> A[0 A0 ~> A ]0 ]0 )0 ->
+                                       V(0 V |- V[0 U ~> [0 V0 ~> F[0 B0 ~> A ]0 ]0 ]0 )0
       := fun (A0 : obA) (V0 : obV) (B0 : obB) (f0 : V(0 V0 |- F[0 B0 ~> A0 ]0 )0)
          => fun (V : obV) (U : obV) (A : obA)
            => fun (f : V(0 V |- V[0 U ~> A[0 A0 ~> A ]0 ]0 )0)
@@ -689,7 +761,8 @@ now memo that in the left hand sides there is permutation of inputs, and that in
 
     Section FunctorComposition.
 
-      (** ** put some polymorph category C , note that unitB is lacked  **)
+      (** ** composition of two polyfunctors, 
+                  now put some polymorph category C , note that unitB is lacked  **)
 
       Variable obC : Type.
       Variable polyC00 : obC -> obC -> obV.
@@ -728,7 +801,7 @@ now memo that in the left hand sides there is permutation of inputs, and that in
       
       (**             c o>F'F a  =  c o>F' (1 o>F a)   ...   c o>F' (b o>F a) = (c o>F' b) o>F'F a ,       b : _ -> F _              
                          d o>F'' (c o>F' (b o>F a))              catA -> catB -> catC -> catD         **)
-      Definition polyF'F :
+      Definition composition_F'_after_F :
         forall (V : obV) (B : obB) (A : obA),
         forall (b : V(0 V |- B[0 B ~> F|0 A ]0 )0),
         forall (W : obV) (C : obC),
@@ -747,7 +820,7 @@ now memo that in the left hand sides there is permutation of inputs, and that in
    (X : obA) => [0V ~> F'[1 c ~> F|0 X ]0 ]1 <o F[1 b ~> X ]0) *)
       Defined.
 
- (************
+      (************
        b : V( V |- B[ B ~> FA] )  ->
       a : B[ B ~> A[ A ~> X ] ] -> [V ~> B[ B ~> F X ]]
 
@@ -772,13 +845,13 @@ now memo that in the left hand sides there is permutation of inputs, and that in
       c : V( W |- C[ C ~> F'|0 B] )  ->
       a : V( C[ C ~> B[ B ~> A[ A ~> X ] ] ] |- [V ~> [W ~> C[ C ~> F'|0 F|0 X ] ] ] )
 
-*****)                                              
+       *****)                                              
       
       
       Parameter unitB : forall {B : obB}, V(0 I |- B[0 B ~> B ]0 )0.
       Notation "'uB'" := (@unitB _) (at level 0).
 
-      Definition polyF'F_simple :
+      Definition composition_F'_after_F_simple :
         forall  (A : obA),
         forall (W : obV) (C : obC),
         forall (c : V(0 W |- C[0 C ~> F'|0 F|0 A ]0 )0),
@@ -786,25 +859,25 @@ now memo that in the left hand sides there is permutation of inputs, and that in
       Proof.
         intros.
         apply DesIdenObR.
-        eapply polyF'F.
+        eapply composition_F'_after_F.
         eapply unitB.
         exact c.
         Show Proof.
-        (*
+      (*
 (fun (A : obA) (W : obV) (C : obC) (c : V(0 W |- F'[0 C ~> F|0 A ]0 )0)
-   (X : obA) => DesIdenObR (polyF'F uB c X))
-         *)
+   (X : obA) => DesIdenObR (composition_F'_after_F uB c X))
+       *)
       Defined.
 
       Notation "F'F|0 B" := (F'|0 F|0 B) (at level 4, right associativity).
       Notation "F'F[0 C ~> A ]0" := (C[0 C ~> F'F|0 A ]0) (at level 25).
-      Notation "F'F[1 c ~> X ]0" := (@polyF'F _ _ _ c X) (at level 25).
-      Notation "F'F[0 X ~> a ]1" := (@polyF'F _ _ _ (@IdenV _) X <o (a : V(0 _ |- A[0 _ ~> X ]0 )0)) (at level 25).
+      Notation "F'F[1 c ~> X ]0" := (@composition_F'_after_F _ _ _ c X) (at level 25).
+      Notation "F'F[0 X ~> a ]1" := (@composition_F'_after_F _ _ _ (@IdenV _) X <o (a : V(0 _ |- A[0 _ ~> X ]0 )0)) (at level 25).
 
-      Definition polyF'F_IdenV : forall (C : obC) (A : obA),
-                               forall X : obA, V(0 A[0 A ~> X ]0  |- [0 F'F[0 C ~> A ]0 ~> F'F[0 C ~> X ]0 ]0 )0
-        := (fun C A X => @polyF'F_simple A (F'F[0 C ~> A ]0) C (@IdenV (F'F[0 C ~> A ]0)) X).
-      Notation "F'F[0 C ~> - ]1" := (@polyF'F_IdenV C) (at level 25).
+      Definition composition_F'_after_F_IdenV : forall (C : obC) (A : obA),
+                                                forall X : obA, V(0 A[0 A ~> X ]0  |- [0 F'F[0 C ~> A ]0 ~> F'F[0 C ~> X ]0 ]0 )0
+        := (fun C A X => @composition_F'_after_F_simple A (F'F[0 C ~> A ]0) C (@IdenV (F'F[0 C ~> A ]0)) X).
+      Notation "F'F[0 C ~> - ]1" := (@composition_F'_after_F_IdenV C) (at level 25).
 
       Definition polyF_unitB : forall (A : obA),
                                forall X : obA, V(0 A[0 A ~> X ]0  |- B[0 F|0 A ~> F|0 X ]0 )0.
@@ -819,13 +892,13 @@ now memo that in the left hand sides there is permutation of inputs, and that in
       (* F|1 is internal structural arrow , but F[0 B ~> - ]1 are external structural arrows*)
       Notation "F|1" := (@polyF_unitB) (at level 0).
 
-      Lemma polyF'F_identitary_polyF'_identitary_polyF_unitary :    forall (C : obC) (A X : obA),
-                                    (F'[0 C ~> - ]1) F|0 A F|0 X <o F|1 A X ~~ (F'F[0 C ~> - ]1) A X.
+      Lemma composition_F'_after_F_identitary_polyF'_identitary_polyF_unitary :    forall (C : obC) (A X : obA),
+                                                                                     (F'[0 C ~> - ]1) F|0 A F|0 X <o F|1 A X ~~ (F'F[0 C ~> - ]1) A X.
       Proof.
         intros.
-        unfold polyF'F_IdenV.
-        unfold polyF'F_simple.
-        unfold polyF'F.
+        unfold composition_F'_after_F_IdenV.
+        unfold composition_F'_after_F_simple.
+        unfold composition_F'_after_F.
         unfold polyF'_IdenV.
         unfold polyF_unitB.
         apply SymV, DesIdenObR_output.
@@ -914,11 +987,23 @@ NEXT4: rewrite natural as above
                                             forall (A : obA) (W : obV) (A' : obA) (g : V(0 W |- A[0 A ~> A']0 )0),
                                             forall (f : V(0 V |-FB|0 A )0) (X : obA),
                                               FB[1I Des( [1 f ~> FB|0 A' ]0 <o (FB||1 <o g) ) ~> X]0
-                                                ~~  DesIn( [0 W ~> FB[1I f ~> X ]0 ]1 <o A[1 g ~> X ]0 ).
+                                                ~~  DesIn( [0 W ~> FB[1I f ~> X ]0 ]1 ) <o A[1 g ~> X ]0 .
         Proof.
-          unfold meta_of_polyF_at_B.  intros. apply polyF_morphism.
+          unfold meta_of_polyF_at_B.  intros.
+          (*TODO ERASE this line later *) eapply TransV; [eapply SymV, DesIn_Input|];
+          apply polyF_morphism.
         Qed.
 
+        (** related to non-variance when unit push the output, commonly  ( (f _i) o>FB 1 ) ~~ (f _i)  , 
+       therefore metaFB is injective **)
+        Lemma meta_of_polyF_at_B_inputUnitA : forall (V : obV) (A : obA),
+                                      forall (f : V(0 V |- FB|0 A )0),
+                                        f ~~ DesIdenObL( (FB[1I f ~> A ]0) <o (@unitA A) ).
+        Proof.
+          unfold meta_of_polyF_at_B. intros.
+          apply polyF_inputUnitA.
+        Qed.
+                    
         Lemma meta_of_polyF_at_B_identitary_polyF_identitary : forall (A : obA),
                                                                forall X : obA,  FB||1 ~~ F[0 B ~> - ]1 A X .
         Proof. 
@@ -930,7 +1015,7 @@ NEXT4: rewrite natural as above
 
       Section Poly_of_meta.
 
-        (** ** polyP of metaP **)
+        (** ** poly_of_metaP of metaP **)
         
         Parameter metaP0 : obA -> obV.
         Notation "P|0 A" := (metaP0 A) (at level 4, right associativity).
@@ -969,36 +1054,36 @@ NEXT4: rewrite natural as above
         (*      (** ??? this is extra for metafunctor than polyfunctor : related to non-variance when unit pull the input, commonly  ( 1 o> h ) ~~ h     ....     ( 1 o> # ) ~~ #  ??? **)
       Hypothesis metaP_unitB : forall (B : obB), forall X : obA, (@IdenV (P[0 B ~> X ]0)) ~~ DesIdenObR( P[1I (@unitB B) ~> X ]0 ) .         *)
         Notation "P[0 B ~> A ]0" := (V[0 B ~> P|0 A ]0) (at level 25).
-        Definition polyP_of_metaP : forall (V : obV) (B : obV) (A : obA),
-                                      V(0 V |- P[0 B ~> A ]0 )0 ->
-                                      forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> P[0 B ~> X ]0 ]0 )0
+        Definition poly_of_metaP : forall (V : obV) (B : obV) (A : obA),
+                                     V(0 V |- P[0 B ~> A ]0 )0 ->
+                                     forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> P[0 B ~> X ]0 ]0 )0
           := fun (V B : obV) (A : obA) (b : V(0 V |- P[0 B ~> A ]0 )0) (X : obA) =>
                ConsIn (P[1I Des b ~> X ]0). 
 
-        Notation "P[1 b ~> X ]0" := (@polyP_of_metaP _ _ _ b X) (at level 25).
-        Notation "P[0 X ~> a ]1" := (@polyP_of_metaP _ _ _ (@IdenV _) X <o (a : V(0 _ |- A[0 _ ~> X ]0 )0)) (at level 25).
+        Notation "P[1 b ~> X ]0" := (@poly_of_metaP _ _ _ b X) (at level 25).
+        Notation "P[0 X ~> a ]1" := (@poly_of_metaP _ _ _ (@IdenV _) X <o (a : V(0 _ |- A[0 _ ~> X ]0 )0)) (at level 25).
 
         Hypothesis Des_Input : forall (U U' : obV) (w : V(0 U' |- U )0), forall (V W : obV) (v : V(0 U |- [0 V ~> W ]0 )0), 
-                               Des( v <o w ) ~~ Des( v ) <o desV10 V w .
+                                 Des( v <o w ) ~~ Des( v ) <o desV10 V w .
         Hypothesis ConsIn_Output : forall V : obV, forall (U0 : obV), forall (U1 U1' : obV) (u1 : V(0 U1' |- U1 )0), forall (W : obV), forall (v : V(0 U0 |- [0 (0 U1 * V )0 ~> W ]0 )0),
                                      ConsIn( [1 (1 u1 * V )0 ~> W ]0 <o v ) ~~ [1 u1 ~> [0 V ~> W ]0 ]0 <o ConsIn( v ) .
-        Lemma polyP_arrow : forall (B : obV) (A : obA),
-                            forall (V V' : obV) (v : V(0 V' |- V )0),
-                            forall (f : V(0 V |- P[0 B ~> A ]0 )0) (X : obA),
-                              P[1 f <o v ~> X ]0
-                               ~~ [1 v ~> P[0 B ~> X ]0 ]0 <o P[1 f ~> X ]0 .
+        Lemma poly_of_metaP_arrow : forall (B : obV) (A : obA),
+                                    forall (V V' : obV) (v : V(0 V' |- V )0),
+                                    forall (f : V(0 V |- P[0 B ~> A ]0 )0) (X : obA),
+                                      P[1 f <o v ~> X ]0
+                                       ~~ [1 v ~> P[0 B ~> X ]0 ]0 <o P[1 f ~> X ]0 .
         Proof.
-          intros. unfold polyP_of_metaP.
+          intros. unfold poly_of_metaP.
           eapply TransV; [| eapply CongConsIn, CongMetaP, Des_Input ].
           eapply TransV; [| eapply CongConsIn, metaP_arrow ].
           apply ConsIn_Output.
         Qed.
 
-        Lemma CongPolyP : forall (V : obV) (B : obV) (A : obA),
-                          forall (f f' : V(0 V |- P[0 B ~> A ]0 )0),
-                            f' ~~ f -> forall X : obA, P[1 f' ~> X ]0 ~~ P[1 f ~> X ]0.
+        Lemma Cong_poly_of_metaP : forall (V : obV) (B : obV) (A : obA),
+                                   forall (f f' : V(0 V |- P[0 B ~> A ]0 )0),
+                                     f' ~~ f -> forall X : obA, P[1 f' ~> X ]0 ~~ P[1 f ~> X ]0.
         Proof.
-          intros. unfold polyP_of_metaP.  apply CongConsIn, CongMetaP, CongDes. assumption.
+          intros. unfold poly_of_metaP.  apply CongConsIn, CongMetaP, CongDes. assumption.
         Qed.
 
         Hypothesis CongConsV01 : forall V1 : obV, forall (V2 V2' : obV) (v v' : arrV00 V2 V2'),
@@ -1015,7 +1100,7 @@ NEXT4: rewrite natural as above
         Hypothesis Cons_Input : forall V : obV, forall (U U' : obV) (w : V(0 U' |- U )0), forall (W : obV) (v : V(0 (0 U * V )0 |- W )0),
                                   Cons(v <o desV10 V w)  ~~ Cons( v ) <o w .
         Hypothesis DesIn_ConsIn : forall V : obV, forall (U0 U1 W : obV), forall (f : V(0 U0 |- [0 (0 U1 * V )0 ~> W ]0 )0),
-                                  DesIn (ConsIn f) ~~ f.
+                                    DesIn (ConsIn f) ~~ f.
 
         Parameter Assoc : forall {V W : obV}, forall {U: obV}, V(0 (0 U * (0 V * W )0 )0 |- (0 ((0 U * V )0) * W )0 )0.
         Hypothesis Assoc_Iso : forall (V W : obV), forall (U: obV),
@@ -1034,14 +1119,14 @@ NEXT4: rewrite natural as above
                                           DesIn ([0 W ~>  ([1 Des f ~> PX ]0) ]1)
                                                 ~~ [1 Assoc ~> PX ]0 <o DesIn( DesIn ([0 W ~>  ConsIn([1 Des f ~> PX ]0) ]1) ) .
 
-        Lemma polyP_morphism : forall (B : obV) (V : obV),
-                               forall (A : obA) (W : obV) (A' : obA) (g : V(0 W |- A[0 A ~> A']0 )0),
-                               forall (f : V(0 V |-P[0 B ~> A ]0 )0) (X : obA),
-                                 P[1 Des( [1 f ~> P[0 B ~> A' ]0 ]0 <o P[0 A' ~> g ]1 ) ~> X ]0
-                                  ~~  DesIn( [0 W ~> P[1 f ~> X ]0 ]1 ) <o A[1 g ~> X ]0.
+        Lemma poly_of_metaP_morphism : forall (B : obV) (V : obV),
+                                       forall (A : obA) (W : obV) (A' : obA) (g : V(0 W |- A[0 A ~> A']0 )0),
+                                       forall (f : V(0 V |-P[0 B ~> A ]0 )0) (X : obA),
+                                         P[1 Des( [1 f ~> P[0 B ~> A' ]0 ]0 <o P[0 A' ~> g ]1 ) ~> X ]0
+                                          ~~  DesIn( [0 W ~> P[1 f ~> X ]0 ]1 ) <o A[1 g ~> X ]0.
         Proof.
           (* enough (  [1Assoc ~> P|0 X ]0 <o DesIn ( _ ) ~~  [1Assoc ~> P|0 X ]0 <o DesIn ( _ ) ) *)
-          intros. unfold polyP_of_metaP.
+          intros. unfold poly_of_metaP.
           intros;  eapply TransV; [ eapply TransV | ]; [ apply ConsIn_DesIn | idtac | apply SymV, ConsIn_DesIn].
           apply CongConsIn, Assoc_Iso.
 
@@ -1081,11 +1166,11 @@ NEXT4: rewrite natural as above
 
           eapply metaP_morphism.
         Qed.
-       
-        Definition polyP_IdenV : forall (B : obV) (A : obA),
-                                 forall X : obA, V(0 A[0 A ~> X ]0  |- [0 P[0 B ~> A ]0 ~> P[0 B ~> X ]0 ]0 )0
-          := (fun B A X => @polyP_of_metaP (P[0 B ~> A ]0) B A (@IdenV (P[0 B ~> A ]0)) X).
-        Notation "P[0 B ~> - ]1" := (@polyP_IdenV B) (at level 25).
+        
+        Definition poly_of_metaP_IdenV : forall (B : obV) (A : obA),
+                                         forall X : obA, V(0 A[0 A ~> X ]0  |- [0 P[0 B ~> A ]0 ~> P[0 B ~> X ]0 ]0 )0
+          := (fun B A X => @poly_of_metaP (P[0 B ~> A ]0) B A (@IdenV (P[0 B ~> A ]0)) X).
+        Notation "P[0 B ~> - ]1" := (@poly_of_metaP_IdenV B) (at level 25).
 
         (** ** unit part of above get that the logical category V is polymorph **)
 
@@ -1110,19 +1195,19 @@ NEXT4: rewrite natural as above
         Hypothesis consV10_functorial_fun1 : forall V1, forall V2 : obV,
                                                (@IdenV _) ~~    [1 (@IdenV V1) ~> V2 ]0 .
 
-        (** ** continue polyP of metaP **)
+        (** ** continue poly_of_metaP of metaP **)
 
-        Definition polyP_unitV : forall (A : obA),
-                                 forall X : obA, V(0 A[0 A ~> X ]0  |- [0 P|0 A ~> P|0 X ]0 )0
-          := (fun A X => DesIdenObR(@polyP_of_metaP I (P|0 A) A (@unitV _) X)).
-        Notation "P|1" := (@polyP_unitV _ _) (at level 0).
+        Definition poly_of_metaP_unitV : forall (A : obA),
+                                         forall X : obA, V(0 A[0 A ~> X ]0  |- [0 P|0 A ~> P|0 X ]0 )0
+          := (fun A X => DesIdenObR(@poly_of_metaP I (P|0 A) A (@unitV _) X)).
+        Notation "P|1" := (@poly_of_metaP_unitV _ _) (at level 0).
         
-        (** polyP_unitV_metaP_IdenV : forall A X : obA, P|1 ~~ P||1 **)
-        Lemma polyP_unitV_metaP_IdenV : forall A X : obA, 
-                                          @polyP_unitV A X ~~ @metaP_IdenV A X .
+        (** poly_of_metaP_unitV_metaP_IdenV : forall A X : obA, P|1 ~~ P||1 **)
+        Lemma poly_of_metaP_unitV_metaP_IdenV : forall A X : obA, 
+                                                  @poly_of_metaP_unitV A X ~~ @metaP_IdenV A X .
         Proof.
           intros.
-          unfold polyP_unitV. unfold polyP_of_metaP.
+          unfold poly_of_metaP_unitV. unfold poly_of_metaP.
           unfold metaP_IdenV.
           eapply TransV; cycle 1.
           eapply CongDesIdenObR, CongConsIn, CongMetaP, Cat1LeftV .
@@ -1135,7 +1220,7 @@ NEXT4: rewrite natural as above
           eapply SymV, Cat1LeftV.
         Qed.
 
-        (** ** polyQ of metaQ **)
+        (** ** poly_of_metaQ of metaQ **)
 
         Parameter metaQ0 : obA -> obV.
         Notation "Q|0 A" := (metaQ0 A) (at level 4, right associativity).
@@ -1174,42 +1259,42 @@ NEXT4: rewrite natural as above
         (*      (** ??? this is extra for metafunctor than polyfunctor : related to non-variance when unit pull the input, commonly  ( 1 o> h ) ~~ h     ....     ( 1 o> # ) ~~ #  ??? **)
       Hypothesis metaQ_unitB : forall (B : obB), forall X : obA, (@IdenV (Q[0 B ~> X ]0)) ~~ DesIdenObR( Q[1I (@unitB B) ~> X ]0 ) .         *)
         Notation "Q[0 B ~> A ]0" := (V[0 B ~> Q|0 A ]0) (at level 25).
-        Definition polyQ_of_metaQ : forall (V : obV) (B : obV) (A : obA),
-                                      V(0 V |- Q[0 B ~> A ]0 )0 ->
-                                      forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> Q[0 B ~> X ]0 ]0 )0
+        Definition poly_of_metaQ : forall (V : obV) (B : obV) (A : obA),
+                                     V(0 V |- Q[0 B ~> A ]0 )0 ->
+                                     forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> Q[0 B ~> X ]0 ]0 )0
           := fun (V B : obV) (A : obA) (b : V(0 V |- Q[0 B ~> A ]0 )0) (X : obA) =>
                ConsIn (Q[1I Des b ~> X ]0). 
 
-        Notation "Q[1 b ~> X ]0" := (@polyQ_of_metaQ _ _ _ b X) (at level 25).
-        Notation "Q[0 X ~> a ]1" := (@polyQ_of_metaQ _ _ _ (@IdenV _) X <o (a : V(0 _ |- A[0 _ ~> X ]0 )0)) (at level 25).
+        Notation "Q[1 b ~> X ]0" := (@poly_of_metaQ _ _ _ b X) (at level 25).
+        Notation "Q[0 X ~> a ]1" := (@poly_of_metaQ _ _ _ (@IdenV _) X <o (a : V(0 _ |- A[0 _ ~> X ]0 )0)) (at level 25).
 
-        Lemma polyQ_arrow : forall (B : obV) (A : obA),
-                            forall (V V' : obV) (v : V(0 V' |- V )0),
-                            forall (f : V(0 V |- Q[0 B ~> A ]0 )0) (X : obA),
-                              Q[1 f <o v ~> X ]0
-                               ~~ [1 v ~> Q[0 B ~> X ]0 ]0 <o Q[1 f ~> X ]0 .
+        Lemma poly_of_metaQ_arrow : forall (B : obV) (A : obA),
+                                    forall (V V' : obV) (v : V(0 V' |- V )0),
+                                    forall (f : V(0 V |- Q[0 B ~> A ]0 )0) (X : obA),
+                                      Q[1 f <o v ~> X ]0
+                                       ~~ [1 v ~> Q[0 B ~> X ]0 ]0 <o Q[1 f ~> X ]0 .
         Proof.
-          intros. unfold polyQ_of_metaQ.
+          intros. unfold poly_of_metaQ.
           eapply TransV; [| eapply CongConsIn, CongMetaQ, Des_Input ].
           eapply TransV; [| eapply CongConsIn, metaQ_arrow ].
           apply ConsIn_Output.
         Qed.
 
-        Lemma CongQolyQ : forall (V : obV) (B : obV) (A : obA),
-                          forall (f f' : V(0 V |- Q[0 B ~> A ]0 )0),
-                            f' ~~ f -> forall X : obA, Q[1 f' ~> X ]0 ~~ Q[1 f ~> X ]0.
+        Lemma Cong_poly_of_metaQ : forall (V : obV) (B : obV) (A : obA),
+                                   forall (f f' : V(0 V |- Q[0 B ~> A ]0 )0),
+                                     f' ~~ f -> forall X : obA, Q[1 f' ~> X ]0 ~~ Q[1 f ~> X ]0.
         Proof.
-          intros. unfold polyQ_of_metaQ.  apply CongConsIn, CongMetaQ, CongDes. assumption.
+          intros. unfold poly_of_metaQ.  apply CongConsIn, CongMetaQ, CongDes. assumption.
         Qed.
 
-        Lemma polyQ_morphism : forall (B : obV) (V : obV),
-                               forall (A : obA) (W : obV) (A' : obA) (g : V(0 W |- A[0 A ~> A']0 )0),
-                               forall (f : V(0 V |-Q[0 B ~> A ]0 )0) (X : obA),
-                                 Q[1 Des( [1 f ~> Q[0 B ~> A' ]0 ]0 <o Q[0 A' ~> g ]1 ) ~> X ]0
-                                  ~~  DesIn( [0 W ~> Q[1 f ~> X ]0 ]1 ) <o A[1 g ~> X ]0.
+        Lemma poly_of_metaQ_morphism : forall (B : obV) (V : obV),
+                                       forall (A : obA) (W : obV) (A' : obA) (g : V(0 W |- A[0 A ~> A']0 )0),
+                                       forall (f : V(0 V |-Q[0 B ~> A ]0 )0) (X : obA),
+                                         Q[1 Des( [1 f ~> Q[0 B ~> A' ]0 ]0 <o Q[0 A' ~> g ]1 ) ~> X ]0
+                                          ~~  DesIn( [0 W ~> Q[1 f ~> X ]0 ]1 ) <o A[1 g ~> X ]0.
         Proof.
           (* enough (  [1Assoc ~> Q|0 X ]0 <o DesIn ( _ ) ~~  [1Assoc ~> Q|0 X ]0 <o DesIn ( _ ) ) *)
-          intros. unfold polyQ_of_metaQ.
+          intros. unfold poly_of_metaQ.
           intros;  eapply TransV; [ eapply TransV | ]; [ apply ConsIn_DesIn | idtac | apply SymV, ConsIn_DesIn].
           apply CongConsIn, Assoc_Iso.
 
@@ -1249,25 +1334,25 @@ NEXT4: rewrite natural as above
 
           eapply metaQ_morphism.
         Qed.
-       
-        Definition polyQ_IdenV : forall (B : obV) (A : obA),
-                                 forall X : obA, V(0 A[0 A ~> X ]0  |- [0 Q[0 B ~> A ]0 ~> Q[0 B ~> X ]0 ]0 )0
-          := (fun B A X => @polyQ_of_metaQ (Q[0 B ~> A ]0) B A (@IdenV (Q[0 B ~> A ]0)) X).
-        Notation "Q[0 B ~> - ]1" := (@polyQ_IdenV B) (at level 25).
-
-        (** ** continue polyQ of metaQ **)
-
-        Definition polyQ_unitV : forall (A : obA),
-                                 forall X : obA, V(0 A[0 A ~> X ]0  |- [0 Q|0 A ~> Q|0 X ]0 )0
-          := (fun A X => DesIdenObR(@polyQ_of_metaQ I (Q|0 A) A (@unitV _) X)).
-        Notation "Q|1" := (@polyQ_unitV _ _) (at level 0).
         
-        (** polyQ_unitV_metaQ_IdenV : forall A X : obA, Q|1 ~~ Q||1 **)
-        Lemma polyQ_unitV_metaQ_IdenV : forall A X : obA, 
-                                          @polyQ_unitV A X ~~ @metaQ_IdenV A X .
+        Definition poly_of_metaQ_IdenV : forall (B : obV) (A : obA),
+                                         forall X : obA, V(0 A[0 A ~> X ]0  |- [0 Q[0 B ~> A ]0 ~> Q[0 B ~> X ]0 ]0 )0
+          := (fun B A X => @poly_of_metaQ (Q[0 B ~> A ]0) B A (@IdenV (Q[0 B ~> A ]0)) X).
+        Notation "Q[0 B ~> - ]1" := (@poly_of_metaQ_IdenV B) (at level 25).
+
+        (** ** continue poly_of_metaQ of metaQ **)
+
+        Definition poly_of_metaQ_unitV : forall (A : obA),
+                                         forall X : obA, V(0 A[0 A ~> X ]0  |- [0 Q|0 A ~> Q|0 X ]0 )0
+          := (fun A X => DesIdenObR(@poly_of_metaQ I (Q|0 A) A (@unitV _) X)).
+        Notation "Q|1" := (@poly_of_metaQ_unitV _ _) (at level 0).
+        
+        (** poly_of_metaQ_unitV_metaQ_IdenV : forall A X : obA, Q|1 ~~ Q||1 **)
+        Lemma poly_of_metaQ_unitV_metaQ_IdenV : forall A X : obA, 
+                                                  @poly_of_metaQ_unitV A X ~~ @metaQ_IdenV A X .
         Proof.
           intros.
-          unfold polyQ_unitV. unfold polyQ_of_metaQ.
+          unfold poly_of_metaQ_unitV. unfold poly_of_metaQ.
           unfold metaQ_IdenV.
           eapply TransV; cycle 1.
           eapply CongDesIdenObR, CongConsIn, CongMetaQ, Cat1LeftV .
@@ -1280,205 +1365,476 @@ NEXT4: rewrite natural as above
           eapply SymV, Cat1LeftV.
         Qed.
 
-      
-      (** ** now natural metatransformation **)
+        
+        (** ** now natural metatransformation **)
 
-      Parameter metaβ : forall (A : obA),
-                           V(0 P|0 A |- Q|0 A )0.
+        Parameter metaβ : forall (A : obA),
+                            V(0 P|0 A |- Q|0 A )0.
 
-      Notation "β||0 A" := (@metaβ A) (at level 4, right associativity).
+        Notation "β||0 A" := (@metaβ A) (at level 4, right associativity).
 
-      (** written here : (inner modification) ~~ (outer modification)**)
-      Hypothesis metaβ_morphism : forall (A : obA)  (A' : obA),
-                                   [0 P|0 A ~>  β||0 A' ]1 <o P||1
-                                                                 ~~ [1 β||0 A ~> Q|0 A' ]0 <o Q||1.
+        (** written here : (inner modification) ~~ (outer modification)**)
+        Hypothesis metaβ_morphism : forall (A : obA)  (A' : obA),
+                                      [0 P|0 A ~>  β||0 A' ]1 <o P||1
+                                                                ~~ [1 β||0 A ~> Q|0 A' ]0 <o Q||1.
 
-      (** Cons et al was here , Des_Input was here **)
+        (** Cons et al was here , Des_Input was here **)
 
-      Definition poly_of_metaβ : forall (V : obV) (B : obV) (A : obA),
-                                    V(0 V |- P[0 B ~> A ]0 )0 ->
-                                    V(0 V |- Q[0 B ~> A ]0 )0
-        := fun (V B : obV) (A : obA) (b : V(0 V |- P[0 B ~> A ]0 )0) =>
-             Cons (β||0 A <o Des b) .
-      
-      (** :^) **)
-      Notation "β|1 f" := (@poly_of_metaβ _ _ _ f) (at level 5, right associativity).
-      (** this Notation "β|0 A" is not held below **)
-      Notation "β|0 A" := (@poly_of_metaβ _ _ A (@IdenV _)) (at level 4, right associativity).
+        Definition poly_of_metaβ : forall (V : obV) (B : obV) (A : obA),
+                                     V(0 V |- P[0 B ~> A ]0 )0 ->
+                                     V(0 V |- Q[0 B ~> A ]0 )0
+          := fun (V B : obV) (A : obA) (b : V(0 V |- P[0 B ~> A ]0 )0) =>
+               Cons (β||0 A <o Des b) .
+        
+        (** :^) **)
+        Notation "β|1 f" := (@poly_of_metaβ _ _ _ f) (at level 5, right associativity).
+        (** this Notation "β|0 A" is not held below **)
+        Notation "β|0 A" := (@poly_of_metaβ _ _ A (@IdenV _)) (at level 4, right associativity).
 
-      Lemma poly_of_metaβ_arrow : forall (B : obV) (A : obA),
-                             forall (V V' : obV) (v : V(0 V' |- V )0),
-                             forall (f : V(0 V |- P[0 B ~> A ]0 )0) (X : obA),
-                               β|1 (f <o v)
-                                   ~~ β|1 f <o v .
-      Proof.
-        intros.
-        unfold poly_of_metaβ.
-        eapply TransV; [ eapply Cons_Input  |] .
-        eapply TransV; [ eapply CongCons; eapply SymV, Cat2V  |] .
-        eapply TransV; [ eapply CongCons; eapply CongCom; [ eapply ReflV |  eapply Des_Input  ] |] .
-        eapply ReflV.
-      Qed.
+        Lemma poly_of_metaβ_arrow : forall (B : obV) (A : obA),
+                                    forall (V V' : obV) (v : V(0 V' |- V )0),
+                                    forall (f : V(0 V |- P[0 B ~> A ]0 )0) (X : obA),
+                                      β|1 (f <o v)
+                                          ~~ β|1 f <o v .
+        Proof.
+          intros.
+          unfold poly_of_metaβ.
+          eapply TransV; [ eapply Cons_Input  |] .
+          eapply TransV; [ eapply CongCons; eapply SymV, Cat2V  |] .
+          eapply TransV; [ eapply CongCons; eapply CongCom; [ eapply ReflV |  eapply Des_Input  ] |] .
+          eapply ReflV.
+        Qed.
 
-      Hypothesis Cons_Output : forall V : obV, forall (U W : obV), forall (v :  V(0 (0 U * V )0 |-  W )0), forall W' (w : V(0 W |- W' )0),
-                                 [0 V ~> w ]1 <o Cons( v ) ~~ Cons( w <o v ) .
-      Hypothesis Des_Output : forall V : obV, forall (U W : obV), forall (v : V(0 U |- [0 V ~> W ]0 )0), forall W' (w : V(0 W |- W' )0),
-                                Des( [0 V ~> w ]1 <o v ) ~~ w <o Des( v ) .
-      Hypothesis ConsIn_Output2 : forall V : obV, forall (U0 : obV), forall (U1 : obV) , forall (W W' : obV) (w : V(0 W |- W' )0), forall (v : V(0 U0 |- [0 (0 U1 * V )0 ~> W ]0 )0),
-                                    ConsIn( [0 (0 U1 * V )0 ~> w ]1 <o v ) ~~ [0 U1 ~> [0 V ~> w ]1 ]1 <o ConsIn( v ) .
-      Hypothesis ConsIn_consV10_functorial : forall V B PA (f : V(0 V |- [0 B ~> PA ]0 )0) PA' QA (g : V(0 [0 B ~> PA ]0 |- [0 B ~> QA ]0 )0),
-                                               ( ConsIn (([1 Des (g <o f) ~> PA' ]0)) )
-                                                 ~~ ( ([1 f ~> [0 B ~> PA' ]0 ]0 <o ConsIn ([1 Des (g) ~> PA' ]0))
-                                                      : V(0 [0 QA ~> PA' ]0 |- [0 V ~> [0 B ~> PA' ]0 ]0 )0 ) .
-      Hypothesis Des_Cons : forall V : obV, forall (U W : obV), forall (f : V(0 (0 U * V )0 |-  W )0),
-                              Des (Cons f) ~~ f.
-      
-      (** ?? may change def of funtor into V because now extra decoding while already in V ?? **)
-      (** written here : (inner modification) ~~ (outer modification)**)
-      Lemma poly_of_metaβ_morphism : forall (V : obV) (B : obV),
-                                      forall (A : obA) (W : obV) (A' : obA) (a : V(0 W |- A[0 A ~> A']0 )0),
-                                      forall (f : V(0 V |- P[0 B ~> A ]0 )0),
-                                        β|1 (Des( [1 f ~> P[0 B ~> A' ]0 ]0 <o P[0 A' ~> a ]1 ))
-                                            ~~ (Des( [1 β|1 f ~> Q[0 B ~> A' ]0 ]0 <o Q[0 A' ~> a ]1 )) .
-      Proof.
-        (** LHS **)
-        intros. unfold poly_of_metaβ. unfold polyP_of_metaP. unfold polyQ_of_metaQ.
-        eapply TransV; [| eapply SymV, Cons_Output ].
-        eapply TransV; [| eapply CongCom; [eapply ReflV| eapply Cons_Des] ].
-        eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply CongConsIn, CongMetaP, Cat1LeftV ].
-        eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply CongConsIn, metaP_arrow ].
-        eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply ConsIn_Input ].
-        eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongCom; [eapply ReflV|]; eapply Cat2V ].
-        eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, SymV, Cat2V ].
-        eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply Des_Input ].
-        eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply CongDes, SymV, ConsIn_consV10_functorial ].        
-        eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply SymV, Des_Input ].
-        eapply TransV; [| eapply  SymV, Des_Output ].
-        eapply TransV; [| eapply  CongDes, SymV, Cat2V].
-        eapply TransV; [| eapply  CongDes, CongCom; [|eapply ReflV] ; eapply SymV, ConsIn_Output2 ].
-        eapply TransV; [| eapply  CongDes, CongCom; [|eapply ReflV] ; eapply CongConsIn, consV11_bifunctorial ].
-        eapply TransV; [| eapply  CongDes, CongCom; [|eapply ReflV] ; eapply ConsIn_Input ].
-        eapply TransV; [| eapply  CongDes, Cat2V ].
-        eapply TransV; [| eapply  CongDes, CongCom; [eapply ReflV|] ; eapply SymV, Cat2V ].
-        eapply TransV; [| eapply  CongDes, CongCom; [eapply ReflV|] ; eapply CongCom; [|eapply ReflV]; eapply metaβ_morphism   ].
-        eapply TransV; [| eapply CongDes; eapply SymV, Cat2V]. 
-        eapply TransV; [| eapply CongDes, CongCom; [| eapply ReflV]; eapply SymV, Cat2V].
+        Hypothesis Cons_Output : forall V : obV, forall (U W : obV), forall (v :  V(0 (0 U * V )0 |-  W )0), forall W' (w : V(0 W |- W' )0),
+                                   [0 V ~> w ]1 <o Cons( v ) ~~ Cons( w <o v ) .
+        Hypothesis Des_Output : forall V : obV, forall (U W : obV), forall (v : V(0 U |- [0 V ~> W ]0 )0), forall W' (w : V(0 W |- W' )0),
+                                  Des( [0 V ~> w ]1 <o v ) ~~ w <o Des( v ) .
+        Hypothesis ConsIn_Output2 : forall V : obV, forall (U0 : obV), forall (U1 : obV) , forall (W W' : obV) (w : V(0 W |- W' )0), forall (v : V(0 U0 |- [0 (0 U1 * V )0 ~> W ]0 )0),
+                                      ConsIn( [0 (0 U1 * V )0 ~> w ]1 <o v ) ~~ [0 U1 ~> [0 V ~> w ]1 ]1 <o ConsIn( v ) .
+        Hypothesis ConsIn_consV10_functorial : forall V B PA (f : V(0 V |- [0 B ~> PA ]0 )0) PA' QA (g : V(0 [0 B ~> PA ]0 |- [0 B ~> QA ]0 )0),
+                                                 ( ConsIn (([1 Des (g <o f) ~> PA' ]0)) )
+                                                   ~~ ( ([1 f ~> [0 B ~> PA' ]0 ]0 <o ConsIn ([1 Des (g) ~> PA' ]0))
+                                                        : V(0 [0 QA ~> PA' ]0 |- [0 V ~> [0 B ~> PA' ]0 ]0 )0 ) .
+        Hypothesis Des_Cons : forall V : obV, forall (U W : obV), forall (f : V(0 (0 U * V )0 |-  W )0),
+                                Des (Cons f) ~~ f.
+        
+        (** ?? may change def of funtor into V because now extra decoding while already in V ?? **)
+        (** written here : (inner modification) ~~ (outer modification)**)
+        Lemma poly_of_metaβ_morphism : forall (V : obV) (B : obV),
+                                       forall (A : obA) (W : obV) (A' : obA) (a : V(0 W |- A[0 A ~> A']0 )0),
+                                       forall (f : V(0 V |- P[0 B ~> A ]0 )0),
+                                         β|1 (Des( [1 f ~> P[0 B ~> A' ]0 ]0 <o P[0 A' ~> a ]1 ))
+                                             ~~ (Des( [1 β|1 f ~> Q[0 B ~> A' ]0 ]0 <o Q[0 A' ~> a ]1 )) .
+        Proof.
+          (** LHS **)
+          intros. unfold poly_of_metaβ. unfold poly_of_metaP. unfold poly_of_metaQ.
+          eapply TransV; [| eapply SymV, Cons_Output ].
+          eapply TransV; [| eapply CongCom; [eapply ReflV| eapply Cons_Des] ].
+          eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply CongConsIn, CongMetaP, Cat1LeftV ].
+          eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply CongConsIn, metaP_arrow ].
+          eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply ConsIn_Input ].
+          eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongCom; [eapply ReflV|]; eapply Cat2V ].
+          eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, SymV, Cat2V ].
+          eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply Des_Input ].
+          eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply CongDes, SymV, ConsIn_consV10_functorial ].        
+          eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply SymV, Des_Input ].
+          eapply TransV; [| eapply  SymV, Des_Output ].
+          eapply TransV; [| eapply  CongDes, SymV, Cat2V].
+          eapply TransV; [| eapply  CongDes, CongCom; [|eapply ReflV] ; eapply SymV, ConsIn_Output2 ].
+          eapply TransV; [| eapply  CongDes, CongCom; [|eapply ReflV] ; eapply CongConsIn, consV11_bifunctorial ].
+          eapply TransV; [| eapply  CongDes, CongCom; [|eapply ReflV] ; eapply ConsIn_Input ].
+          eapply TransV; [| eapply  CongDes, Cat2V ].
+          eapply TransV; [| eapply  CongDes, CongCom; [eapply ReflV|] ; eapply SymV, Cat2V ].
+          eapply TransV; [| eapply  CongDes, CongCom; [eapply ReflV|] ; eapply CongCom; [|eapply ReflV]; eapply metaβ_morphism   ].
+          eapply TransV; [| eapply CongDes; eapply SymV, Cat2V]. 
+          eapply TransV; [| eapply CongDes, CongCom; [| eapply ReflV]; eapply SymV, Cat2V].
 
-        (** RHS **)
-        eapply CongDes. eapply TransV; [ eapply Cat2V |]. eapply CongCom; [|eapply ReflV].
-        eapply TransV; [ eapply CongCom; [eapply ReflV|];  eapply CongConsIn , CongMetaQ, SymV, Cat1LeftV |].
-        eapply TransV; [ eapply CongCom; [eapply ReflV|];  eapply CongConsIn , SymV, metaQ_arrow |].
-        eapply TransV; [ eapply CongCom; [eapply ReflV|];  eapply SymV, ConsIn_Input |].
-        eapply TransV; [ eapply Cat2V |].
-        eapply CongCom; [| eapply ReflV].
+          (** RHS **)
+          eapply CongDes. eapply TransV; [ eapply Cat2V |]. eapply CongCom; [|eapply ReflV].
+          eapply TransV; [ eapply CongCom; [eapply ReflV|];  eapply CongConsIn , CongMetaQ, SymV, Cat1LeftV |].
+          eapply TransV; [ eapply CongCom; [eapply ReflV|];  eapply CongConsIn , SymV, metaQ_arrow |].
+          eapply TransV; [ eapply CongCom; [eapply ReflV|];  eapply SymV, ConsIn_Input |].
+          eapply TransV; [ eapply Cat2V |].
+          eapply CongCom; [| eapply ReflV].
 
-        (** more pure logic *)
-        eapply TransV; [| eapply CongCom; [| eapply ReflV]; eapply CongConsIn, CongConsV10, CongDes, SymV, Cat1LeftV].
-        eapply TransV; [| eapply SymV, ConsIn_Input].
-        eapply TransV; [| eapply CongConsIn; eapply SymV, consV10_functorial].
-        eapply TransV; [| eapply CongConsIn, CongConsV10,  SymV, Des_Cons ].
-        eapply TransV; [| eapply CongConsIn, CongConsV10,  CongDes, Cat1LeftV ].
-        eapply ConsIn_consV10_functorial.
-      Qed.
+          (** more pure logic *)
+          eapply TransV; [| eapply CongCom; [| eapply ReflV]; eapply CongConsIn, CongConsV10, CongDes, SymV, Cat1LeftV].
+          eapply TransV; [| eapply SymV, ConsIn_Input].
+          eapply TransV; [| eapply CongConsIn; eapply SymV, consV10_functorial].
+          eapply TransV; [| eapply CongConsIn, CongConsV10,  SymV, Des_Cons ].
+          eapply TransV; [| eapply CongConsIn, CongConsV10,  CongDes, Cat1LeftV ].
+          eapply ConsIn_consV10_functorial.
+        Qed.
 
-      Lemma poly_of_metaβ_morphism_codomain : forall (V : obV),
-                                               forall (B : obV) (W : obV) (B' : obV) (b : V(0 W |- V[0 B' ~> B]0 )0),
-                                               forall (A : obA),
-                                               forall (f : V(0 V |-P[0 B ~> A ]0 )0),
-                                                 β|1 (Des( V[1 b ~> P|0 A ]0 <o f ))
-                                                     ~~  Des( V[1 b ~> Q|0 A ]0 <o β|1 f ).
-      Proof.
-        (** LHS **)
-        intros. unfold poly_of_metaβ.
-        eapply TransV; [| eapply SymV, Cons_Output ].
-        eapply TransV; [| eapply CongCom; [eapply ReflV| eapply Cons_Des] ].
+        Lemma poly_of_metaβ_morphism_codomain : forall (V : obV),
+                                                forall (B : obV) (W : obV) (B' : obV) (b : V(0 W |- V[0 B' ~> B]0 )0),
+                                                forall (A : obA),
+                                                forall (f : V(0 V |-P[0 B ~> A ]0 )0),
+                                                  β|1 (Des( V[1 b ~> P|0 A ]0 <o f ))
+                                                      ~~  Des( V[1 b ~> Q|0 A ]0 <o β|1 f ).
+        Proof.
+          (** LHS **)
+          intros. unfold poly_of_metaβ.
+          eapply TransV; [| eapply SymV, Cons_Output ].
+          eapply TransV; [| eapply CongCom; [eapply ReflV| eapply Cons_Des] ].
 
-        (** RHS **)
-        eapply TransV; [ eapply CongDes, CongCom; [eapply ReflV|];  eapply Cons_Output |].
-        eapply TransV; [ eapply CongDes, CongCom; [eapply ReflV|];  eapply CongCom; [eapply ReflV|]; eapply SymV, Cons_Des |].
-        eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply ConsIn_DesIn |].
-        eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply CongConsIn, polyV_monoV |].
-        eapply TransV; [ eapply CongDes, Cat2V |].
-        eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply ConsIn_Input |].
-        eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply CongConsIn, consV11_bifunctorial |].
-        eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply SymV, ConsIn_Input |].
-        eapply TransV; [ eapply CongDes, SymV, Cat2V  |].
-        eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply CongConsIn, SymV, Cat1RightV |].
-        eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply SymV, ConsIn_Output2 |].
-        eapply TransV; [ eapply CongDes, SymV, Cat2V  |].
-        eapply TransV; [ eapply SymV, Des_Output  |].
-        eapply TransV; [ eapply CongCom; [eapply ReflV |]; eapply CongDes, Cat2V |].
-        eapply TransV; [ eapply CongCom; [eapply ReflV |]; eapply CongDes, CongCom; [|eapply ReflV]; eapply ConsIn_Input  |].
-        eapply TransV; [ eapply CongCom; [eapply ReflV |]; eapply CongDes, CongCom; [|eapply ReflV]; eapply CongConsIn, Cat1LeftV  |].
-        eapply TransV; [ eapply CongCom; [eapply ReflV |]; eapply CongDes, CongCom; [|eapply ReflV]; eapply CongConsIn, SymV, polyV_monoV  |].
-        eapply TransV; [ eapply CongCom; [eapply ReflV |]; eapply CongDes, CongCom; [|eapply ReflV]; eapply SymV, ConsIn_DesIn  |].
+          (** RHS **)
+          eapply TransV; [ eapply CongDes, CongCom; [eapply ReflV|];  eapply Cons_Output |].
+          eapply TransV; [ eapply CongDes, CongCom; [eapply ReflV|];  eapply CongCom; [eapply ReflV|]; eapply SymV, Cons_Des |].
+          eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply ConsIn_DesIn |].
+          eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply CongConsIn, polyV_monoV |].
+          eapply TransV; [ eapply CongDes, Cat2V |].
+          eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply ConsIn_Input |].
+          eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply CongConsIn, consV11_bifunctorial |].
+          eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply SymV, ConsIn_Input |].
+          eapply TransV; [ eapply CongDes, SymV, Cat2V  |].
+          eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply CongConsIn, SymV, Cat1RightV |].
+          eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply SymV, ConsIn_Output2 |].
+          eapply TransV; [ eapply CongDes, SymV, Cat2V  |].
+          eapply TransV; [ eapply SymV, Des_Output  |].
+          eapply TransV; [ eapply CongCom; [eapply ReflV |]; eapply CongDes, Cat2V |].
+          eapply TransV; [ eapply CongCom; [eapply ReflV |]; eapply CongDes, CongCom; [|eapply ReflV]; eapply ConsIn_Input  |].
+          eapply TransV; [ eapply CongCom; [eapply ReflV |]; eapply CongDes, CongCom; [|eapply ReflV]; eapply CongConsIn, Cat1LeftV  |].
+          eapply TransV; [ eapply CongCom; [eapply ReflV |]; eapply CongDes, CongCom; [|eapply ReflV]; eapply CongConsIn, SymV, polyV_monoV  |].
+          eapply TransV; [ eapply CongCom; [eapply ReflV |]; eapply CongDes, CongCom; [|eapply ReflV]; eapply SymV, ConsIn_DesIn  |].
 
-        eapply ReflV.
-      Qed.
+          eapply ReflV.
+        Qed.
 
-      Hypothesis Des_I_Iso : forall (A : obV),
-                            forall (Y X : obV) (f g : V(0 Y |-  [0  A ~> X ]0 )0 ), 
-                              [1 Des (@IdenV ([0 I ~> A ]0)) ~> X ]0 <o f ~~ [1  Des (@IdenV ([0 I ~> A ]0))  ~> X ]0 <o g -> f ~~ g .
+        Hypothesis Des_I_Iso : forall (A : obV),
+                               forall (Y X : obV) (f g : V(0 Y |-  [0  A ~> X ]0 )0 ), 
+                                 [1 Des (@IdenV ([0 I ~> A ]0)) ~> X ]0 <o f ~~ [1  Des (@IdenV ([0 I ~> A ]0))  ~> X ]0 <o g -> f ~~ g .
 
-      Lemma meta_morphism_of_poly_of_metaβ : ( forall (V : obV) (B : obV),
-                                        forall (A : obA) (W : obV) (A' : obA) (a : V(0 W |- A[0 A ~> A']0 )0),
-                                        forall (f : V(0 V |- P[0 B ~> A ]0 )0),
-                                          β|1 (Des( [1 f ~> P[0 B ~> A' ]0 ]0 <o P[0 A' ~> a ]1 ))
-                                              ~~ (Des( [1 β|1 f ~> Q[0 B ~> A' ]0 ]0 <o Q[0 A' ~> a ]1 )) )
-                                      -> ( forall (A : obA)  (A' : obA),
-                                            [0 P|0 A ~>  β||0 A' ]1 <o P||1
-                                                                      ~~ [1 β||0 A ~> Q|0 A' ]0 <o Q||1 ) .
-      Proof.
-        intro H_poly_morphism. intros.
-        specialize H_poly_morphism with (B := I) (A := A) (A' := A') (a := 1) (f := 1).
-        unfold poly_of_metaβ in H_poly_morphism. unfold polyP_of_metaP in H_poly_morphism. unfold polyQ_of_metaQ in H_poly_morphism.
-        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply SymV, Cons_Output ].
-        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply Cons_Des ].
-        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongCom; [|eapply ReflV]; eapply SymV, consV10_functorial_fun1 ].
-        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, SymV, Cat1LeftV ].
-        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, SymV, Cat1RightV ]. 
-        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongConsIn, CongMetaP, Cat1LeftV ].
-        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongConsIn, metaP_arrow ].
-        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, ConsIn_Input ].
-        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply SymV, Des_Output ].
-        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongDes, SymV, Cat2V ].
-        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongDes, CongCom; [|eapply ReflV]; eapply SymV, ConsIn_Output2   ].
-        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongDes, SymV, ConsIn_Input   ].
+        Lemma meta_morphism_of_poly_of_metaβ : ( forall (V : obV) (B : obV),
+                                                 forall (A : obA) (W : obV) (A' : obA) (a : V(0 W |- A[0 A ~> A']0 )0),
+                                                 forall (f : V(0 V |- P[0 B ~> A ]0 )0),
+                                                   β|1 (Des( [1 f ~> P[0 B ~> A' ]0 ]0 <o P[0 A' ~> a ]1 ))
+                                                       ~~ (Des( [1 β|1 f ~> Q[0 B ~> A' ]0 ]0 <o Q[0 A' ~> a ]1 )) )
+                                               -> ( forall (A : obA)  (A' : obA),
+                                                     [0 P|0 A ~>  β||0 A' ]1 <o P||1
+                                                                               ~~ [1 β||0 A ~> Q|0 A' ]0 <o Q||1 ) .
+        Proof.
+          (** LHS **)
+          intro H_poly_morphism. intros.
+          specialize H_poly_morphism with (B := I) (A := A) (A' := A') (a := 1) (f := 1).
+          unfold poly_of_metaβ in H_poly_morphism. unfold poly_of_metaP in H_poly_morphism. unfold poly_of_metaQ in H_poly_morphism.
+          eapply SymV, TransV, SymV in H_poly_morphism; [| eapply SymV, Cons_Output ].
+          eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply Cons_Des ].
+          eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongCom; [|eapply ReflV]; eapply SymV, consV10_functorial_fun1 ].
+          eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, SymV, Cat1LeftV ].
+          eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, SymV, Cat1RightV ]. 
+          eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongConsIn, CongMetaP, Cat1LeftV ].
+          eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongConsIn, metaP_arrow ].
+          eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, ConsIn_Input ].
+          eapply SymV, TransV, SymV in H_poly_morphism; [| eapply SymV, Des_Output ].
+          eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongDes, SymV, Cat2V ].
+          eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongDes, CongCom; [|eapply ReflV]; eapply SymV, ConsIn_Output2   ].
+          eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongDes, SymV, ConsIn_Input   ].
 
-        (** RHS **)
-        eapply CongCons in H_poly_morphism.
-        eapply SymV, TransV, SymV in H_poly_morphism; [|eapply Cons_Des]. eapply TransV in H_poly_morphism; [|eapply Cons_Des].
-        eapply  TransV in H_poly_morphism; [|eapply CongCom; [eapply ReflV|]; eapply SymV, Cat1RightV ].
-        eapply TransV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|];  eapply CongConsIn, CongMetaQ, Cat1LeftV ].
-        eapply TransV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|];  eapply CongConsIn, metaQ_arrow].
-        eapply TransV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|];  eapply ConsIn_Input].
-        eapply TransV in H_poly_morphism; [| eapply SymV, Cat2V ].
-        eapply TransV in H_poly_morphism; [| eapply CongCom; [|eapply ReflV]; eapply SymV, ConsIn_consV10_functorial ].
-        eapply TransV in H_poly_morphism; [| eapply SymV, ConsIn_Input].
-        eapply CongDesIn in H_poly_morphism.
-        eapply SymV, TransV, SymV in H_poly_morphism; [|eapply DesIn_ConsIn]. eapply TransV in H_poly_morphism; [|eapply DesIn_ConsIn].        
-        eapply TransV in H_poly_morphism; [| eapply CongCom; [|eapply ReflV];  eapply CongConsV10, CongDes, SymV, Cat1LeftV].
-        eapply TransV in H_poly_morphism; [| eapply CongCom; [|eapply ReflV];  eapply CongConsV10, Des_Cons].
-        eapply TransV in H_poly_morphism; [| eapply CongCom; [|eapply ReflV];  eapply consV10_functorial].
-        eapply TransV in H_poly_morphism; [| eapply Cat2V].
-        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [|eapply ReflV]; eapply consV11_bifunctorial ].
-        eapply SymV, TransV, SymV in H_poly_morphism; [| eapply Cat2V ].
-        (*
-        Notation  "'MID' x" := (@IdenV x ) (at level 3).
-        Show.
-        (** really is iso [1Des MID (P[0 I ~> A ]0) ~> Q|0 A' ]0 **)
-        Notation  "'DES' x y" := (@Des x _ _ y) (at level 3).
-        Show.
-        (** really is iso   [1DES I (MID (P[0 I ~> A ]0)) ~> Q|0 A' ]0  **)
-        Show.
-         *)
-        eapply Des_I_Iso in H_poly_morphism.
-        exact H_poly_morphism.
-      Qed.
-      
+          (** RHS **)
+          eapply CongCons in H_poly_morphism.
+          eapply SymV, TransV, SymV in H_poly_morphism; [|eapply Cons_Des]. eapply TransV in H_poly_morphism; [|eapply Cons_Des].
+          eapply  TransV in H_poly_morphism; [|eapply CongCom; [eapply ReflV|]; eapply SymV, Cat1RightV ].
+          eapply TransV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|];  eapply CongConsIn, CongMetaQ, Cat1LeftV ].
+          eapply TransV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|];  eapply CongConsIn, metaQ_arrow].
+          eapply TransV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|];  eapply ConsIn_Input].
+          eapply TransV in H_poly_morphism; [| eapply SymV, Cat2V ].
+          eapply TransV in H_poly_morphism; [| eapply CongCom; [|eapply ReflV]; eapply SymV, ConsIn_consV10_functorial ].
+          eapply TransV in H_poly_morphism; [| eapply SymV, ConsIn_Input].
+          eapply CongDesIn in H_poly_morphism.
+          eapply SymV, TransV, SymV in H_poly_morphism; [|eapply DesIn_ConsIn]. eapply TransV in H_poly_morphism; [|eapply DesIn_ConsIn].        
+          eapply TransV in H_poly_morphism; [| eapply CongCom; [|eapply ReflV];  eapply CongConsV10, CongDes, SymV, Cat1LeftV].
+          eapply TransV in H_poly_morphism; [| eapply CongCom; [|eapply ReflV];  eapply CongConsV10, Des_Cons].
+          eapply TransV in H_poly_morphism; [| eapply CongCom; [|eapply ReflV];  eapply consV10_functorial].
+          eapply TransV in H_poly_morphism; [| eapply Cat2V].
+          eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [|eapply ReflV]; eapply consV11_bifunctorial ].
+          eapply SymV, TransV, SymV in H_poly_morphism; [| eapply Cat2V ].
+          eapply Des_I_Iso in H_poly_morphism.
+
+          exact H_poly_morphism.
+        Qed.
+        
       End Poly_of_meta.
 
     End MetaTransformation.
+
+    Module NaturalityIsPolymorphic.
+
+      Variable (V : obV) (B : obB) (A : obA).
+
+      (** ** meta_of_polyF_at_B , metafunctor FB on top of F[0 B ~> - ]1 **)
+
+      Definition meta_of_polyF_at_B0 : obA -> obV
+        := fun A : obA => F[0 B ~> A ]0 .
+      Notation "FB|0 A" := (meta_of_polyF_at_B0 A) (at level 4, right associativity).
+
+      Definition meta_of_polyF_at_B : forall (V : obV)  (A : obA),
+                                        V(0 V |- FB|0 A )0 ->
+                                        forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> FB|0 X ]0 )0
+        := (fun (V : obV) (A : obA) (f : V(0 V |- FB|0 A )0) (X : obA) =>
+              @polyF V B A f X (* F[1 f ~> X ]0 *) ) .
+      (* intros. unfold meta_of_polyF_at_B0. apply polyF. assumption.
+        Show Proof. *)
+
+      Notation "FB[1I b ~> X ]0" := (@meta_of_polyF_at_B _ _ b X) (at level 25).
+
+      Definition meta_of_polyF_at_B_IdenV : forall A X : obA, V(0 A[0 A ~> X ]0 |- [0 FB|0 A ~> FB|0 X ]0 )0
+        :=  (fun A X => @meta_of_polyF_at_B _ A (@IdenV _) X).
+      Notation "FB||1" := (@meta_of_polyF_at_B_IdenV _ _) (at level 0).
+
+      Lemma  Cong_meta_of_polyF_at_B : forall (V : obV)(A : obA),
+                                       forall (f f' : V(0 V |- FB|0 A )0),
+                                         f' ~~ f -> forall X : obA, FB[1I f' ~> X ]0 ~~ FB[1I f ~> X ]0 .
+      Proof.
+        intros. unfold meta_of_polyF_at_B. apply CongPolyF. assumption.
+      Qed.
+
+      Lemma meta_of_polyF_at_B_arrow : forall (A : obA),
+                                       forall (V V' : obV) (v : V(0 V' |- V )0),
+                                       forall (f : V(0 V |- FB|0 A )0) (X : obA),
+                                         FB[1I f <o v ~> X ]0
+                                           ~~ [1 v ~> FB|0 X ]0 <o FB[1I f ~> X ]0 .
+      Proof.
+        unfold meta_of_polyF_at_B. apply polyF_arrow.
+      Qed.
+
+      Lemma meta_of_polyF_at_B_morphism : forall (V : obV),
+                                          forall (A : obA) (W : obV) (A' : obA) (g : V(0 W |- A[0 A ~> A']0 )0),
+                                          forall (f : V(0 V |-FB|0 A )0) (X : obA),
+                                            FB[1I Des( [1 f ~> FB|0 A' ]0 <o (FB||1 <o g) ) ~> X]0
+                                              ~~  DesIn( [0 W ~> FB[1I f ~> X ]0 ]1 ) <o A[1 g ~> X ]0.
+      Proof.
+        unfold meta_of_polyF_at_B.  intros.
+        (*TODO ERASE this line later *) eapply TransV; [eapply SymV, DesIn_Input|];
+                                        apply polyF_morphism.
+      Qed.
+
+      (** related to non-variance when unit push the output, commonly  ( (f _i) o>FB 1 ) ~~ (f _i)  , 
+       therefore metaFB is injective **)
+      Lemma meta_of_polyF_at_B_inputUnitA : forall (V : obV) (A : obA),
+                                            forall (f : V(0 V |- FB|0 A )0),
+                                              f ~~ DesIdenObL( (FB[1I f ~> A ]0) <o (@unitA A) ).
+      Proof.
+        unfold meta_of_polyF_at_B. intros.
+        apply polyF_inputUnitA.
+      Qed.
+
+      Lemma meta_of_polyF_at_B_identitary_polyF_identitary : forall (A : obA),
+                                                             forall X : obA,  FB||1 ~~ F[0 B ~> - ]1 A X .
+      Proof. 
+        unfold meta_of_polyF_at_B_IdenV. unfold meta_of_polyF_at_B. unfold polyF_IdenV .
+        intros. apply ReflV.
+      Qed.
+
+      (** ** poly_of_metaP of metaP **)
+        
+        Definition metaP0 : obA -> obV := meta_of_polyF_at_B0.
+        Notation "P|0 A" := (metaP0 A) (at level 4, right associativity).
+
+        Definition metaP : forall (V : obV) (A : obA),
+                            V(0 V |- P|0 A )0 ->
+                            forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> P|0 X ]0 )0 := meta_of_polyF_at_B. 
+
+        Notation "P[1I b ~> X ]0" := (@metaP _ _ b X) (at level 25).
+
+        Definition metaP_IdenV : forall A X : obA, V(0 A[0 A ~> X ]0 |- [0 P|0 A ~> P|0 X ]0 )0
+          :=  (fun A X => @metaP _ A (@IdenV _) X).
+        Notation "P||1" := (@metaP_IdenV _ _) (at level 0).
+
+        Definition CongMetaP : forall (V : obV)(A : obA),
+                               forall (f f' : V(0 V |- P|0 A )0),
+                                 f' ~~ f -> forall X : obA, P[1I f' ~> X ]0 ~~ P[1I f ~> X ]0 := Cong_meta_of_polyF_at_B .
+
+        Definition metaP_arrow : forall (A : obA),
+                                 forall (V V' : obV) (v : V(0 V' |- V )0),
+                                 forall (f : V(0 V |- P|0 A )0) (X : obA),
+                                   P[1I f <o v ~> X ]0
+                                    ~~ [1 v ~> P|0 X ]0 <o P[1I f ~> X ]0 := meta_of_polyF_at_B_arrow.
+
+        Definition metaP_morphism : forall (V : obV),
+                                    forall (A : obA) (W : obV) (A' : obA) (g : V(0 W |- A[0 A ~> A']0 )0),
+                                    forall (f : V(0 V |-P|0 A )0) (X : obA),
+                                      P[1I Des( [1 f ~> P|0 A' ]0 <o (P||1 <o g) ) ~> X]0
+                                       ~~  DesIn( [0 W ~> P[1I f ~> X ]0 ]1 ) <o A[1 g ~> X ]0 := meta_of_polyF_at_B_morphism.
+
+        (** related to non-variance when unit push the output, commonly  ( (f _i) o>P 1 ) ~~ (f _i)  , 
+       therefore metaP is injective **)
+        Definition metaP_inputUnitA : forall (V : obV) (A : obA),
+                                      forall (f : V(0 V |- P|0 A )0),
+                                        f ~~ DesIdenObL( (P[1I f ~> A ]0) <o (@unitA A) ) := meta_of_polyF_at_B_inputUnitA.
+        (*      (** ??? this is extra for metafunctor than polyfunctor : related to non-variance when unit pull the input, commonly  ( 1 o> h ) ~~ h     ....     ( 1 o> # ) ~~ #  ??? **)
+      Hypothesis metaP_unitB : forall (B : obB), forall X : obA, (@IdenV (P[0 B ~> X ]0)) ~~ DesIdenObR( P[1I (@unitB B) ~> X ]0 ) .         *)
+        Notation "P[0 B ~> A ]0" := (V[0 B ~> P|0 A ]0) (at level 25).
+        Definition poly_of_metaP : forall (V : obV) (B : obV) (A : obA),
+                                     V(0 V |- P[0 B ~> A ]0 )0 ->
+                                     forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> P[0 B ~> X ]0 ]0 )0
+          := fun (V B : obV) (A : obA) (b : V(0 V |- P[0 B ~> A ]0 )0) (X : obA) =>
+               ConsIn (P[1I Des b ~> X ]0). 
+
+        Notation "P[1 b ~> X ]0" := (@poly_of_metaP _ _ _ b X) (at level 25).
+        Notation "P[0 X ~> a ]1" := (@poly_of_metaP _ _ _ (@IdenV _) X <o (a : V(0 _ |- A[0 _ ~> X ]0 )0)) (at level 25).
+
+        Hypothesis Des_Input : forall (U U' : obV) (w : V(0 U' |- U )0), forall (V W : obV) (v : V(0 U |- [0 V ~> W ]0 )0), 
+                                 Des( v <o w ) ~~ Des( v ) <o desV10 V w .
+        Hypothesis ConsIn_Output : forall V : obV, forall (U0 : obV), forall (U1 U1' : obV) (u1 : V(0 U1' |- U1 )0), forall (W : obV), forall (v : V(0 U0 |- [0 (0 U1 * V )0 ~> W ]0 )0),
+                                     ConsIn( [1 (1 u1 * V )0 ~> W ]0 <o v ) ~~ [1 u1 ~> [0 V ~> W ]0 ]0 <o ConsIn( v ) .
+        Lemma poly_of_metaP_arrow : forall (B : obV) (A : obA),
+                                    forall (V V' : obV) (v : V(0 V' |- V )0),
+                                    forall (f : V(0 V |- P[0 B ~> A ]0 )0) (X : obA),
+                                      P[1 f <o v ~> X ]0
+                                       ~~ [1 v ~> P[0 B ~> X ]0 ]0 <o P[1 f ~> X ]0 .
+        Proof.
+          intros. unfold poly_of_metaP.
+          eapply TransV; [| eapply CongConsIn, CongMetaP, Des_Input ].
+          eapply TransV; [| eapply CongConsIn, metaP_arrow ].
+          apply ConsIn_Output.
+        Qed.
+
+        Lemma Cong_poly_of_metaP : forall (V : obV) (B : obV) (A : obA),
+                                   forall (f f' : V(0 V |- P[0 B ~> A ]0 )0),
+                                     f' ~~ f -> forall X : obA, P[1 f' ~> X ]0 ~~ P[1 f ~> X ]0.
+        Proof.
+          intros. unfold poly_of_metaP.  apply CongConsIn, CongMetaP, CongDes. assumption.
+        Qed.
+
+        Hypothesis CongConsV01 : forall V1 : obV, forall (V2 V2' : obV) (v v' : arrV00 V2 V2'),
+                                   v' ~~ v -> [0 V1 ~> v' ]1 ~~ [0 V1 ~> v ]1 .
+        Hypothesis ConsIn_Input : forall V : obV, forall (U0 U1 W : obV), forall (v : V(0 U0 |- [0 (0 U1 * V )0 ~> W ]0 )0), forall (U0' : obV) (i : V(0 U0' |- U0 )0),
+                                    ConsIn( v <o i ) ~~ (ConsIn v) <o i .
+        Hypothesis consV01_functorial : forall V1 : obV, forall V2 V2' (v : arrV00 V2 V2'), forall V2'' (v' : arrV00 V2' V2''),
+                                          [0 V1 ~> v' <o v ]1 ~~  [0 V1 ~> v' ]1 <o  [0 V1  ~> v ]1 .
+
+        Hypothesis CongCons : forall V : obV, forall (U W : obV), forall (v v' : V(0 (0 U * V )0 |- W )0 ),
+                                v' ~~ v -> Cons v' ~~ Cons v.
+        Hypothesis Cons_Des : forall V : obV, forall (U W : obV), forall (f : V(0 U |-  [0 V ~> W ]0 )0),
+                                Cons (Des f) ~~ f.
+        Hypothesis Cons_Input : forall V : obV, forall (U U' : obV) (w : V(0 U' |- U )0), forall (W : obV) (v : V(0 (0 U * V )0 |- W )0),
+                                  Cons(v <o desV10 V w)  ~~ Cons( v ) <o w .
+        Hypothesis DesIn_ConsIn : forall V : obV, forall (U0 U1 W : obV), forall (f : V(0 U0 |- [0 (0 U1 * V )0 ~> W ]0 )0),
+                                    DesIn (ConsIn f) ~~ f.
+
+
+        Hypothesis Assoc_Iso : forall (V W : obV), forall (U: obV),
+                               forall (Y X : obV) (f g : V(0 Y |-  [0 (0 ((0 U * V )0) * W )0 ~> X ]0 )0 ), 
+                                 [1 Assoc ~> X ]0 <o f ~~ [1 Assoc  ~> X ]0 <o g -> f ~~ g .
+        Hypothesis Assoc_nat0 : forall (V W : obV), forall (U U' : obV) (f : V(0 U |- U' )0 ),
+                                  Assoc <o (1 f * (0 V * W )0 )0 ~~ (1 ((1 f * V )0) * W )0 <o Assoc .
+        Hypothesis Des_consV10_functorial : forall V B PA (f : V(0 V |- [0 B ~> PA ]0 )0) PA' QA (g : V(0 [0 B ~> PA ]0 |- [0 B ~> QA ]0 )0) ,
+                                              (Des ([1 Des (g <o f) ~> PA' ]0 ))
+                                                ~~ ( ( Des (Des ([1 f ~> [0 B ~> PA' ]0 ]0 <o ConsIn ([1 Des (g) ~> PA' ]0))) ) <o Assoc
+                                                     : V(0 (0 ([0 QA ~> PA' ]0) * (0V * B )0 )0 |- PA' )0 ).
+        (** Hypothesis Assoc_Des_Des_old : forall V B PA PA' (f : V(0 V |- [0 B ~> PA ]0 )0),
+                                     ( (Des ([1 Des f ~> PA' ]0 )) : V(0 (0 ([0 PA ~> PA' ]0) * (0V * B )0 )0 |- PA' )0 )
+                                       ~~ ( ( Des (Des ([1 f ~> [0 B ~> PA' ]0 ]0 <o ConsIn ([1 Des (@IdenV ([0 B ~> PA ]0)) ~> PA' ]0))) ) <o Assoc ). **)
+        Hypothesis Assoc_DesIn_DesIn :  forall W PX, forall  V B PA (f : V(0 V |- [0 B ~> PA ]0 )0),
+                                          DesIn ([0 W ~>  ([1 Des f ~> PX ]0) ]1)
+                                                ~~ [1 Assoc ~> PX ]0 <o DesIn( DesIn ([0 W ~>  ConsIn([1 Des f ~> PX ]0) ]1) ) .
+
+        Lemma poly_of_metaP_morphism : forall (B : obV) (V : obV),
+                                       forall (A : obA) (W : obV) (A' : obA) (g : V(0 W |- A[0 A ~> A']0 )0),
+                                       forall (f : V(0 V |-P[0 B ~> A ]0 )0) (X : obA),
+                                         P[1 Des( [1 f ~> P[0 B ~> A' ]0 ]0 <o P[0 A' ~> g ]1 ) ~> X ]0
+                                          ~~  DesIn( [0 W ~> P[1 f ~> X ]0 ]1 ) <o A[1 g ~> X ]0.
+        Proof.
+          (* enough (  [1Assoc ~> P|0 X ]0 <o DesIn ( _ ) ~~  [1Assoc ~> P|0 X ]0 <o DesIn ( _ ) ) *)
+          intros. unfold poly_of_metaP.
+          intros;  eapply TransV; [ eapply TransV | ]; [ apply ConsIn_DesIn | idtac | apply SymV, ConsIn_DesIn].
+          apply CongConsIn, Assoc_Iso.
+
+          (** LHS **)
+          eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply DesIn_ConsIn].
+          eapply TransV; [| eapply SymV, metaP_arrow ].
+          eapply TransV; [| eapply CongMetaP, CongCom; [ eapply CongDes, CongDes, CongCom; [ eapply ReflV | eapply CongCom; [ eapply CongConsIn, CongMetaP, Cat1LeftV | eapply ReflV]  ] | eapply ReflV ] ] .
+          eapply TransV; [| eapply CongMetaP, CongCom; [ eapply CongDes, CongDes, CongCom; [ eapply ReflV | eapply CongCom; [ eapply CongConsIn, metaP_arrow | eapply ReflV]  ] | eapply ReflV ] ] .
+          eapply TransV; [| eapply CongMetaP, CongCom; [ eapply CongDes, CongDes, CongCom; [ eapply ReflV | eapply CongCom; [ eapply ConsIn_Input | eapply ReflV]  ] | eapply ReflV ] ] .
+          eapply TransV; [| eapply CongMetaP, CongCom; [ eapply CongDes, CongDes, CongCom; [ eapply ReflV | eapply Cat2V  ] | eapply ReflV ] ] .
+          eapply TransV; [| eapply CongMetaP, CongCom; [ eapply CongDes, CongDes, SymV, Cat2V  | eapply ReflV ] ] .
+          eapply TransV; [| eapply CongMetaP, CongCom; [ eapply CongDes, Des_Input  | eapply ReflV ] ] .
+          eapply TransV; [| eapply CongMetaP, CongCom; [ eapply Des_Input  | eapply ReflV ] ] .
+          eapply TransV; [| eapply CongMetaP, Cat2V ] .
+          eapply TransV; [| eapply CongMetaP, CongCom; [ eapply ReflV | eapply SymV, Assoc_nat0 ] ] .
+          eapply TransV; [| eapply CongMetaP, SymV, Cat2V ] .
+          eapply TransV; [| eapply CongMetaP, CongCom; [ eapply SymV, Des_consV10_functorial  | eapply ReflV] ] .
+          eapply TransV; [| eapply CongMetaP, CongCom; [|eapply ReflV]; eapply CongDes, CongConsV10, CongDes, SymV, Cat1LeftV ] .
+          eapply TransV; [| eapply CongMetaP, SymV, Des_Input ] .
+
+          (** RHS **)
+          eapply TransV; [eapply CongCom; [eapply ReflV|]; eapply DesIn_Input |].
+          eapply TransV; [eapply CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply CongDesIn, CongDesIn, CongConsV01, CongConsIn, CongMetaP, SymV, Cat1LeftV |].
+          eapply TransV; [eapply CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply CongDesIn, CongDesIn, CongConsV01, CongConsIn, SymV, metaP_arrow  |].
+          eapply TransV; [eapply CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply CongDesIn, CongDesIn, CongConsV01, SymV, ConsIn_Input  |].
+          eapply TransV; [eapply CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply CongDesIn, CongDesIn, SymV, consV01_functorial  |].
+          eapply TransV; [eapply CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply CongDesIn, DesIn_Input  |].
+          eapply TransV; [eapply CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply DesIn_Input  |].
+          eapply TransV; [eapply CongCom; [eapply ReflV|]; eapply SymV, Cat2V  |].
+          eapply TransV; [ eapply Cat2V  |].
+          eapply TransV; [eapply CongCom; [|eapply ReflV]; eapply Assoc_DesIn_DesIn  |].
+          eapply TransV; [ eapply Cat2V  |].
+          eapply TransV; [eapply CongCom; [|eapply ReflV]; eapply SymV, DesIn_Input  |].
+          eapply TransV; [eapply CongCom; [|eapply ReflV]; eapply CongDesIn, consV01_functorial  |].
+          eapply TransV; [eapply CongCom; [|eapply ReflV]; eapply CongDesIn, CongConsV01, metaP_arrow  |].
+          eapply TransV; [eapply CongCom; [|eapply ReflV]; eapply CongDesIn, CongConsV01, CongMetaP, Cat1LeftV  |].
+
+          eapply metaP_morphism.
+        Qed.
+        
+        Definition poly_of_metaP_IdenV : forall (B : obV) (A : obA),
+                                         forall X : obA, V(0 A[0 A ~> X ]0  |- [0 P[0 B ~> A ]0 ~> P[0 B ~> X ]0 ]0 )0
+          := (fun B A X => @poly_of_metaP (P[0 B ~> A ]0) B A (@IdenV (P[0 B ~> A ]0)) X).
+        Notation "P[0 B ~> - ]1" := (@poly_of_metaP_IdenV B) (at level 25).
+
+        (** ** unit part of above get that the logical category V is polymorph **)
+
+
+        Notation "'uV'" := (@unitV _) (at level 0).
+
+        Hypothesis unitV_IdenV : forall A : obV,  (@IdenV A) ~~ DesIdenObL (@unitV A).
+
+        Hypothesis polyV_unitV : forall (A : obV), forall X : obV, (@IdenV (V[0 A ~> X ]0)) ~~ DesIdenObR( V[1 (@unitV A) ~> X ]0 ) .
+
+        Hypothesis polyV_inputUnitV : forall (B : obV), forall (V : obV) (A : obV),
+                                      forall (f : V(0 V |- V[0 B ~> A ]0 )0),
+                                        f  ~~ DesIdenObL( (V[1 f ~> A ]0) <o (@unitV A) ).
+
+        (** already ConsIn_Input above **)
+        Hypothesis DesIdenObR_Input : forall (U W : obV) (U' : obV) (w : V(0 U' |- U )0), forall v : V(0 U |- [0 I ~> W ]0 )0, 
+                                        DesIdenObR( v <o w ) ~~ DesIdenObR( v ) <o w .
+
+        Hypothesis consV10_DesIdenObL : forall U : obV, forall V : obV, forall (W : obV), forall (v : V(0 I |- [0 V ~> W ]0 )0), 
+                                          [1 DesIdenObL  v ~> U ]0  ~~ DesIdenObR( ConsIn( [1 Des v ~> U ]0 ) ) .
+
+        Hypothesis consV10_functorial_fun1 : forall V1, forall V2 : obV,
+                                               (@IdenV _) ~~    [1 (@IdenV V1) ~> V2 ]0 .
+
+        (** ** continue poly_of_metaP of metaP **)
+
+        Definition poly_of_metaP_unitV : forall (A : obA),
+                                         forall X : obA, V(0 A[0 A ~> X ]0  |- [0 P|0 A ~> P|0 X ]0 )0
+          := (fun A X => DesIdenObR(@poly_of_metaP I (P|0 A) A (@unitV _) X)).
+        Notation "P|1" := (@poly_of_metaP_unitV _ _) (at level 0).
+        
+        (** poly_of_metaP_unitV_metaP_IdenV : forall A X : obA, P|1 ~~ P||1 **)
+        Lemma poly_of_metaP_unitV_metaP_IdenV : forall A X : obA, 
+                                                  @poly_of_metaP_unitV A X ~~ @metaP_IdenV A X .
+        Proof.
+          intros.
+          unfold poly_of_metaP_unitV. unfold poly_of_metaP.
+          unfold metaP_IdenV.
+          eapply TransV; cycle 1.
+          eapply CongDesIdenObR, CongConsIn, CongMetaP, Cat1LeftV .
+          eapply TransV; [| eapply CongDesIdenObR, CongConsIn, metaP_arrow ].
+          eapply TransV; [| eapply CongDesIdenObR, ConsIn_Input ].
+          eapply TransV; [| eapply DesIdenObR_Input ].
+          eapply TransV; [| eapply CongCom; [eapply SymV, consV10_DesIdenObL | eapply ReflV] ].
+          eapply TransV; [| eapply CongCom; [ eapply CongConsV10, SymV, unitV_IdenV  | eapply ReflV] ].
+          eapply TransV; [| eapply CongCom; [ eapply SymV, consV10_functorial_fun1  | eapply ReflV] ].
+          eapply SymV, Cat1LeftV.
+        Qed.
+
+
+      
+      
+    End NaturalityIsPolymorphic.
     
   End Transformation.
 
