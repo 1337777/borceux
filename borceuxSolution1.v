@@ -53,11 +53,151 @@ http://1337777.link/ooo/guJAHkwRZYYyuhrh4GyYWv7BPOwNEF-jSeQcYN9WxLk!Zw1GYSFfr6ch
 
 Set Implicit Arguments.
 
+(** ** NEXT1: use (+) record structure packaking interface with (+) semi-automatic semi-programmed canonical resolution/synthesis of the polymorphicity extras which is (+) on top of the data of objects and composition. Also note that any instance of the logic interface V shall be passed as parameter to the functor interface
+ **)
+
+(** **NEXT2: is it necessary, for efficient semi-automatic semi-programmed canonical resolution/synthesis of the polymorphicity extras,  that one shall express polymorphicity as naturality in the ultimate Coq meta logic T ? Or is polymorphicity-as-is workable ? **)
+
+(** ** ultimate meta logic (Coq type theory) T , which enrich all the subject logics instances of the interface V **)
+
+(** T on top of Type is instance of meta/logical category with interface V , 
++    any instance of interface V is enriched in T , 
++    T is both ordinary (in T) and enriched in itself T where ordinary (0 _ |- _ )0 coincide with enriched [0 _  ~> _ ]0  ,
++    polymorphicity (polyF_morphism or polyF_arrow) of category or functor  is naturality (metaα_morphism or metaυ_morphism) of meta transformation polyF (in index A or index V) where meta is the T instance of interface V
+
+later, top interface is  polyfunctor (which is family of metafunctors with shared category-family ), get category by putting F is identity : obA -> obB := obA   and now polyF_morphism becomes the wanted polyA_morphism ,   get metafunctor by putting F is constant : obA -> obB := unit   and now polyF_morphism becomes the wanted metaF_morphism
+
+later rename polyF_unitary to polyF_constant because some constant family is same as pointing at result (or shrinking the inputdomain)   ,         keep polyF_identitary
+ **)
+
+Definition obT : Type := Type. 
+Definition polyT00 : obT -> obT -> obT := fun T1 T2 => T1 -> T2.
+Notation "T(0 B |- A )0" := (polyT00 B A) (at level 35).
+
+(** comprehended as conversion on the enriched data **)
+Definition convT : forall T1 T2, T(0 T1 |- T2)0 -> T(0 T1 |- T2 )0 -> Prop := fun T1 T2 f g => forall t1, f t1 = g t1.
+Notation "v2 ~~T v1" := (convT v2 v1)  (at level 70).
+Lemma ReflT : forall A1 A2 (f : T(0 A1 |- A2 )0), f ~~T f.
+Proof.
+  intros; intro; intros. reflexivity.
+Qed.
+Lemma TransT : forall A1 A2, forall (uTrans f : T(0 A1 |- A2)0), uTrans ~~T f -> forall (f' : T(0 A1 |- A2)0), f' ~~T uTrans -> f' ~~T f.
+Proof.
+  intros ? ? ? ? H ? H0. intro. eapply eq_trans. apply H0. apply H.
+      (*intros; eapply eq_trans; eassumption.*)
+Qed.
+Lemma SymT : forall A1 A2,  forall (f' f : T(0 A1 |- A2)0), f ~~T f' -> f' ~~T f.
+Proof.
+  intros; intro; symmetry. apply H.
+(*  symmetry. assumption. *)
+Qed.
+
+Definition polyT_relT : forall (B : obT), forall (T : Type) (A : obT),
+                          ( T -> T(0 B |- A )0 ) ->
+                          forall X : obT, T(0 A |- X )0  ->  ( T -> T(0 B |- X )0 )
+  := (fun (B : obT) (T : Type) (A : obT) (f : T -> T(0 B |- A )0) 
+        (X : obT) (g : T(0 A |- X )0) (t : T) (b : B) =>   g (f t b)) .
+
+(** almost same as the common unitary .. but no unit-picking mentionned **)
+Definition polyT_relT_unitary : forall (B : obT), forall (A : obT),
+                                  T(0 B |- A )0 -> forall X : obT, T(0 A |- X )0  -> T(0 B |- X )0
+  := (fun (B A : obT) (f : T(0 B |- A )0) (X : obT) (g : T(0 A |- X )0) =>
+        polyT_relT (fun _ : unit => f) g tt) .  
+
+Definition polyT_relT_identitary : forall (B : obT), forall (A : obT),
+                                   forall X : obT, T(0 A |- X )0  -> T(0 B |- A )0 -> T(0 B |- X )0
+  :=  fun (B : obT) => fun (A : obT) =>
+                      fun X : obT =>  fun (a : T(0 A |- X )0) => fun (b : T(0 B |- A )0) =>
+                                                            @polyT_relT B (T(0 B |- A )0) A (fun b0 => b0) X a b .
+
+Notation "T(1 b |- X )0" := (@polyT_relT _ _ _ b X) (at level 35).
+
+Notation "T(1I b |- - )0" := (@polyT_relT_unitary _ _ b) (at level 35).
+(**  more precisely ( ( b 0 ) o> _ )   **)
+Notation "T(1I b |- X )0" := (@polyT_relT_unitary _ _ b X) (at level 35).
+(**  more precisely ( ( b 0 ) o> a )  **)
+Notation "b o>> a" := (@polyT_relT_unitary _ _ b _ a) (at level 33, right associativity).
+Eval compute in  fun b a => b o>> a .
+
+Notation "T(1 'id' |- X )0" := (@polyT_relT_identitary _ _ X) (at level 35).
+Notation "T(0 X |- - )1" := (@polyT_relT_identitary _ _ X) (at level 35).
+(**  more precisely ( ( id _ ) o> a )  **)
+Notation "T(0 X |- a )1" := (@polyT_relT_identitary _ _ X a) (at level 35).
+(**  more precisely ( ( id b ) o> a )  **)
+Notation "a <<o b" := (@polyT_relT_identitary _ _ _ a b) (at level 33, right associativity).
+Eval compute in  fun b a => a <<o b .
+
+Lemma polyT_relT_arrow :  forall (B : obT), forall (A : obT),
+                          forall (T T' : Type) (b : T' -> T),
+                          forall (f : T -> T(0 B |- A )0 ) (X : obT),
+                          forall (a : T(0 A |- X )0), forall (ttt: T'),
+                           T(1 (fun v' => f (b v')) |- X )0 a ttt
+                             ~~T T(1 f |- X )0 a (b ttt) .
+Proof.
+  intros; intro. reflexivity.
+Qed.
+
+Lemma polyT_relT_unitary_rel_identitary :  forall (B : obT) , forall (A : obT) ,
+                                           forall X : obT , forall (a : T(0 A |- X )0),  forall (b : T(0 B |- A )0),
+                                              @polyT_relT_unitary B A b X a ~~T  a <<o b  . (* @polyT_relT B (T(0 B |- A )0) A (fun b0 => b0) X a b .*)
+Proof. (* instance-proof copy-paste*)
+  unfold polyT_relT_identitary. unfold polyT_relT_unitary.
+  intros; intro; apply polyT_relT_arrow with (f := fun b0 => b0) (b := fun _ : unit => b).
+Qed.
+
+(** written here :   (outer modification) ~~ (inner modification) **)
+Lemma polyT_relT_morphism :  forall (B : obT), 
+                             forall (A : obT) (A' : obT) (g : T(0 A |- A')0),
+                             forall (X : obT), forall (pull : T(0 B |- A)0), forall (push : T(0 A'  |- X )0 ),
+                               T(1I T(0 A' |- g )1 pull |- X )0 push
+                                ~~T  T(0 X |- T(1I g |- X )0 push )1 pull .
+Proof.
+  intros; intro; reflexivity.
+Qed.
+
+Definition convT_fun : forall U1 U2 T1 T2, (T(0 U1 |- U2)0 -> T(0 T1 |- T2)0) -> (T(0 U1 |- U2)0 -> T(0 T1 |- T2 )0) -> Prop
+  := fun  U1 U2 T1 T2 (w' w : (T(0 U1 |- U2)0 -> T(0 T1 |- T2)0)) =>
+       forall u1 u2, u1 ~~T u2 -> w' u1 ~~T w u2 .
+Notation "w' ~~~T w" := (convT_fun w' w)  (at level 70).
+
+Lemma CongPolyT : forall (B : obT), forall (A : obT),
+                  forall (f f' : T(0 B |- A )0),
+                    f' ~~T f -> forall X : obT, @polyT_relT_unitary B A f' X ~~~T @polyT_relT_unitary B A f X.
+Proof.
+  (*  intros. intro. intros. unfold convT in * . f_equal; assumption. *) 
+  intros. intro. intros. unfold convT in * . intros.  compute. (* solve [congruence]. *)
+  rewrite H. apply H0.
+Qed.
+
+Definition idT : forall T : Type, T -> T := fun T : Type => fun x : T => x .
+Definition IdenT : forall {T : obT}, T(0 T |- T )0 := idT .
+Notation "1T" := (@IdenT _) (at level 0).
+
+(** related to non-variance when unit pull the input, commonly  ( 1 o> h ) ~~ h  **)
+Lemma polyT_relT_unitT : forall (A : obT), forall X : obT, ( @idT (T(0 A |- X )0)  ) ~~~T ( T(1I (@IdenT A) |- X )0 ) .
+Proof.
+  intros. intro. intros. assumption.
+Qed.
+
+(** related to non-variance when unit push the output, commonly  ( (f _i) o> 1 ) ~~ (f _i)  , 
+       therefore polyT is injective **)
+Lemma polyT_relT_inputUnitT : forall (B : obT), forall (A : obT),
+                              forall (b : T(0 B |- A )0),
+                                 b  ~~T ( (T(1I b |- A )0)  (@IdenT A) ) .
+Proof.
+  intros; intro; reflexivity.
+Qed.
+(** TODO: write the  functional monoidal logic onto T **)
+       
+
 (** ** put any ( may be written in polymorph-style ... ) `arrows :^) logic'   V **)
 
+      (* now: rewrite polyV_relT more generally as if enriched in T  then get old instance... therefore must rewrite polyV_relT_polymorphism more generally then get old instance
+       *)
+
 Variable obV : Type.
-Parameter monoV00 : obV -> obV -> Type.
-Notation "V(0 B |- A )0" := (monoV00 B A) (at level 35).
+Parameter polyV_relT00 : obV -> obV -> obT.
+Notation "V(0 B |- A )0" := (polyV_relT00 B A) (at level 35).
 
 Parameter convV : forall V1 V2, V(0 V1 |- V2)0 -> V(0 V1 |- V2 )0 -> Prop.
 Notation "v2 ~~ v1" := (convV v2 v1)  (at level 70).
@@ -65,94 +205,170 @@ Hypothesis ReflV : forall A1 A2 (f : V(0 A1 |- A2 )0), f ~~ f.
 Hypothesis TransV : forall A1 A2, forall (uTrans f : V(0 A1 |- A2)0), uTrans ~~ f -> forall (f' : V(0 A1 |- A2)0), f' ~~ uTrans -> f' ~~ f.
 Hypothesis SymV : forall A1 A2,  forall (f' f : V(0 A1 |- A2)0), f ~~ f' -> f' ~~ f.
 
-Parameter monoV_unitary : forall (B : obV), forall (A : obV),
-                             V(0 B |- A )0 -> forall X : obV, V(0 A |- X )0  -> V(0 B |- X )0.
+(* polyV_relT as primitive breaks definitional of <o and o> .. but now clearly any instance of interface V is enriched in T *)
+Parameter polyV_relT : forall (B : obV), forall (T : obT) (A : obV),
+                         T(0 T |- V(0 B |- A )0 )0 ->
+                         forall X : obV, T(0 V(0 A |- X )0 |-  T(0 T |- V(0 B |- X )0 )0 )0 .
 
-Definition monoV_identitary : forall (B : obV), forall (A : obV),
+(* TODO: below everywhere change polyV_relT to polyV_relT *)
+(*
+Parameter polyV_relT_unitary : forall (B : obV), forall (A : obV),
+                             V(0 B |- A )0 -> forall X : obV, V(0 A |- X )0  -> V(0 B |- X )0.
+ *)
+(** almost same as the common unitary .. but no unit-picking mentionned **)
+Definition polyV_relT_unitary : forall (B : obV), forall (A : obV),
+                             V(0 B |- A )0 -> forall X : obV, T(0 V(0 A |- X )0  |- V(0 B |- X )0 )0
+  := (fun (B A : obV) (f : V(0 B |- A )0) (X : obV) (g : V(0 A |- X )0) =>
+        polyV_relT (fun _ : unit => f) g tt) .  
+
+(** definitionally: relation of polyV_relT_identitary to polyV_relT_unitary , instead of going through polyF_relT which gives only propositional equality **)
+(*Definition polyV_relT_identitary : forall (B : obV), forall (A : obV),
                     forall X : obV, V(0 A |- X )0  -> V(0 B |- A )0 -> V(0 B |- X )0
   :=  fun (B : obV) => fun (A : obV) =>
                      fun X : obV =>  fun (a : V(0 A |- X )0) => fun (b : V(0 B |- A )0) =>
-                                                           (@monoV_unitary B A b X a).
+                                                           (@polyV_relT_unitary B A b X a).
+ *)
+Definition polyV_relT_identitary : forall (B : obV), forall (A : obV),
+                    forall X : obV, T(0 V(0 A |- X )0  |- T(0 V(0 B |- A )0 |- V(0 B |- X )0 )0 )0
+  :=  fun (B : obV) => fun (A : obV) =>
+                     fun X : obV =>  fun (a : V(0 A |- X )0) => fun (b : V(0 B |- A )0) =>
+                                                           @polyV_relT B (V(0 B |- A )0) A (fun b0 => b0) X a b .
 
-Notation "V(1 b |- - )0" := (@monoV_unitary _ _ b) (at level 35).
+Notation "V(1 b |- X )0" := (@polyV_relT _ _ _ b X) (at level 35).
+
+Notation "V(1I b |- - )0" := (@polyV_relT_unitary _ _ b) (at level 35).
 (**  more precisely ( ( b 0 ) o> _ )   **)
-Notation "V(1 b |- X )0" := (@monoV_unitary _ _ b X) (at level 35).
+Notation "V(1I b |- X )0" := (@polyV_relT_unitary _ _ b X) (at level 35).
 (**  more precisely ( ( b 0 ) o> a )  **)
-Notation "b o> a" := (@monoV_unitary _ _ b _ a) (at level 33, right associativity).
+Notation "b o> a" := (@polyV_relT_unitary _ _ b _ a) (at level 33, right associativity).
 
-Notation "V(1 'id' |- X )0" := (@monoV_identitary _ _ X) (at level 35).
-Notation "V(0 X |- - )1" := (@monoV_identitary _ _ X) (at level 35).
+Notation "V(1 'id' |- X )0" := (@polyV_relT_identitary _ _ X) (at level 35).
+Notation "V(0 X |- - )1" := (@polyV_relT_identitary _ _ X) (at level 35).
 (**  more precisely ( ( id _ ) o> a )  **)
-Notation "V(0 X |- a )1" := (@monoV_identitary _ _ X a) (at level 35).
+Notation "V(0 X |- a )1" := (@polyV_relT_identitary _ _ X a) (at level 35).
 (**  more precisely ( ( id b ) o> a )  **)
-Notation "a <o b" := (@monoV_identitary _ _ _ a b) (at level 33, right associativity).
+Notation "a <o b" := (@polyV_relT_identitary _ _ _ a b) (at level 33, right associativity).
+
+(*
+Hypothesis polyV_relT_arrow :  forall (B : obV), forall (A : obV),
+                        forall (V V' : obT) (b : V' -> V),
+                        forall (f : V -> V(0 B |- A )0 ) (X : obV),
+                        forall (a : V(0 A |- X )0) (ttt: V'),
+                          V(1 (fun v' => f (b v')) |- X )0 a ttt
+                          = V(1 f |- X )0 a (b ttt).
+
+Lemma polyV_relT_identitary_really :  forall (B : obV) , forall (A : obV) ,
+                                 forall X : obV , forall (a : V(0 A |- X )0),  forall (b : V(0 B |- A )0),
+                                   @polyV_relT_identitary B A X a b = @polyV_relT B (V(0 B |- A )0) A (fun b0 => b0) X a b .
+Proof.
+  intros.  unfold polyV_relT_identitary. unfold polyV_relT_unitary. 
+  eapply polyV_relT_arrow with (f := fun b0 => b0) (b := fun _ : unit => b).
+Qed.
+Notation "V(0 X |- a )1" := (@polyF _ _ _ (@IdenV _) X <o (a : V(0 _ |- F[0 _ ~> X ]0 )0)) (at level 25).
+*)
+(*
+Variable polyV_relT_morphism :  forall (B : obV), forall (V : obT),
+                           forall (A : obV) (W : obT) (A' : obV) (g : W -> V(0 A |- A')0),
+                           forall (f : V -> V(0 B |- A )0) (X : obV),
+                             V(1 Des( [1 f ~> F[0 B ~> A' ]0 ]0 <o F[0 A' ~> g ]1 ) |- X)0
+                              ~~  DesIn( [0 W ~> F[1 f ~> X ]0 ]1 <o F[1 g ~> X ]0 ).
+*)
+
+(* ERASE OLD: note the stronger relation (of the Coq ultimate meta logic T) ~~T instead of particular subject logic relation ~~ *)
+Hypothesis polyV_relT_arrow :  forall (B : obV), forall (A : obV),
+                        forall (V V' : obT) (b : V' -> V),
+                        forall (f : V -> V(0 B |- A )0 ) (X : obV),
+                        forall (a : V(0 A |- X )0) (ttt: V'),
+                          V(1 (fun v' => f (b v')) |- X )0 a ttt
+                          ~~  V(1 f |- X )0 a (b ttt) .
+(*
+Hypothesis polyV_relT_arrow :  forall (B : obV), forall (A : obV),
+                        forall (V V' : obT) (b : V' -> V),
+                        forall (f : V -> V(0 B |- A )0 ) (X : obV),
+                        forall (a : V(0 A |- X )0) (ttt: V'),
+                          V(1 (fun v' => f (b v')) |- X )0 a ttt
+                          = V(1 f |- X )0 a (b ttt).     *)
+
+Lemma polyV_relT_unitary_rel_identitary :  forall (B : obV) , forall (A : obV) ,
+                                 forall X : obV , forall (a : V(0 A |- X )0),  forall (b : V(0 B |- A )0),
+                                   @polyV_relT_unitary B A b X a  ~~  a <o b . (* @polyV_relT B (V(0 B |- A )0) A (fun b0 => b0) X a b .*)
+Proof.
+  unfold polyV_relT_identitary. unfold polyV_relT_unitary.
+  intros. eapply polyV_relT_arrow with (f := fun b0 => b0) (b := fun _ : unit => b).
+Qed.
 
 (** written here :   (outer modification) ~~ (inner modification) **)
-Hypothesis monoV_morphism :  forall (B : obV), 
+Hypothesis polyV_relT_morphism :  forall (B : obV), 
                            forall (A : obV) (A' : obV) (g : V(0 A |- A')0),
                            forall (X : obV), forall (pull : V(0 B |- A)0), forall (push : V(0 A'  |- X )0 ),
-                             V(1 V(0 A' |- g )1 pull |- X )0 push
-                              ~~  V(0 X |- V(1 g |- X )0 push )1 pull .
+                             V(1I V(0 A' |- g )1 pull |- X )0 push
+                              ~~  V(0 X |- V(1I g |- X )0 push )1 pull .
 
-Check monoV_morphism : forall (B A A' : obV) (g : V(0 A |- A' )0) (X : obV) 
+Check polyV_relT_morphism : forall (B A A' : obV) (g : V(0 A |- A' )0) (X : obV) 
                          (pull : V(0 B |- A )0) (push : V(0 A' |- X )0),
                          (g <o pull) o> push ~~ (g o> push) <o pull .
-About monoV_morphism.
-
-Lemma Cat2V : forall A3 A4 (f3 : V(0 A3 |- A4)0), forall A2 (f2 : V(0 A2 |- A3)0), forall A1 (f1 : V(0 A1 |- A2)0),
-                (f3 <o f2) <o f1 ~~ f3 <o (f2 <o f1).
-Proof.
-  intros. apply SymV, monoV_morphism.
-Qed.
+About polyV_relT_morphism.
 
 Definition convV_fun : forall U1 U2 V1 V2, (V(0 U1 |- U2)0 -> V(0 V1 |- V2)0) -> (V(0 U1 |- U2)0 -> V(0 V1 |- V2 )0) -> Prop
   := fun  U1 U2 V1 V2 (w' w : (V(0 U1 |- U2)0 -> V(0 V1 |- V2)0)) =>
        forall u1 u2, u1 ~~ u2 -> w' u1 ~~ w u2 .
 Notation "w' ~~~ w" := (convV_fun w' w)  (at level 70).
+
 (** ALT 
-Hypothesis CongMonoV : forall (B : obV), forall (A : obV),
+Hypothesis Cong_polyV_relT : forall (B : obV), forall (A : obV),
                        forall X : obV, forall (a a' : V(0 A |- X )0),
-                         a' ~~ a -> @monoV_identitary B A X a' ~~~ @monoV_identitary B A X a .
+                         a' ~~ a -> @polyV_relT_identitary B A X a' ~~~ @polyV_relT_identitary B A X a .
 **)
-Hypothesis CongMonoV : forall (B : obV), forall (A : obV),
+Hypothesis Cong_polyV_relT : forall (B : obV), forall (A : obV),
                        forall (f f' : V(0 B |- A )0),
-                         f' ~~ f -> forall X : obV, @monoV_unitary B A f' X ~~~ @monoV_unitary B A f X.
-
-
-Lemma CongCom : forall A2 A3, forall (f2 f2' : V(0 A2 |- A3 )0), f2 ~~ f2' -> forall A1, forall (f1 f1' : V(0 A1 |- A2 )0), f1 ~~ f1' -> f2 <o f1 ~~ f2' <o f1'.
-Proof.
-  intros. apply CongMonoV.
-  assumption.
-  assumption.
-Qed.
+                         f' ~~ f -> forall X : obV, @polyV_relT_unitary B A f' X ~~~ @polyV_relT_unitary B A f X.
 
 Parameter IdenV : forall {V : obV}, V(0 V |- V )0.
 Notation "1" := (@IdenV _) (at level 0).
 
 (** related to non-variance when unit pull the input, commonly  ( 1 o> h ) ~~ h  **)
-Definition idT : forall T : Type, T -> T := fun T : Type => fun x : T => x .
-Hypothesis monoV_unitV : forall (A : obV), forall X : obV, ( @idT (V(0 A |- X )0)  ) ~~~ ( V(1 (@IdenV A) |- X )0 ) .
+Hypothesis polyV_relT_unitV : forall (A : obV), forall X : obV, ( @idT (V(0 A |- X )0)  ) ~~~ ( V(1I (@IdenV A) |- X )0 ) .
 
 (** related to non-variance when unit push the output, commonly  ( (f _i) o> 1 ) ~~ (f _i)  , 
        therefore polyV is injective **)
-Hypothesis monoV_inputUnitV : forall (B : obV), forall (A : obV),
+Hypothesis polyV_relT_inputUnitV : forall (B : obV), forall (A : obV),
                               forall (b : V(0 B |- A )0),
-                                b  ~~ ( (V(1 b |- A )0)  (@IdenV A) ).
+                                b  ~~ ( (V(1I b |- A )0)  (@IdenV A) ).
+
+
+Definition ComV : forall V1, forall UCom, V(0 V1 |-  UCom )0 -> forall V3, V(0 UCom |- V3 )0 -> V(0 V1 |- V3 )0 := polyV_relT_unitary .
+
+Lemma CongCom : forall A2 A3, forall (f2 f2' : V(0 A2 |- A3 )0), f2 ~~ f2' -> forall A1, forall (f1 f1' : V(0 A1 |- A2 )0), f1 ~~ f1' -> f2 <o f1 ~~ f2' <o f1'.
+Proof.
+  intros. eapply TransV; [ eapply polyV_relT_unitary_rel_identitary | ].
+  eapply TransV; [| eapply SymV, polyV_relT_unitary_rel_identitary].
+  apply Cong_polyV_relT;  assumption.
+Qed.
+
+Lemma Cat2V : forall A3 A4 (f3 : V(0 A3 |- A4)0), forall A2 (f2 : V(0 A2 |- A3)0), forall A1 (f1 : V(0 A1 |- A2)0),
+                (f3 <o f2) <o f1 ~~ f3 <o (f2 <o f1).
+Proof.
+  intros. eapply TransV; [ eapply polyV_relT_unitary_rel_identitary  |].
+  eapply TransV; [| eapply CongCom; [|eapply ReflV]; eapply SymV, polyV_relT_unitary_rel_identitary  ].
+  apply SymV, polyV_relT_morphism.
+  (*replace ( f3 <o ( f2 <o f1) ) with    ((f2 <o f1) o> f3) by (apply  polyV_relT_unitary_rel_identitary; exact tt).
+  replace  (f3 <o f2) with  (f2 o> f3) by (apply  polyV_relT_unitary_rel_identitary; exact tt). *)
+  (* OLD DEFINITIONALLY intros. apply SymV, polyV_relT_morphism. *)
+Qed.
+
 
 Lemma Cat1RightV : forall A1 A2, forall f : V(0 A1 |- A2)0,  f ~~ f <o 1.
 Proof.
-  intros. apply monoV_unitV.
+  intros. eapply TransV; [ eapply polyV_relT_unitary_rel_identitary |].
+  apply polyV_relT_unitV.
   apply ReflV.
 Qed.
   
 Lemma Cat1LeftV : forall A1 A2, forall f : V(0 A1 |- A2)0,  f ~~ 1 <o f.
 Proof.
-  intros. apply monoV_inputUnitV.
+  intros. eapply TransV; [ eapply polyV_relT_unitary_rel_identitary |].
+  apply polyV_relT_inputUnitV.
 Qed.
-
-Definition ComV : forall V1, forall UCom, V(0 V1 |-  UCom )0 -> forall V3, V(0 UCom |- V3 )0 -> V(0 V1 |- V3 )0.
-  intros. eapply monoV_unitary. eassumption. eassumption.
-Defined.
 
 
 (** ** put functional monoidal logic onto V **)
@@ -237,21 +453,21 @@ Notation "F[0 B ~> - ]1" := (@polyF_IdenV B) (at level 25).
 
 (** ** get that the logical category V is polymorph **)
 
-Variable polyV : forall (W : obV), forall (U : obV) (V : obV),
+Variable polyV_relV : forall (W : obV), forall (U : obV) (V : obV),
                    V(0 U |- [0 W ~> V ]0 )0 ->
                    forall X : obV, V(0 [0 V ~> X ]0  |- [0 U ~> [0 W ~> X ]0 ]0 )0.
 
 Notation "V[0 U ~> V ]0" := ([0 U ~> V ]0) (at level 25, only parsing).
-Notation "V[1 v ~> X ]0" := (@polyV _ _ _ v X) (at level 25).
-Notation "V[0 X ~> w ]1" := (@polyV _ _ _ 1 X <o w) (at level 25).
-Notation "V[0 W ~> - ]1" := (fun V X => @polyV _ _ _ (@IdenV ([0 W ~> V ]0)) X) (at level 25). 
+Notation "V[1 v ~> X ]0" := (@polyV_relV _ _ _ v X) (at level 25).
+Notation "V[0 X ~> w ]1" := (@polyV_relV _ _ _ 1 X <o w) (at level 25).
+Notation "V[0 W ~> - ]1" := (fun V X => @polyV_relV _ _ _ (@IdenV ([0 W ~> V ]0)) X) (at level 25). 
 
-Hypothesis polyV_monoV : forall (W : obV), forall (U : obV) (V : obV),
+Hypothesis polyV_relV_polyV_relT : forall (W : obV), forall (U : obV) (V : obV),
                          forall (v : V(0 U |- [0 W ~> V ]0 )0), forall X : obV,
                            [1 Des v ~> X]0
                                          ~~ DesIn( V[1 v ~> X ]0 ) .
 
-Hypothesis polyV_arrow :  forall (B : obV) (A : obV) (V : obV),
+Hypothesis polyV_relV_arrow :  forall (B : obV) (A : obV) (V : obV),
                           forall (V' : obV) (v : V(0 V' |- V )0),
                           forall (f : V(0 V |- V[0 B ~> A ]0 )0) (X : obV),
                             V[1 f <o v ~> X ]0
@@ -268,7 +484,7 @@ Lemma polyF_arrowIn :  forall (B : obF) (A : obF) (V : obV),
 Proof.
   intros; eapply TransV; [ apply DesIn_Input | ].
   eapply TransV; [ | apply polyF_arrow ].
-  eapply CongCom; [ | eapply ReflV]; apply polyV_monoV.
+  eapply CongCom; [ | eapply ReflV]; apply polyV_relV_polyV_relT.
 Qed.
 
 (** polyF_natural (sym) says that, put the parameter f, then get
@@ -302,12 +518,12 @@ Proof.
     by ( apply CongPolyF, CongDes;  eapply TransV; [ eapply Cat2V | ]; eapply TransV; [ eapply Cat1RightV | ];
          apply polyF_arrow ).
 
-  (* convert right hand side : outer polyV_arrow then outer polyF_arrowIn which is inner form of polyF_arrow *)
+  (* convert right hand side : outer polyV_relV_arrow then outer polyF_arrowIn which is inner form of polyF_arrow *)
   assert ( RHS1 : DesIn( ( V[1 (@IdenV (V[0 V ~> (F[0 B ~> C ]0) ]0)) <o (F[1 f ~> C ]0) ~> (F[0 B ~> X ]0) ]0 ) <o F[0 B ~> - ]1 C X )
                        ~~ DesIn( [1 F[1 f ~> C ]0 ~> [0 V ~> F[0 B ~> X ]0 ]0 ]0 <o ( V[0 V ~> - ]1 (F[0 B ~> C ]0) (F[0 B ~> X ]0) ) <o F[0 B ~> - ]1 C X ) )
     by ( eapply TransV; [ eapply CongDesIn; eapply Cat2V | ];
          apply CongDesIn; apply CongCom; [ | apply ReflV];
-         apply polyV_arrow ).
+         apply polyV_relV_arrow ).
 
   assert ( RHS2 : ( F[1 (@IdenV (F[0 B ~> C ]0)) <o Des( (@IdenV (V[0 V ~> (F[0 B ~> C ]0) ]0)) <o (F[1 f ~> C ]0) ) ~> X ]0 )
                     ~~ DesIn( ( V[1 (@IdenV (V[0 V ~> (F[0 B ~> C ]0) ]0)) <o (F[1 f ~> C ]0) ~> (F[0 B ~> X ]0) ]0 ) <o F[0 B ~> - ]1 C X ) )
@@ -533,7 +749,7 @@ which is, holding only f as parameter and running all the arguments,
   Proof.
     intros; eapply TransV; [ apply DesIn_Input | ].
     eapply TransV; [ | apply polyF_arrow ].
-    eapply CongCom; [ | eapply ReflV]; apply polyV_monoV.
+    eapply CongCom; [ | eapply ReflV]; apply polyV_relV_polyV_relT.
   Qed.
 
   (** polyF_natural (sym) says that, put the parameter f, then get
@@ -564,12 +780,12 @@ now memo that in the left hand sides there is permutation of inputs, and that in
       by ( apply CongPolyF, CongDes;  eapply TransV; [ eapply Cat2V | ]; eapply TransV; [ eapply Cat1RightV | ];
            apply polyF_arrow ).
 
-    (* convert right hand side : outer polyV_arrow then outer polyF_arrowIn which is inner form of polyF_arrow *)
+    (* convert right hand side : outer polyV_relV_arrow then outer polyF_arrowIn which is inner form of polyF_arrow *)
     assert ( RHS1 : DesIn( ( V[1 (@IdenV (V[0 V ~> (F[0 B ~> C ]0) ]0)) <o (F[1 f ~> C ]0) ~> (F[0 B ~> X ]0) ]0 ) <o F[0 B ~> - ]1 C X )
                          ~~ DesIn( [1 F[1 f ~> C ]0 ~> [0 V ~> F[0 B ~> X ]0 ]0 ]0 <o ( V[0 V ~> - ]1 (F[0 B ~> C ]0) (F[0 B ~> X ]0) ) <o F[0 B ~> - ]1 C X ) )
       by ( eapply TransV; [ eapply CongDesIn; eapply Cat2V | ];
            apply CongDesIn; apply CongCom; [ | apply ReflV];
-           apply polyV_arrow ).
+           apply polyV_relV_arrow ).
 
     assert ( RHS2 : ( F[1 (@IdenV (F[0 B ~> C ]0)) <o Des( (@IdenV (V[0 V ~> (F[0 B ~> C ]0) ]0)) <o (F[1 f ~> C ]0) ) ~> X ]0 )
                       ~~ DesIn( ( V[1 (@IdenV (V[0 V ~> (F[0 B ~> C ]0) ]0)) <o (F[1 f ~> C ]0) ~> (F[0 B ~> X ]0) ]0 ) <o F[0 B ~> - ]1 C X ) )
@@ -728,14 +944,14 @@ now memo that in the left hand sides there is permutation of inputs, and that in
 
     Variable polyβ_arrow : forall (B : obB) (A : obA),
                            forall (V V' : obV) (v : V(0 V' |- V )0),
-                           forall (f : V(0 V |- F[0 B ~> A ]0 )0) (X : obA),
+                           forall (f : V(0 V |- F[0 B ~> A ]0 )0),
                              β|1 (f <o v)
                                  ~~ β|1 f <o v .
 
     (** written here : (inner modification) ~~ (outer modification)**)
     Variable polyβ_morphism : forall (V : obV) (B : obB),
                               forall (A : obA) (W : obV) (A' : obA) (a : V(0 W |- A[0 A ~> A']0 )0),
-                              forall (f : V(0 V |- F[0 B ~> A ]0 )0) (X : obA),
+                              forall (f : V(0 V |- F[0 B ~> A ]0 )0),
                                 β|1 (Des( [1 f ~> F[0 B ~> A' ]0 ]0 <o F[0 A' ~> a ]1 ))
                                     ~~ (Des( [1 β|1 f ~> G[0 B ~> A' ]0 ]0 <o G[0 A' ~> a ]1 )) .
 
@@ -750,7 +966,7 @@ now memo that in the left hand sides there is permutation of inputs, and that in
      1. define naturality of any transformation of polymorph functors into catV
      2. show codeductibility of naturality for this transformation in catV with polymorphism (polymorph in V , B is easy) for the corresponding polytransformation
      3. define composition of polymorph functors, view [0 V0 ~> F[0 B0 ~> - ]0 ]0 as coming from composite polymorph functors
-     4. confirm old naturality signify new naturality of the transformation F[1 (f0 : V(0 V0 |- F[0 B0 ~> A0 ]0 )0) ~> - ]0 between these polymorph functors on top of A[0 A0 ~> - ]0 (which is polyA) and on top of [0 V0 ~> F[0 B0 ~> - ]0 ]0 (which is composite of polyV with polyF)
+     4. confirm old naturality signify new naturality of the transformation F[1 (f0 : V(0 V0 |- F[0 B0 ~> A0 ]0 )0) ~> - ]0 between these polymorph functors on top of A[0 A0 ~> - ]0 (which is polyA) and on top of [0 V0 ~> F[0 B0 ~> - ]0 ]0 (which is composite of polyV_relV with polyF)
      5. rewrite the yoneda lemma as saying that the image is precisely any transformation whose corresponding polytransformation is polymorph
      **)
 
@@ -815,10 +1031,11 @@ now memo that in the left hand sides there is permutation of inputs, and that in
         forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> [0 W ~> C[0 C ~> F'|0 F|0 X ]0 ]0 ]0 )0.
       Proof.
         intros.
-        eapply ComV.
+        (*eapply ComV. ... not anymore that unitary is definationally same as identitary *)
+        eapply polyV_relT_identitary (* _ <o _ *). apply consV01. apply (polyF' c).
         apply (polyF b).
-        apply consV01.
-        apply (polyF' c). 
+(*        apply consV01.
+        apply (polyF' c). *)
         Show Proof.
       (*
 (fun (V : obV) (B : obB) (A : obA) (b : V(0 V |- F[0 B ~> A ]0 )0) 
@@ -909,7 +1126,7 @@ now memo that in the left hand sides there is permutation of inputs, and that in
         unfold polyF_unitB.
         apply SymV, DesIdenObR_output.
       Qed.
-    (* apply this to unfold this as identitary (external-structural) of composition of polyfunctors ( polyV o (poly_of_meta F[0 B ~> - ]1) ) .. ( polyV o (poly_of_meta metaFB) )  ...  show before that
+    (* apply this to unfold this as identitary (external-structural) of composition of polyfunctors ( polyV_relV o (poly_of_meta F[0 B ~> - ]1) ) .. ( polyV_relV o (poly_of_meta metaFB) )  ...  show before that
 1. NEXT1 some metafunctor metaFB into catV on top of F[0 B ~> - ]1  by polyF which becomes  metaFB := meta_of_poly F at B,
 2. then get derived polyfunctor from this metafunctor, 
 3. then unitary( |1 ) of this derived polyfunctor is  identitary( ||1 ) of the metafunctor metaFB on top of F[0 B ~> - ]1 
@@ -919,8 +1136,8 @@ all: ( V[0 V ~> - ]1 (F[0 B ~> A' ]0) (F[0 B ~> X ]0) ) <o F[0 B ~> - ]1 A' X
        ( V[0 V ~> - ]1 (F[0 B ~> A' ]0) (F[0 B ~> X ]0) ) <o (meta_of_poly F at B)||1 A' X    
        ( V[0 V ~> - ]1 (F[0 B ~> A' ]0) (F[0 B ~> X ]0) ) <o FB||1 A' X    
        ( V[0 V ~> - ]1 (F[0 B ~> A' ]0) (F[0 B ~> X ]0) ) <o (poly_of_meta metaFB)|1 A' X
-       (polyV o (poly_of_meta metaFB))[0 V ~> - ]1 A' X
-       (meta_of_poly (polyV o (poly_of_meta (meta_of_poly F at B))) at V)||1 A' X
+       (polyV_relV o (poly_of_meta metaFB))[0 V ~> - ]1 A' X
+       (meta_of_poly (polyV_relV o (poly_of_meta (meta_of_poly F at B))) at V)||1 A' X
 
   Definition natural (V : obV) (B : obB) (A : obA) (β : forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> F[0 B ~> X ]0 ]0 )0) :=
                         forall (C X : obA),
@@ -930,13 +1147,13 @@ all: ( V[0 V ~> - ]1 (F[0 B ~> A' ]0) (F[0 B ~> X ]0) ) <o F[0 B ~> - ]1 A' X
                                  <o ( V[0 V ~> - ]1 (F[0 B ~> C ]0) (F[0 B ~> X ]0) ) <o F[0 B ~> - ]1 C X ) .
 
   Definition natural (V : obV) (B : obB) (A : obA) 
-                        (β : forall X : obA, V(0 (meta_of_poly polyA at A)|0 X  |- (meta_of_poly (polyV o (poly_of_meta (meta_of_poly F at B))) at V)|0 X )0) :=
+                        (β : forall X : obA, V(0 (meta_of_poly polyA at A)|0 X  |- (meta_of_poly (polyV_relV o (poly_of_meta (meta_of_poly F at B))) at V)|0 X )0) :=
                         forall (A' X : obA),
                           ( [0 (meta_of_poly polyA at A)|0 A' ~> β X ]1
                             <o (meta_of_poly polyA at A)||1 A' X )
-                            ~~ ( [1 β A' ~> (meta_of_poly (polyV o (poly_of_meta (meta_of_poly F at B))) at V)|0 X ]0
-                                 <o (meta_of_poly (polyV o (poly_of_meta (meta_of_poly F at B))) at V)||1 A' X ) .
-      ... == natural_metatransformation from (meta_of_poly polyA at A) to (meta_of_poly (polyV o (poly_of_meta (meta_of_poly F at B))) at V) by β at A' at X
+                            ~~ ( [1 β A' ~> (meta_of_poly (polyV_relV o (poly_of_meta (meta_of_poly F at B))) at V)|0 X ]0
+                                 <o (meta_of_poly (polyV_relV o (poly_of_meta (meta_of_poly F at B))) at V)||1 A' X ) .
+      ... == natural_metatransformation from (meta_of_poly polyA at A) to (meta_of_poly (polyV_relV o (poly_of_meta (meta_of_poly F at B))) at V) by β at A' at X
 
 NEXT3: naturality of any metatransformation of any metafunctors <-> polymorphism of coresp polytransformation of coresp polyfuntors
 NEXT4: rewrite natural as above
@@ -1185,9 +1402,9 @@ NEXT4: rewrite natural as above
 
         Hypothesis unitV_IdenV : forall A : obV,  (@IdenV A) ~~ DesIdenObL (@unitV A).
 
-        Hypothesis polyV_unitV : forall (A : obV), forall X : obV, (@IdenV (V[0 A ~> X ]0)) ~~ DesIdenObR( V[1 (@unitV A) ~> X ]0 ) .
+        Hypothesis polyV_relV_unitV : forall (A : obV), forall X : obV, (@IdenV (V[0 A ~> X ]0)) ~~ DesIdenObR( V[1 (@unitV A) ~> X ]0 ) .
 
-        Hypothesis polyV_inputUnitV : forall (B : obV), forall (V : obV) (A : obV),
+        Hypothesis polyV_relV_inputUnitV : forall (B : obV), forall (V : obV) (A : obV),
                                       forall (f : V(0 V |- V[0 B ~> A ]0 )0),
                                         f  ~~ DesIdenObL( (V[1 f ~> A ]0) <o (@unitV A) ).
 
@@ -1488,7 +1705,7 @@ NEXT4: rewrite natural as above
           eapply TransV; [ eapply CongDes, CongCom; [eapply ReflV|];  eapply Cons_Output |].
           eapply TransV; [ eapply CongDes, CongCom; [eapply ReflV|];  eapply CongCom; [eapply ReflV|]; eapply SymV, Cons_Des |].
           eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply ConsIn_DesIn |].
-          eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply CongConsIn, polyV_monoV |].
+          eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply CongConsIn, polyV_relV_polyV_relT |].
           eapply TransV; [ eapply CongDes, Cat2V |].
           eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply ConsIn_Input |].
           eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply CongConsIn, consV11_bifunctorial |].
@@ -1501,7 +1718,7 @@ NEXT4: rewrite natural as above
           eapply TransV; [ eapply CongCom; [eapply ReflV |]; eapply CongDes, Cat2V |].
           eapply TransV; [ eapply CongCom; [eapply ReflV |]; eapply CongDes, CongCom; [|eapply ReflV]; eapply ConsIn_Input  |].
           eapply TransV; [ eapply CongCom; [eapply ReflV |]; eapply CongDes, CongCom; [|eapply ReflV]; eapply CongConsIn, Cat1LeftV  |].
-          eapply TransV; [ eapply CongCom; [eapply ReflV |]; eapply CongDes, CongCom; [|eapply ReflV]; eapply CongConsIn, SymV, polyV_monoV  |].
+          eapply TransV; [ eapply CongCom; [eapply ReflV |]; eapply CongDes, CongCom; [|eapply ReflV]; eapply CongConsIn, SymV, polyV_relV_polyV_relT  |].
           eapply TransV; [ eapply CongCom; [eapply ReflV |]; eapply CongDes, CongCom; [|eapply ReflV]; eapply SymV, ConsIn_DesIn  |].
 
           eapply ReflV.
@@ -1566,6 +1783,9 @@ NEXT4: rewrite natural as above
 
     Module NaturalityIsPolymorphic.
 
+
+      (*SCRATCH DRAFT
+      
       Variable (V : obV) (B : obB) (A : obA).
 
       (** ** meta_of_polyF_at_B , metafunctor FB on top of F[0 B ~> - ]1 **)
@@ -1796,9 +2016,9 @@ NEXT4: rewrite natural as above
 
         Hypothesis unitV_IdenV : forall A : obV,  (@IdenV A) ~~ DesIdenObL (@unitV A).
 
-        Hypothesis polyV_unitV : forall (A : obV), forall X : obV, (@IdenV (V[0 A ~> X ]0)) ~~ DesIdenObR( V[1 (@unitV A) ~> X ]0 ) .
+        Hypothesis polyV_relV_unitV : forall (A : obV), forall X : obV, (@IdenV (V[0 A ~> X ]0)) ~~ DesIdenObR( V[1 (@unitV A) ~> X ]0 ) .
 
-        Hypothesis polyV_inputUnitV : forall (B : obV), forall (V : obV) (A : obV),
+        Hypothesis polyV_relV_inputUnitV : forall (B : obV), forall (V : obV) (A : obV),
                                       forall (f : V(0 V |- V[0 B ~> A ]0 )0),
                                         f  ~~ DesIdenObL( (V[1 f ~> A ]0) <o (@unitV A) ).
 
@@ -1837,7 +2057,7 @@ NEXT4: rewrite natural as above
           eapply SymV, Cat1LeftV.
         Qed.
 
-
+       *)
       
       
     End NaturalityIsPolymorphic.
