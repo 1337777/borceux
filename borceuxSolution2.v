@@ -339,13 +339,15 @@ Module LOGIC.
                        T(0 T |- (polyV_relT00 B A) )0 ->
                        forall (X : obV), T(0 (polyV_relT00 A X) |-  T(0 T |- (polyV_relT00 B X) )0 )0;
          IdenV : forall {V : obV}, (polyV_relT00 V V);
-         desV00 : forall V2 : obV, forall V1 : obV, obV;
-         desV10 : forall V2 : obV, forall {V1 V1'}, (polyV_relT00 V1 V1') -> (polyV_relT00 (desV00 V2 V1) (desV00 V2 V1'));
+
          consV00 : obV -> obV -> obV;
          consV01 : forall V1 : obV, forall {V2 V2'}, (polyV_relT00 V2 V2') -> (polyV_relT00 (consV00 V1 V2)  (consV00 V1 V2'));
          consV10 : forall {V1' V1}, (polyV_relT00 V1' V1) -> forall V2 : obV, (polyV_relT00 (consV00 V1 V2) (consV00 V1' V2));
-         Des : forall {V : obV}, forall {U W : obV}, (polyV_relT00 U (consV00 V W)) -> (polyV_relT00 (desV00 V U) W);
+         desV00 : forall V2 : obV, forall V1 : obV, obV;
+         desV10 : forall V2 : obV, forall {V1 V1'}, (polyV_relT00 V1 V1') -> (polyV_relT00 (desV00 V2 V1) (desV00 V2 V1'));
          Cons : forall {V : obV}, forall {U W : obV}, (polyV_relT00 (desV00 V U) W) -> (polyV_relT00 U (consV00 V W));
+         Des : forall {V : obV}, forall {U W : obV}, (polyV_relT00 U (consV00 V W)) -> (polyV_relT00 (desV00 V U) W);
+
          IdenObV : obV;
          unitV : forall {A : obV}, (polyV_relT00 IdenObV (consV00 A A) );
          Assoc : forall {V W :obV}, forall {U: obV}, (polyV_relT00 (desV00 (desV00 W V) U )  ((desV00 W (desV00  V U ))  ) );
@@ -354,171 +356,74 @@ Module LOGIC.
     Arguments Des {_} {_ _ _} _ .
     Arguments Cons {_} {_ _ _} _ .
     Arguments Assoc {_} {_ _ _}.
+
+    Definition polyV_relV00 := consV00.
     
-    Notation "v2 ~~ v1" := (convV v2 v1)  (at level 70).
-  Notation "V(0 B |- A )0" := (polyV_relT00 B A) (at level 35).
-  Notation "1" := (@IdenV _ _) (at level 0).
-  Notation  "(0 V1 * V2 )0" := (desV00 V2 V1) (at level 30, V1 at next level).
-  Notation  "(1 v * V2 )0" := (desV10 V2 v) (at level 30, v at next level).
-  Notation "[0 V1 ~> V2 ]0" := (consV00 V1 V2) (at level 30).
-  Notation "[0 V1 ~> v ]1" := (consV01 V1 v) (at level 30).
-  Notation "[1 v ~> V2 ]0" := (consV10 v V2) (at level 30).
-  Notation  "'I'" := (@IdenObV _) (at level 0).
-  Notation "'uV'" := (@unitV _) (at level 0).
-  Module Ex_Notations.
-    Notation "v2 ~~ dat ` v1" := (@convV dat _ _ v2 v1)  (at level 70, dat at next level, format "v2  ~~ dat `  v1").
-    Notation "dat .-V(0 B |- A )0" := (@polyV_relT00 dat B A) (at level 35, format "dat .-V(0  B  |-  A  )0").
-    Notation "dat .-1" := (@IdenV dat _ _) (at level 0, format "dat .-1").
-    Notation  "dat .-(0 V1 * V2 )0" := (@desV00 dat V2 V1) (at level 30, V1 at next level, format "dat .-(0  V1  *  V2  )0").
-    Notation  "dat .-(1 v * V2 )0" := (@desV10 dat V2 _ _ v) (at level 30, v at next level, format "dat .-(1  v  *  V2  )0").
-    Notation "dat .-[0 V1 ~> V2 ]0" := (@consV00 dat V1 V2) (at level 30, format "dat .-[0  V1  ~>  V2  ]0").
-    Notation "dat .-[0 V1 ~> v ]1" := (@consV01 dat V1 _ _ v) (at level 30, format "dat .-[0  V1  ~>  v  ]1").
-    Notation "dat .-[1 v ~> V2 ]0" := (@consV10 dat _ _ v V2) (at level 30, format "dat .-[1  v  ~>  V2  ]0").
-    Notation  "dat .-I" := (@IdenObV dat _) (at level 0, format "dat .-I").
-    Notation "dat .-uV" := (@unitV dat _) (at level 0, format "dat .-uV").
-  End Ex_Notations.
-
-   (* 
-    Notation "v2 ~~ dat ` v1" := (@convV dat _ _ v2 v1)  (at level 70, dat at next level, format "v2  ~~ dat `  v1").
-    Notation "dat .-V(0 B |- A )0" := (@polyV_relT00 dat B A) (at level 35, format "dat .-V(0  B  |-  A  )0").
-    Notation "dat .-1" := (@IdenV dat _) (at level 0, format "dat .-1").
-    Notation  "dat .-(0 V1 * V2 )0" := (@desV00 dat V2 V1) (at level 30, V1 at next level, format "dat .-(0  V1  *  V2  )0").
-    Notation  "dat .-(1 v * V2 )0" := (@desV10 dat V2 _ _ v) (at level 30, v at next level, format "dat .-(1  v  *  V2  )0").
-    Notation "dat .-[0 V1 ~> V2 ]0" := (@consV00 dat V1 V2) (at level 30, format "dat .-[0  V1  ~>  V2  ]0").
-    Notation "dat .-[0 V1 ~> v ]1" := (@consV01 dat V1 _ _ v) (at level 30, format "dat .-[0  V1  ~>  v  ]1").
-    Notation "dat .-[1 v ~> V2 ]0" := (@consV10 dat _ _ v V2) (at level 30, format "dat .-[1  v  ~>  V2  ]0").
-    Notation  "dat .-I" := (@IdenObV dat) (at level 0, format "dat .-I").
-    Notation "dat .-uV" := (@unitV dat _) (at level 0, format "dat .-uV").
-
-    Notation "v2 ~~ v1" := (v2 ~~ _ ` v1)  (at level 70).
+    Module Ex_Notations.
+      Notation "dat .-V(0 B |- A )0" := (@polyV_relT00 dat B A) (at level 35, format "dat .-V(0  B  |-  A  )0").
+    End Ex_Notations.
+    Import Ex_Notations.
     Notation "V(0 B |- A )0" := (_ .-V(0 B |- A )0) (at level 35).
+
+    (** almost same as the common unitary .. but no unit-picking mentionned **)
+    Definition polyV_relT_unitary {log: data} : forall (B : obV log), forall (A : obV log),
+                                                  V(0 B |- A )0 -> forall X : obV log, T(0 V(0 A |- X )0  |- V(0 B |- X )0 )0
+      := (fun (B A : obV log) (f : V(0 B |- A )0) (X : obV log) (g : V(0 A |- X )0) =>
+            polyV_relT (fun _ : unit => f) g tt) .
+
+    Definition polyV_relT_identitary {log : data} : forall (B : obV log), forall (A : obV log),
+                                                    forall X : obV log, T(0 V(0 A |- X )0  |- T(0 V(0 B |- A )0 |- V(0 B |- X )0 )0 )0
+      :=  fun (B : obV log) => fun (A : obV log) =>
+                              fun X : obV log =>  fun (a : V(0 A |- X )0) => fun (b : V(0 B |- A )0) =>
+                                                                        @polyV_relT log (V(0 B |- A )0) B A (fun b0 => b0) X a b .
+
+    Module Ex_Notations2.
+      Export Ex_Notations.
+      Notation "dat .-V(1 b |- X )0" := (@polyV_relT dat _ _ _ b X) (at level 35, format "dat .-V(1  b  |-  X  )0").
+      Notation "dat .-V(1I b |- - )0" := (@polyV_relT_unitary dat _ _ b) (at level 35, format "dat .-V(1I  b  |-  -  )0").
+      (**  more precisely ( ( b 0 ) o> _ )   **)
+      Notation "dat .-V(1I b |- X )0" := (@polyV_relT_unitary dat _ _ b X) (at level 35, format "dat .-V(1I  b  |-  X  )0").
+      (**  more precisely ( ( b 0 ) o> a )  **)
+      Notation "b o> dat > a" := (@polyV_relT_unitary dat _ _ b _ a) (at level 33, right associativity, dat at next level, format "b  o> dat >  a").
+      Notation "dat .-V(1 'id' |- X )0" := (@polyV_relT_identitary dat _ _ X) (at level 35, format "dat .-V(1  'id'  |-  X  )0").
+      Notation "dat .-V(0 X |- - )1" := (@polyV_relT_identitary dat _ _ X) (at level 35, format "dat .-V(0  X  |-  -  )1").
+      (**  more precisely ( ( id _ ) o> a )  **)
+      Notation "dat .-V(0 X |- a )1" := (@polyV_relT_identitary dat _ _ X a) (at level 35, format "dat .-V(0  X  |-  a  )1").
+      (**  more precisely ( ( id b ) o> a )  **)
+      Notation "a < dat <o b" := (@polyV_relT_identitary dat _ _ _ a b) (at level 33, right associativity, dat at next level, format "a  < dat <o  b").
+
+      Notation "v2 ~~ dat ` v1" := (@convV dat _ _ v2 v1)  (at level 70, dat at next level, format "v2  ~~ dat `  v1").
+      Notation "dat .-1" := (@IdenV dat _) (at level 0, format "dat .-1").
+      Notation "dat .-[0 V1 ~> V2 ]0" := (@consV00 dat V1 V2) (at level 30, format "dat .-[0  V1  ~>  V2  ]0").
+      Notation "dat .-[0 V1 ~> v ]1" := (@consV01 dat V1 _ _ v) (at level 30, format "dat .-[0  V1  ~>  v  ]1").
+      Notation "dat .-[1 v ~> V2 ]0" := (@consV10 dat _ _ v V2) (at level 30, format "dat .-[1  v  ~>  V2  ]0").
+      Notation  "dat .-(0 V1 * V2 )0" := (@desV00 dat V2 V1) (at level 30, V1, V2 at level 30, format "dat .-(0  V1  *  V2  )0").
+      Notation  "dat .-(1 v * V2 )0" := (@desV10 dat V2 _ _ v) (at level 30, v , V2 at level 30, format "dat .-(1  v  *  V2  )0").
+      Notation "dat .-V[0 V1 ~> V2 ]0" := (@polyV_relV00 dat V1 V2) (at level 25, only parsing).
+      Notation  "dat .-I" := (@IdenObV dat ) (at level 0, format "dat .-I").
+      Notation "dat .-uV" := (@unitV dat _) (at level 0, format "dat .-uV").
+    End Ex_Notations2.
+    Import Ex_Notations2.
+    Notation "V(1 b |- X )0" := (_ .-V(1 b |- X )0) (at level 35, format "V(1  b  |-  X  )0").
+    Notation "V(1I b |- - )0" := (_ .-V(1I b |- - )0) (at level 35, format "V(1I  b  |-  -  )0").
+    Notation "V(1I b |- X )0" := (_ .-V(1I b |- X )0) (at level 35, format "V(1I  b  |-  X  )0").
+    Notation "b o> a" := (@polyV_relT_unitary _ _ _ b _ a) (at level 33, right associativity).
+    Notation "V(1 'id' |- X )0" := (_ .-V(1 id |- X )0) (at level 35, format "V(1  'id'  |-  X  )0").
+    Notation "V(0 X |- - )1" := (_ .-V(0 X |- - )1) (at level 35, format "V(0  X  |-  -  )1").
+    Notation "V(0 X |- a )1" := (_ .-V(0 X |- a )1) (at level 35, format "V(0  X  |-  a  )1").
+    Notation "a <o b" := (@polyV_relT_identitary _ _ _ _ a b) (at level 33, right associativity).
+
+    Notation "v2 ~~ v1" := (@convV _ _ _ v2 v1)  (at level 70).
     Notation "1" := (_ .-1) (at level 0).
-    Notation  "(0 V1 * V2 )0" := (_ .-(0 V1 * V2 )0) (at level 30, V1 at next level).
-    Notation  "(1 v * V2 )0" := (_ .-(1 v * V2 )0) (at level 30, v at next level).
-    Notation "[0 V1 ~> V2 ]0" := (_ .-[0 V1 ~> V2 ]0) (at level 30).
-    Notation "[0 V1 ~> v ]1" := (_ .-[0 V1 ~> v ]1) (at level 30).
-    Notation "[1 v ~> V2 ]0" := (_ .-[1 v ~> V2 ]0) (at level 30).
+    Notation "[0 V1 ~> V2 ]0" := (_ .-[0 V1 ~> V2 ]0) (at level 30, format "[0  V1  ~>  V2  ]0").
+    Notation "[0 V1 ~> v ]1" := (_ .-[0 V1 ~> v ]1) (at level 30, format "[0  V1  ~>  v  ]1" ).
+    Notation "[1 v ~> V2 ]0" := (_ .-[1 v ~> V2 ]0) (at level 30, format "[1  v  ~>  V2  ]0"). Print Grammar constr.
+    Notation  "(0 V1 * V2 )0" := (_ .-(0 V1 * V2 )0) (at level 30, V1, V2 at  level 30, format "(0  V1  *  V2  )0").
+    Notation  "(1 v * V2 )0" := (_ .-(1 v * V2 )0) (at level 30, v, V2 at level 30, format "(1  v  *  V2  )0").
+    Notation "V[0 V1 ~> V2 ]0" := (_ .-V[0 V1 ~> V2 ]0) (at level 25, only parsing).
     Notation  "'I'" := (_ .-I) (at level 0).
     Notation "'uV'" := (_ .-uV) (at level 0).
-*)
-
-  (*
-  Record data :=
-    Data {
-        obV : Type;
-        polyV_relT00 : obV -> obV -> obT;
-        convV : forall V1 V2, polyV_relT00 V1 V2 -> polyV_relT00 V1 V2 -> Prop;
-      }.
-
-  Notation "v2 ~~ v1" := (convV v2 v1)  (at level 70).
-  Notation "V(0 B |- A )0" := (polyV_relT00 B A) (at level 35).
-
-  Record data1 :=
-    Data1 {
-        data_of :> data;
-        (* polyV_relT as primitive breaks definitional of <o and o> .. but now clearly any instance of interface V is enriched in T *)
-        polyV_relT : forall B : obV data_of, forall (T : obT) (A : obV data_of),
-                       T(0 T |- V(0 B |- A)0 )0 ->
-                       forall (X : obV data_of), T(0 V(0 A |- X)0 |-  T(0 T |- V(0 B |- X)0 )0 )0;
-        IdenV : forall {V : obV data_of}, V(0 V |- V )0
-      }.
-*)
   
-  (* TODO: below everywhere change polyV_relT to polyV_relT *)
-  (*
-Parameter polyV_relT_unitary : forall (B : obV), forall (A : obV),
-                             V(0 B |- A )0 -> forall X : obV, V(0 A |- X )0  -> V(0 B |- X )0.
-   *)
-  (** almost same as the common unitary .. but no unit-picking mentionned **)
-  Definition polyV_relT_unitary {log: data} : forall (B : obV log), forall (A : obV log),
-                                                V(0 B |- A )0 -> forall X : obV log, T(0 V(0 A |- X )0  |- V(0 B |- X )0 )0
-    := (fun (B A : obV log) (f : V(0 B |- A )0) (X : obV log) (g : V(0 A |- X )0) =>
-         polyV_relT (fun _ : unit => f) g tt) .
-
-  (** definitionally: relation of polyV_relT_identitary to polyV_relT_unitary , instead of going through polyF_relT which gives only propositional equality **)
-  (*Definition polyV_relT_identitary : forall (B : obV), forall (A : obV),
-                    forall X : obV, V(0 A |- X )0  -> V(0 B |- A )0 -> V(0 B |- X )0
-  :=  fun (B : obV) => fun (A : obV) =>
-                     fun X : obV =>  fun (a : V(0 A |- X )0) => fun (b : V(0 B |- A )0) =>
-                                                           (@polyV_relT_unitary B A b X a).
-   *)
-  Definition polyV_relT_identitary {log : data} : forall (B : obV log), forall (A : obV log),
-                                                   forall X : obV log, T(0 V(0 A |- X )0  |- T(0 V(0 B |- A )0 |- V(0 B |- X )0 )0 )0
-    :=  fun (B : obV log) => fun (A : obV log) =>
-                           fun X : obV log =>  fun (a : V(0 A |- X )0) => fun (b : V(0 B |- A )0) =>
-                                                                     @polyV_relT log (V(0 B |- A )0) B A (fun b0 => b0) X a b .
-  
-  Notation "V(1 b |- X )0" := (@polyV_relT _ _ _ _ b X) (at level 35).
-
-  Notation "V(1I b |- - )0" := (@polyV_relT_unitary _ _ _ b) (at level 35).
-  (**  more precisely ( ( b 0 ) o> _ )   **)
-  Notation "V(1I b |- X )0" := (@polyV_relT_unitary _ _ _ b X) (at level 35).
-  (**  more precisely ( ( b 0 ) o> a )  **)
-  Notation "b o> a" := (@polyV_relT_unitary _ _ _ b _ a) (at level 33, right associativity).
-
-  Notation "V(1 'id' |- X )0" := (@polyV_relT_identitary _ _ _ X) (at level 35).
-  Notation "V(0 X |- - )1" := (@polyV_relT_identitary _ _ _ X) (at level 35).
-  (**  more precisely ( ( id _ ) o> a )  **)
-  Notation "V(0 X |- a )1" := (@polyV_relT_identitary _ _ _ X a) (at level 35).
-  (**  more precisely ( ( id b ) o> a )  **)
-  Notation "a <o b" := (@polyV_relT_identitary _ _ _ _ a b) (at level 33, right associativity).
-
-  Module Ex_Notations2.
-      
-    Notation "dat .-V(1 b |- X )0" := (@polyV_relT dat _ _ _ b X) (at level 35, format "dat .-V(1  b  |-  X  )0").
-
-    Notation "dat .-V(1I b |- - )0" := (@polyV_relT_unitary dat _ _ b) (at level 35, format "dat .-V(1I  b  |-  -  )0").
-    (**  more precisely ( ( b 0 ) o> _ )   **)
-    Notation "dat .-V(1I b |- X )0" := (@polyV_relT_unitary dat _ _ b X) (at level 35, format "dat .-V(1I  b  |-  X  )0").
-    (**  more precisely ( ( b 0 ) o> a )  **)
-    Notation "b o> dat > a" := (@polyV_relT_unitary dat _ _ b _ a) (at level 33, right associativity, format "b  o> dat >  a").
-
-    Notation "dat .-V(1 'id' |- X )0" := (@polyV_relT_identitary dat _ _ X) (at level 35, format "dat .-V(1  'id'  |-  X  )0").
-    Notation "dat .-V(0 X |- - )1" := (@polyV_relT_identitary dat _ _ X) (at level 35, format "dat .-V(0  X  |-  -  )1").
-    (**  more precisely ( ( id _ ) o> a )  **)
-    Notation "dat .-V(0 X |- a )1" := (@polyV_relT_identitary dat _ _ X a) (at level 35, format "dat .-V(0  X  |-  a  )1").
-    (**  more precisely ( ( id b ) o> a )  **)
-    Notation "a < dat <o b" := (@polyV_relT_identitary dat _ _ _ a b) (at level 33, right associativity, format "a  < dat <o  b").
-  End Ex_Notations2.
-  (*
-Hypothesis polyV_relT_arrow :  forall (B : obV), forall (A : obV),
-                        forall (V V' : obT) (b : V' -> V),
-                        forall (f : V -> V(0 B |- A )0 ) (X : obV),
-                        forall (a : V(0 A |- X )0) (ttt: V'),
-                          V(1 (fun v' => f (b v')) |- X )0 a ttt
-                          = V(1 f |- X )0 a (b ttt).
-
-Lemma polyV_relT_identitary_really :  forall (B : obV) , forall (A : obV) ,
-                                 forall X : obV , forall (a : V(0 A |- X )0),  forall (b : V(0 B |- A )0),
-                                   @polyV_relT_identitary B A X a b = @polyV_relT B (V(0 B |- A )0) A (fun b0 => b0) X a b .
-Proof.
-  intros.  unfold polyV_relT_identitary. unfold polyV_relT_unitary. 
-  eapply polyV_relT_arrow with (f := fun b0 => b0) (b := fun _ : unit => b).
-Qed.
-Notation "V(0 X |- a )1" := (@polyF _ _ _ (@IdenV _) X <o (a : V(0 _ |- F[0 _ ~> X ]0 )0)) (at level 25).
-   *)
-  (*
-Variable polyV_relT_morphism :  forall (B : obV), forall (V : obT),
-                           forall (A : obV) (W : obT) (A' : obV) (g : W -> V(0 A |- A')0),
-                           forall (f : V -> V(0 B |- A )0) (X : obV),
-                             V(1 Des( [1 f ~> F[0 B ~> A' ]0 ]0 <o F[0 A' ~> g ]1 ) |- X)0
-                              ~~  DesIn( [0 W ~> F[1 f ~> X ]0 ]1 <o F[1 g ~> X ]0 ).
-   *)
-
-  (* ERASE OLD: note the stronger relation (of the Coq ultimate meta logic T) ~~T instead of particular subject logic relation ~~ *)
-  (*
-Hypothesis polyV_relT_arrow :  forall (B : obV), forall (A : obV),
-                        forall (V V' : obT) (b : V' -> V),
-                        forall (f : V -> V(0 B |- A )0 ) (X : obV),
-                        forall (a : V(0 A |- X )0) (ttt: V'),
-                          V(1 (fun v' => f (b v')) |- X )0 a ttt
-                          = V(1 f |- X )0 a (b ttt).     *)
-(*
-    Definition convV_fun {dat : data}: forall (U1 U2 V1 V2 : obV dat), (V(0 U1 |- U2)0 -> V(0 V1 |- V2)0) -> (V(0 U1 |- U2)0 -> V(0 V1 |- V2 )0) -> Prop
-      := fun  U1 U2 V1 V2 (w' w : (V(0 U1 |- U2)0 -> V(0 V1 |- V2)0)) =>
-          forall u1 u2, u1 ~~ u2 -> w' u1 ~~ w u2 .
-    Notation "w' ~~~ w" := (convV_fun w' w)  (at level 70).
-*)
     Record extras {dat : data} :=
       Extras {
           ReflV : forall (A1 A2 : obV dat) (f : V(0 A1 |- A2 )0), f ~~ f;
@@ -530,9 +435,9 @@ Hypothesis polyV_relT_arrow :  forall (B : obV), forall (A : obV),
                               forall (V V' : obT) (b : V' -> V),
                               forall (f : V -> V(0 B |- A )0 ) (X : obV dat),
                               forall (a : V(0 A |- X )0), forall (ttt: V'),
-                                 V(1 (fun v' => f (b v')) |- X )0 a ttt
+                                V(1 (fun v' => f (b v')) |- X )0 a ttt
                                  ~~   V(1 f |- X )0 a (b ttt);
-(*          polyV_relT_morphism :   forall (V : obT) (B A : obV dat) (W : obT) (A' : obV dat)
+          (*          polyV_relT_morphism :   forall (V : obT) (B A : obV dat) (W : obT) (A' : obV dat)
                                      (g : T(0 W |- V(0 A |- A' )0 )0) (f : T(0 V |- V(0 B |- idT A )0 )0)
                                      (X : obV dat),
                                      V(1 DesT
@@ -547,17 +452,17 @@ Hypothesis polyV_relT_arrow :  forall (B : obV), forall (A : obV),
                                       ((T(1 fun b0 : T(0 V(0 A' |- X )0 |- [0TW ~> V(0 A |- X )0 ]0 )0 => b0
                                                                                                     |- [0TW ~> [0TV ~> V(0 B |- idT X )0 ]0 ]0 )0)
                                          ([0TW ~> V(1 f |- X )0 ]1) (V(1 g |- X )0)); *)
-  (*        polyV_relT_morphism :   forall (V : obT) (B A : obV dat) (W : obT) (A' : obV dat)
+          (*        polyV_relT_morphism :   forall (V : obT) (B A : obV dat) (W : obT) (A' : obV dat)
                                     (g : T(0 W |- V(0 A |- A' )0 )0) (f : T(0 V |- V(0 B |- idT A )0 )0)
                                     (X : obV dat),
                                     V(1 DesT( ([1Tf ~> V(0 B |- idT A' )0 ]0) <<o (V(0 A' |- g )1)) |- X )0 ~~T
                                      DesInT( ([0TW ~> V(1 f |- X )0 ]1) <<o (V(1 g |- X )0) );
-*)
+           *)
           (** written here :   (outer modification) ~~ (inner modification) **)
           polyV_relT_morphism :  forall (B : obV dat), 
                                  forall (A : obV dat) (A' : obV dat) (g : V(0 A |- A')0),
                                  forall (X : obV dat), forall (pull : V(0 B |- A)0), forall (push : V(0 A'  |- X )0 ),
-                                    V(1I V(0 A' |- g )1 pull |- X )0 push
+                                   V(1I V(0 A' |- g )1 pull |- X )0 push
                                     ~~ V(0 X |- V(1I g |- X )0 push )1 pull;
           (** ALT 
 Hypothesis Cong_polyV_relT : forall (B : obV), forall (A : obV),
@@ -569,24 +474,30 @@ Hypothesis Cong_polyV_relT : forall (B : obV), forall (A : obV),
           (** related to non-variance when unit push the output, commonly  ( (f _i) o> 1 ) ~~ (f _i)  , 
        therefore polyV is injective **)
           polyV_relT_inputUnitV : forall (B : obV dat), forall (A : obV dat),
-                              forall (b : V(0 B |- A )0),
-                                b  ~~ ( (V(1I b |- A )0)  (@IdenV _ A) );
+                                  forall (b : V(0 B |- A )0),
+                                    b  ~~ ( (V(1I b |- A )0)  (@IdenV _ A) );
           
           CongDes : forall V : obV dat, forall (U W : obV dat), forall (f f' : V(0 U |- [0 V ~> W ]0 )0),
                       f' ~~ f -> Des f' ~~ Des f ;
           Des_Cons : forall V : obV dat, forall (U W : obV dat), forall (f : V(0 (0 U * V )0 |-  W )0),
                        Des (Cons f) ~~ f ;
           Des_Output : forall V : obV dat, forall (U W : obV dat), forall (v : V(0 U |- [0 V ~> W ]0 )0), forall W' (w : V(0 W |- W' )0),
-                                  Des( [0 V ~> w ]1 <o v ) ~~ w <o Des( v ) ;
+                         Des( [0 V ~> w ]1 <o v ) ~~ w <o Des( v ) ;
           CongCons : forall V : obV dat, forall (U W : obV dat), forall (v v' : V(0 (0 U * V )0 |- W )0 ),
                        v' ~~ v -> Cons v' ~~ Cons v ;
           Cons_Des : forall V : obV dat, forall (U W : obV dat), forall (f : V(0 U |-  [0 V ~> W ]0 )0),
                        Cons (Des f) ~~ f ;
           Cons_Input : forall V : obV dat, forall (U U' : obV dat) (w : V(0 U' |- U )0), forall (W : obV dat) (v : V(0 (0 U * V )0 |- W )0),
                          Cons(v <o (1 w * V )0 )  ~~ Cons( v ) <o w ;
-
+          Assoc_Rev : forall{V W U : obV dat},
+                        V(0 (0(0U * V )0 * W )0 |- (0U * (0V * W )0 )0 )0;
+          Assoc_Assoc_Rev : forall(V W U : obV dat),
+                              1 ~~ (Assoc_Rev <o (@Assoc dat V W U));
+          Assoc_Rev_Assoc : forall(V W U : obV dat),
+                              1 ~~ ((@Assoc dat V W U) <o Assoc_Rev);
         }.
 
+    Existing Class extras. 
     Arguments ReflV {_ _} _ _ _ .
     Arguments TransV {_ _} _ _ _ _ _ _ _ .
     Arguments SymV {_ _} _ _ _ _ _ . About Cong_polyV_relT.
@@ -601,7 +512,8 @@ Hypothesis Cong_polyV_relT : forall (B : obV), forall (A : obV),
     Arguments CongCons {_ _} [_ _ _] _ _ _.
     Arguments Cons_Des {_ _} [_ _ _ _] .
     Arguments Cons_Input {_ _} [_ _ _ _ _] _ .
-(*    Arguments DesIn {_ _} [_ _ _ _] _ .
+    Arguments Assoc_Rev {_ _} {_ _ _} .
+    (*    Arguments DesIn {_ _} [_ _ _ _] _ .
     Arguments DesIdenObR {_ _} [_ _] _  .
     Arguments CongDesIdenObR {_ _} [_ _ _ _] _  .
     Arguments DesIdenObR_output {_ _} [_ _ _] _ _ .
@@ -612,24 +524,9 @@ Hypothesis Cong_polyV_relT : forall (B : obV), forall (A : obV),
     Arguments consV10_functorial {_ _} [_ _ _] _  _ _ .
     Arguments consV11_bifunctorial {_ _} [_ _ _ _] _ _ .
     Arguments CongConsV10 {_ _} [_ _ _ _] _ _ .
-*)    
+     *)    
 
-    Lemma           polyV_relT_morphism'' {dat : data} {ext : @extras dat} :  forall (B : obV dat), 
-                                 forall (A : obV dat) (A' : obV dat) (g : V(0 A |- A')0),
-                                 forall (X : obV dat), forall (pull : V(0 B |- A)0), forall (push : V(0 A'  |- X )0 ),
-                                    V(1I V(0 A' |- g )1 pull |- X )0 push
-                                    ~~ V(0 X |- V(1I g |- X )0 push )1 pull.
-      Check           polyV_relT_morphism .
-      Abort.
-    Lemma Cong_polyV_relT' {dat : data} {ext : @extras dat} : forall (B : obV dat), forall (A : obV dat),
-                                          forall (f f' : V(0 B |- A )0),
-                               f' ~~ f -> forall X : obV dat,
-                                            forall a1 a2, a1 ~~ a2 -> @polyV_relT_unitary dat B A f' X a1 ~~  @polyV_relT_unitary _ B A f X a2.
-    Proof.
-      intros. eapply  (@Cong_polyV_relT _ ext)  with (f:=fun _ : unit => f)  (f':=fun _ : unit => f'); intros; assumption.
-    Qed.
-    Arguments Cong_polyV_relT' {_ _} [_ _ _ _ _ _ _] _ _ .
-                                             
+
     Structure logic :=
       Logic {
           data_of :> data;
@@ -637,12 +534,195 @@ Hypothesis Cong_polyV_relT : forall (B : obV), forall (A : obV),
         }.
 
     (* not critical, only for easy proofs without doing (extras_of _) *)
-    Existing Class extras. 
     Existing Instance extras_of. 
 
     Section Context.
       Context {log : logic}.
-            
+
+      (** later, most of the remaining fields shall be DEFINITIONS and LEMMAS **)
+      Definition DesIn : forall {V : obV log}, forall {U0 U1 W : obV log}, V(0 U0 |- [0 U1 ~> [0 V ~> W ]0 ]0 )0 -> V(0 U0 |- [0 (0 U1 * V )0 ~> W ]0 )0.
+        intros. apply Cons. eapply polyV_relT_identitary. Check @Assoc. 2: eapply Assoc. eapply Des.
+        eapply Des. exact H.
+      Defined.
+      Lemma CongDesIn : forall V : obV log, forall (U0 U1 W : obV log), forall (v v' : V(0 U0 |- [0 U1 ~> [0 V ~> W ]0 ]0 )0),
+                          v' ~~ v -> DesIn v' ~~ DesIn v.
+      Admitted.
+      Definition ConsIn : forall V : obV log, forall (U0 U1 W : obV log), V(0 U0 |- [0 (0 U1 * V )0 ~> W ]0 )0 -> V(0 U0 |- [0 U1 ~> [0 V ~> W ]0 ]0 )0 .
+        intros. apply Cons. apply Cons. Check @Assoc. eapply polyV_relT_identitary. eapply Des.  2:  eapply Assoc_Rev. exact H.
+      Defined.
+      Lemma CongConsIn : forall V : obV log, forall (U0 U1 W : obV log), forall (v v' : V(0 U0 |- [0 (0 U1 * V )0 ~> W ]0 )0),
+                           v' ~~ v -> ConsIn v' ~~ ConsIn v .
+        Admitted.
+     Lemma ConsIn_DesIn : forall V : obV log, forall (U0 U1 W : obV log), forall (f : V(0 U0 |- [0 U1 ~> [0 V ~> W ]0 ]0 )0),
+                            ConsIn (DesIn f) ~~ f .
+     Admitted.
+     Lemma DesIn_Input : forall V : obV log, forall (U0 U1 W : obV log), forall (v : V(0 U0 |- [0 U1 ~> [0 V ~> W ]0 ]0 )0), forall (U0' : obV log) (i : V(0 U0' |- U0 )0),
+                            (DesIn v) <o i ~~ DesIn( v <o i ) .
+     Admitted.
+     Lemma Des_Input : forall (U U' : obV log) (w : V(0 U' |- U )0), forall (V W : obV log) (v : V(0 U |- [0 V ~> W ]0 )0), 
+                         Des( v <o w ) ~~ Des( v ) <o desV10 V w .
+     Admitted.
+     Lemma ConsIn_Output : forall V : obV log, forall (U0 : obV log), forall (U1 U1' : obV log) (u1 : V(0 U1' |- U1 )0), forall (W : obV log), forall (v : V(0 U0 |- [0 (0 U1 * V )0 ~> W ]0 )0),
+                             ConsIn( [1 (1 u1 * V )0 ~> W ]0 <o v ) ~~ [1 u1 ~> [0 V ~> W ]0 ]0 <o ConsIn( v ) .
+     Admitted.
+     Lemma CongConsV01 : forall V1 : obV log, forall (V2 V2' : obV log) (v v' : V(0 V2 |- V2' )0),
+                           v' ~~ v -> [0 V1 ~> v' ]1 ~~ [0 V1 ~> v ]1 .
+     Admitted.
+     Lemma ConsIn_Input : forall V : obV log, forall (U0 U1 W : obV log), forall (v : V(0 U0 |- [0 (0 U1 * V )0 ~> W ]0 )0), forall (U0' : obV log) (i : V(0 U0' |- U0 )0),
+                            ConsIn( v <o i ) ~~ (ConsIn v) <o i .
+     Admitted.
+     Lemma consV01_functorial : forall V1 : obV log, forall V2 V2' (v : V(0 V2 |- V2' )0), forall V2'' (v' : V(0 V2' |- V2'' )0),
+                                  [0 V1 ~> v' <o v ]1 ~~  [0 V1 ~> v' ]1 <o  [0 V1  ~> v ]1 .
+     Admitted.
+     Lemma DesIn_ConsIn : forall V : obV log, forall (U0 U1 W : obV log), forall (f : V(0 U0 |- [0 (0 U1 * V )0 ~> W ]0 )0),
+                            DesIn (ConsIn f) ~~ f.
+     Admitted.
+     Lemma Assoc_Iso : forall (V W : obV log), forall (U: obV log),
+                            forall (Y X : obV log) (f g : V(0 Y |-  [0 (0 ((0 U * V )0) * W )0 ~> X ]0 )0 ), 
+                              [1 Assoc ~> X ]0 <o f ~~ [1 Assoc  ~> X ]0 <o g -> f ~~ g .
+     Admitted.
+     Lemma Assoc_nat0 : forall (V W : obV log), forall (U U' : obV log) (f : V(0 U |- U' )0 ),
+                          Assoc <o (1 f * (0 V * W )0 )0 ~~ (1 ((1 f * V )0) * W )0 <o Assoc .
+     Admitted.
+     Lemma Des_consV10_functorial : forall V B PA (f : V(0 V |- [0 B ~> PA ]0 )0) PA' QA (g : V(0 [0 B ~> PA ]0 |- [0 B ~> QA ]0 )0) ,
+                                           (Des ([1 Des (g <o f) ~> PA' ]0 ))
+                                             ~~ ( ( Des (Des ([1 f ~> [0 B ~> PA' ]0 ]0 <o ConsIn ([1 Des (g) ~> PA' ]0))) ) <o Assoc
+                                                  : V(0 (0 ([0 QA ~> PA' ]0) * (0V * B )0 )0 |- PA' )0 ).
+     Admitted.
+     (** Lemma Assoc_Des_Des_old : forall V B PA PA' (f : V(0 V |- [0 B ~> PA ]0 )0),
+                                     ( (Des ([1 Des f ~> PA' ]0 )) : V(0 (0 ([0 PA ~> PA' ]0) * (0V * B )0 )0 |- PA' )0 )
+                                       ~~ ( ( Des (Des ([1 f ~> [0 B ~> PA' ]0 ]0 <o ConsIn ([1 Des (@IdenV ([0 B ~> PA ]0)) ~> PA' ]0))) ) <o Assoc ). **)
+     Lemma Assoc_DesIn_DesIn :  forall W PX, forall  V B PA (f : V(0 V |- [0 B ~> PA ]0 )0),
+                                       DesIn ([0 W ~>  ([1 Des f ~> PX ]0) ]1)
+                                             ~~ [1 Assoc ~> PX ]0 <o DesIn( DesIn ([0 W ~>  ConsIn([1 Des f ~> PX ]0) ]1) ) .
+     Admitted.
+
+     Lemma Cons_Output : forall V : obV log, forall (U W : obV log), forall (v :  V(0 (0 U * V )0 |-  W )0), forall W' (w : V(0 W |- W' )0),
+                                [0 V ~> w ]1 <o Cons( v ) ~~ Cons( w <o v ) .
+     Admitted.
+     Lemma ConsIn_Output2 : forall V : obV log, forall (U0 : obV log), forall (U1 : obV log) , forall (W W' : obV log) (w : V(0 W |- W' )0), forall (v : V(0 U0 |- [0 (0 U1 * V )0 ~> W ]0 )0),
+                                   ConsIn( [0 (0 U1 * V )0 ~> w ]1 <o v ) ~~ [0 U1 ~> [0 V ~> w ]1 ]1 <o ConsIn( v ) .
+     Admitted.
+     Lemma ConsIn_consV10_functorial : forall V B PA (f : V(0 V |- [0 B ~> PA ]0 )0) PA' QA (g : V(0 [0 B ~> PA ]0 |- [0 B ~> QA ]0 )0),
+                                              ( ConsIn (([1 Des (g <o f) ~> PA' ]0)) )
+                                                ~~ ( ([1 f ~> [0 B ~> PA' ]0 ]0 <o ConsIn ([1 Des (g) ~> PA' ]0))
+                                                     : V(0 [0 QA ~> PA' ]0 |- [0 V ~> [0 B ~> PA' ]0 ]0 )0 ) .
+     Admitted.
+
+     Lemma Des_I_Iso : forall (A : obV log),
+                            forall (Y X : obV log) (f g : V(0 Y |-  [0  A ~> X ]0 )0 ), 
+                              [1 Des (@IdenV _ ([0 I ~> A ]0)) ~> X ]0 <o f ~~ [1  Des (@IdenV _ ([0 I ~> A ]0))  ~> X ]0 <o g -> f ~~ g .
+     Admitted.
+     
+     (** **** section **)
+     Definition polyV_relV :  forall (U : obV log), forall (W : obV log), forall (V : obV log),
+                               V(0 U |- [0 W ~> V ]0 )0 ->
+                               forall X : obV log, V(0 [0 V ~> X ]0  |- [0 U ~> [0 W ~> X ]0 ]0 )0 .
+       intros ? ? ? v ?.  exact  (ConsIn( [1 Des v ~> X]0)).
+     Defined.
+
+    End Context.
+
+
+    Module Ex_Notations3.
+      Export Ex_Notations2.
+      Notation "dat .-V[1 v ~> X ]0" := (@polyV_relV dat _ _ _ v X) (at level 25).
+      Notation "dat .-V[0 X ~> w ]1" := ((@polyV_relV dat _ _ _ 1 X) <dat<o w) (at level 25).
+      Notation "dat .-V[0 W ~> - ]1" := (fun V X => @polyV_relV dat _ _ _ (@IdenV dat (dat.-V[0 W ~> V ]0)) X) (at level 25).
+    End Ex_Notations3.
+    Import Ex_Notations3.
+      Notation "V[1 v ~> X ]0" := (_ .-V[1 v ~> X ]0) (at level 25).
+      Notation "V[0 X ~> w ]1" := (_ .-V[0 X ~> w ]1) (at level 25).
+      Notation "V[0 W ~> - ]1" := (_ .-V[0 W ~> - ]1) (at level 25).
+
+      Section Context2.
+        Context {log : logic}.
+
+        Lemma polyV_relV_polyV_relT : forall (W : obV log), forall (U : obV log) (V : obV log),
+                                      forall (v : V(0 U |- [0 W ~> V ]0 )0), forall X : obV log,
+                                        [1 Des v ~> X]0
+                                                      ~~ DesIn( V[1 v ~> X ]0 ) .
+        Admitted.
+    
+        Parameter DesIdenObR : forall {U W : obV log}, V(0 U |- [0 I ~> W ]0 )0 -> V(0 U  |- W )0 .
+       Axiom CongDesIdenObR : forall (U W : obV log), forall (v v' : V(0 U |- [0 I ~> W ]0 )0),
+                                v' ~~ v -> DesIdenObR v' ~~ DesIdenObR v .
+       Axiom DesIdenObR_output : forall (U : obV log) (W W' : obV log) (w : V(0 W |- W' )0), forall v : V(0 U |- [0 I ~> W ]0 )0, 
+                                   DesIdenObR( [0 I ~> w ]1 <o v ) ~~ w <o DesIdenObR( v ) .
+       Axiom DesIdenObR_Input : forall (U W : obV log) (U' : obV log) (w : V(0 U' |- U )0), forall v : V(0 U |- [0 I ~> W ]0 )0, 
+                                        DesIdenObR( v <o w ) ~~ DesIdenObR( v ) <o w .
+
+       Parameter DesIdenObL : forall {V : obV log}, forall {W : obV log}, V(0 I |- [0 V ~> W ]0 )0 -> V(0 V |- W )0 .
+       Axiom CongDesIdenObL : forall (V W : obV log), forall (v v' : V(0 I |- [0 V ~> W ]0 )0),
+                                v' ~~ v -> DesIdenObL v' ~~ DesIdenObL v .
+       Parameter ConsIdenObL : forall V : obV log, forall (W : obV log), V(0 V |- W )0 -> V(0 I |- [0 V ~> W ]0 )0 .
+       Axiom ConsIdenObL_DesIdenObL : forall V : obV log, forall (W : obV log), forall v : V(0 I |- [0 V ~> W ]0 )0,
+                                        v ~~ ConsIdenObL( DesIdenObL v) .
+       Axiom Des_ConsIn :  forall V : obV log, forall (U1 W : obV log), forall (v : V(0 I |- [0 (0 U1 * V )0 ~> W ]0 )0),
+                        DesIdenObL (v) ~~ Des (DesIdenObL (ConsIn (v))).
+       Axiom CongConsIdenObL : forall V : obV log, forall (W : obV log), forall (v v' : V(0 V |- W )0),
+                                 v' ~~ v -> ConsIdenObL v' ~~ ConsIdenObL v .
+       Axiom consV10_functorial : forall (V1' V1 : obV log) (v :  V(0 V1' |- V1 )0), forall V1'' (v' : V(0 V1'' |- V1' )0), forall V2 : obV log,
+                                    [1 v <o v' ~> V2 ]0 ~~  [1 v' ~> V2 ]0 <o  [1 v ~> V2 ]0 .
+       Axiom consV11_bifunctorial : forall (V1' V1 : obV log) (v : V(0 V1' |- V1 )0), forall W1 W1' (w : V(0 W1 |- W1' )0),
+                                      [0 V1' ~> w ]1 <o  [1 v ~> W1 ]0 ~~ [1 v ~> W1' ]0 <o [0 V1 ~> w ]1 .
+       Axiom CongConsV10 : forall (V1' V1 : obV log) (v v' : V(0 V1' |- V1)0), forall V2 : obV log,
+                             v' ~~ v -> [1 v' ~> V2 ]0 ~~ [1 v ~> V2 ]0 .
+
+       
+        Axiom consV10_DesIdenObL : forall U : obV log, forall V : obV log, forall (W : obV log), forall (v : V(0 I |- [0 V ~> W ]0 )0), 
+                                          [1 DesIdenObL  v ~> U ]0  ~~ DesIdenObR( ConsIn( [1 Des v ~> U ]0 ) ) .
+        Axiom consV10_functorial_fun1 : forall V1, forall V2 : obV log,
+                                          (@IdenV _ _) ~~    [1 (@IdenV _ V1) ~> V2 ]0 .
+        
+       
+       (* unitV is not really primitive*)
+       Axiom unitV_IdenV : forall A : obV log,  (@IdenV log A) ~~ DesIdenObL (@unitV log A).
+
+       (* even/same for these that the decision are recursively-decidable because still purely logical after unfolding polyV_relV *) 
+       Lemma CongPolyV : forall (V B A : obV log) (f f' : V(0 V |- V[0 B ~> A ]0 )0),
+                           f' ~~ f -> forall X : obV log, V[1 f' ~> X ]0 ~~ V[1 f ~> X ]0 .
+       Admitted.
+
+       Lemma polyV_relV_arrow :  forall (B : obV log) (A : obV log) (V : obV log),
+                                 forall (V' : obV log) (v : V(0 V' |- V )0),
+                                 forall (f : V(0 V |- [0 B ~> A ]0 )0) (X : obV log),
+                                   V[1 (f <o v) ~> X ]0
+                                    ~~ [1 v ~> [0 B ~> X ]0 ]0 <o (V[1 f ~>  X ]0) .
+        Admitted.
+
+        Lemma polyV_relV_morphism :  forall (V B A W A' : obV log) (g : V(0 W |-V[0 A ~> A' ]0 )0)
+                                       (f : V(0 V |- V[0 B ~> idT A ]0 )0) (X : obV log),
+                                       V[1 Des ([1 f ~> [0 B ~> idT A' ]0 ]0 <o V[0 A' ~> g ]1) ~> X ]0 ~~
+                                        DesIn ([0 W ~> V[1 f ~> X ]0 ]1 <o V[1 g ~> X ]0) .
+        Admitted.
+
+       Lemma polyV_relV_unitV : forall (A : obV log), forall X : obV log, (@IdenV log (V[0 A ~> X ]0)) ~~ DesIdenObR( V[1 (@unitV log A) ~> X ]0 ) .
+       Admitted.
+      Lemma polyV_relV_inputUnitV :forall (V : obV log),  forall (B : obV log),  forall (A : obV log),
+                                    forall (f : V(0 V |- V[0 B ~> A ]0 )0),
+                                      f  ~~ DesIdenObL( (V[1 f ~> A ]0) <o (@unitV log A) ).
+      Admitted.
+
+
+      (** *** section *)
+      Lemma           polyV_relT_morphism'' {dat : data} {ext : @extras dat} :  forall (B : obV dat), 
+                                                                                forall (A : obV dat) (A' : obV dat) (g : V(0 A |- A')0),
+                                                                                forall (X : obV dat), forall (pull : V(0 B |- A)0), forall (push : V(0 A'  |- X )0 ),
+                                                                                  V(1I V(0 A' |- g )1 pull |- X )0 push
+                                                                                   ~~ V(0 X |- V(1I g |- X )0 push )1 pull.
+        Check           polyV_relT_morphism .
+      Abort.
+      Lemma Cong_polyV_relT' {dat : data} {ext : @extras dat} : forall (B : obV dat), forall (A : obV dat),
+                                                                forall (f f' : V(0 B |- A )0),
+                                                                  f' ~~ f -> forall X : obV dat,
+                                                                            forall a1 a2, a1 ~~ a2 -> @polyV_relT_unitary dat B A f' X a1 ~~  @polyV_relT_unitary _ B A f X a2.
+      Proof.
+        intros. eapply  (@Cong_polyV_relT _ ext)  with (f:=fun _ : unit => f)  (f':=fun _ : unit => f'); intros; assumption.
+      Qed.
+      Arguments Cong_polyV_relT' {_ _} [_ _ _ _ _ _ _] _ _ .
+
+      
       Lemma polyV_relT_unitary_rel_identitary :  forall (B : obV log) , forall (A : obV log) ,
                                                               forall X : obV log , forall (a : V(0 A |- X )0),  forall (b : V(0 B |- A )0),
                                                                 @polyV_relT_unitary log B A b X a  ~~  a <o b . (* @polyV_relT B (V(0 B |- A )0) A (fun b0 => b0) X a b .*)
@@ -698,61 +778,11 @@ Hypothesis Cong_polyV_relT : forall (B : obV), forall (A : obV),
         apply polyV_relT_inputUnitV. 
       Qed.
 
-      (** later, most of the remaining fields shall be DEFINITIONS and LEMMAS **)
-      Definition DesIn : forall {V : obV log}, forall {U0 U1 W : obV log}, V(0 U0 |- [0 U1 ~> [0 V ~> W ]0 ]0 )0 -> V(0 U0 |- [0 (0 U1 * V )0 ~> W ]0 )0.
-        intros. apply Cons. eapply polyV_relT_identitary. Check @Assoc. 2: eapply (@Assoc log _ _ _).  eapply Des.
-        eapply Des. exact H.
-        Defined.
-      Axiom CongDesIn : forall V : obV log, forall (U0 U1 W : obV log), forall (v v' : V(0 U0 |- [0 U1 ~> [0 V ~> W ]0 ]0 )0),
-                          v' ~~ v -> DesIn v' ~~ DesIn v.
-      Parameter ConsIn : forall V : obV log, forall (U0 U1 W : obV log), V(0 U0 |- [0 (0 U1 * V )0 ~> W ]0 )0 -> V(0 U0 |- [0 U1 ~> [0 V ~> W ]0 ]0 )0 .
-      Axiom CongConsIn : forall V : obV log, forall (U0 U1 W : obV log), forall (v v' : V(0 U0 |- [0 (0 U1 * V )0 ~> W ]0 )0),
-                           v' ~~ v -> ConsIn v' ~~ ConsIn v .
-      Axiom ConsIn_DesIn : forall V : obV log, forall (U0 U1 W : obV log), forall (f : V(0 U0 |- [0 U1 ~> [0 V ~> W ]0 ]0 )0),
-                             ConsIn (DesIn f) ~~ f .
-      Axiom DesIn_Input : forall V : obV log, forall (U0 U1 W : obV log), forall (v : V(0 U0 |- [0 U1 ~> [0 V ~> W ]0 ]0 )0), forall (U0' : obV log) (i : V(0 U0' |- U0 )0),
-                            (DesIn v) <o i ~~ DesIn( v <o i ) .
-      Parameter polyV_relV : forall (W : obV log), forall (U : obV log) (V : obV log),
-                               V(0 U |- [0 W ~> V ]0 )0 ->
-                               forall X : obV log, V(0 [0 V ~> X ]0  |- [0 U ~> [0 W ~> X ]0 ]0 )0 .
-      Axiom polyV_relV_polyV_relT : forall (W : obV log), forall (U : obV log) (V : obV log),
-                                    forall (v : V(0 U |- [0 W ~> V ]0 )0), forall X : obV log,
-                                      [1 Des v ~> X]0
-                                                    ~~ DesIn( polyV_relV v X ) .
-      Axiom polyV_relV_arrow :  forall (B : obV log) (A : obV log) (V : obV log),
-                                forall (V' : obV log) (v : V(0 V' |- V )0),
-                                forall (f : V(0 V |- [0 B ~> A ]0 )0) (X : obV log),
-                                  polyV_relV (f <o v) X
-                                             ~~ [1 v ~> [0 B ~> X ]0 ]0 <o (polyV_relV f  X) .
-    End Context.
 
-    Notation "V[0 U ~> V ]0" := ([0 U ~> V ]0) (at level 25, only parsing).
-    Notation "V[1 v ~> X ]0" := (@polyV_relV _ _ _ _ v X) (at level 25).
-    Notation "V[0 X ~> w ]1" := (@polyV_relV _ _ _ _ 1 X <o w) (at level 25).
-    Notation "V[0 W ~> - ]1" := (fun V X => @polyV_relV _ _ _ _ (@IdenV _ ([0 W ~> V ]0)) X) (at level 25). 
+      
+      End Context2.
 
-    Section Context2.
-          Context {log : logic}.
-
-          Parameter DesIdenObR : forall {U W : obV log}, V(0 U |- [0 I ~> W ]0 )0 -> V(0 U  |- W )0 .
-          Axiom CongDesIdenObR : forall (U W : obV log), forall (v v' : V(0 U |- [0 I ~> W ]0 )0),
-                                   v' ~~ v -> DesIdenObR v' ~~ DesIdenObR v .
-          Axiom DesIdenObR_output : forall (U : obV log) (W W' : obV log) (w : V(0 W |- W' )0), forall v : V(0 U |- [0 I ~> W ]0 )0, 
-                                      DesIdenObR( [0 I ~> w ]1 <o v ) ~~ w <o DesIdenObR( v ) .
-          Parameter DesIdenObL : forall {V : obV log}, forall {W : obV log}, V(0 I |- [0 V ~> W ]0 )0 -> V(0 V |- W )0 .
-          Parameter ConsIdenObL : forall V : obV log, forall (W : obV log), V(0 V |- W )0 -> V(0 I |- [0 V ~> W ]0 )0 .
-          Axiom ConsIdenObL_DesIdenObL : forall V : obV log, forall (W : obV log), forall v : V(0 I |- [0 V ~> W ]0 )0,
-                                           v ~~ ConsIdenObL( DesIdenObL v) .
-          Axiom CongConsIdenObL : forall V : obV log, forall (W : obV log), forall (v v' : V(0 V |- W )0),
-                                    v' ~~ v -> ConsIdenObL v' ~~ ConsIdenObL v .
-          Axiom consV10_functorial : forall (V1' V1 : obV log) (v :  V(0 V1' |- V1 )0), forall V1'' (v' : V(0 V1'' |- V1' )0), forall V2 : obV log,
-                                       [1 v <o v' ~> V2 ]0 ~~  [1 v' ~> V2 ]0 <o  [1 v ~> V2 ]0 .
-          Axiom consV11_bifunctorial : forall (V1' V1 : obV log) (v : V(0 V1' |- V1 )0), forall W1 W1' (w : V(0 W1 |- W1' )0),
-                                         [0 V1' ~> w ]1 <o  [1 v ~> W1 ]0 ~~ [1 v ~> W1' ]0 <o [0 V1 ~> w ]1 .
-          Axiom CongConsV10 : forall (V1' V1 : obV log) (v v' : V(0 V1' |- V1)0), forall V2 : obV log,
-                                v' ~~ v -> [1 v' ~> V2 ]0 ~~ [1 v ~> V2 ]0 .
-    End Context2.
-
+      (* TODO
     Canonical Structure logT : logic :=
       @Logic _
             (@Extras (Data (polyV_relT00:=polyT_relT00) convT polyT_relT 
@@ -761,6 +791,7 @@ Hypothesis Cong_polyV_relT : forall (B : obV), forall (A : obV),
                     polyT_relT_morphism polyT_relT_unitT polyT_relT_inputUnitT CongDesT
                     Des_ConsT Des_OutputT CongConsT Cons_DesT Cons_InputT).
     Print logT.
+    *)
 End LOGIC.
 
 Module FUNCTOR.
@@ -913,9 +944,6 @@ Module FUNCTOR.
                          forall (f f' : V(0 V |- F[0 B ~> A ]0 )0),
                            f' ~~ f -> forall X : obA dat, polyF f' X ~~ polyF f X;
             polyA_unitA : forall (A : obA dat), forall X : obA dat, (@IdenV _ (A[0 A ~> X ]0)) ~~ DesIdenObR( A[1 (@unitA _ dat A) ~> X ]0 );
-            polyA_inputUnitA : forall (V : obV log), forall (B : obA dat), forall (A : obA dat),
-                               forall (f : V(0 V |- A[0 B ~> A ]0 )0),
-                                 f  ~~ DesIdenObL( (A[1 f ~> A ]0) <o (@unitA _ dat A) );
             polyF_inputUnitA : forall (V : obV log) (B : obB dat) (A : obA dat),
                                forall (f : V(0 V |- F[0 B ~> A ]0 )0),
                                  f ~~ DesIdenObL( (F[1 f ~> A ]0) <o (@unitA _ dat A) )
@@ -928,7 +956,6 @@ Module FUNCTOR.
       Global Arguments polyF_morphism {_ _} [_ _ _ _ _] _ _ _ .
       Global Arguments CongPolyF {_ _} [_ _ _ _ _] _ _ . About polyF_inputUnitA.
       Global Arguments polyA_unitA {_ _} _ _ .
-      Global Arguments polyA_inputUnitA {_ _} [_ _ _] _ .
       Global Arguments polyF_inputUnitA {_ _} [_ _ _] _  .
 
     End Context4.
@@ -1113,7 +1140,7 @@ Module CATEGORY.
           }.
       Existing Class data.
 
-      Coercion dataFun_of_dataCat (d : data)
+      Coercion dataFun_of_dataCatForm (d : data)
       : @FUNCTOR.data log := {|
                       FUNCTOR.obA := obA d;
                       FUNCTOR.polyA00 := @polyA00 d;
@@ -1125,9 +1152,49 @@ Module CATEGORY.
                       FUNCTOR.polyF := @polyA d;
                       FUNCTOR.unitA := @unitA d|}.
 
-      Global Arguments dataFun_of_dataCat : simpl never.
+      Global Arguments dataFun_of_dataCatForm : simpl never.
 
-      Record extras {dat : data} :=
+    End Context6.
+    
+    Module FORM.
+      Section Context7.
+        Context {log : logic}.
+        
+        Record extras (dat : data) :=
+          Extras {
+              CongPolyA : forall (V : obV log), forall (B : FUNCTOR.obA dat), forall (A : FUNCTOR.obA dat),
+                          forall (f f' : V(0 V |- A[0 B ~> A ]0 )0),
+                            f' ~~ f -> forall X : FUNCTOR.obA dat, polyA f' X ~~ polyA f X;
+              polyA_arrow :  forall (B : FUNCTOR.obA dat), forall (A : FUNCTOR.obA dat),
+                             forall (V V' : obV log) (v : V(0 V' |- V )0),
+                             forall (f : V(0 V |- A[0 B ~> A ]0 )0) (X :  FUNCTOR.obA dat),
+                               A[1 f <o v ~> X ]0
+                                ~~ [1 v ~> A[0 B ~> X ]0 ]0 <o A[1 f ~> X ]0;
+              polyA_unitA : forall (A :  FUNCTOR.obA dat), forall X :  FUNCTOR.obA dat, (@IdenV _ (A[0 A ~> X ]0)) ~~ DesIdenObR( A[1 (@FUNCTOR.unitA _ dat A) ~> X ]0 );
+            }.
+
+        Existing Class extras.
+        Global Arguments CongPolyA {_ _} [_ _ _ _ _] _ _  .
+        Global Arguments polyA_arrow {_ _} [_ _ _ _] _ _ _ .
+        Global Arguments polyA_unitA {_ _} _ _ .
+
+      End Context7.
+
+      Structure form (log : logic) :=
+        Form {
+            data_of :> @data log;
+            extras_of :> @extras log (data_of)
+          }.
+
+        (* is this necessary?*)
+        Global Existing Instance extras_of.
+    End FORM.
+
+    Export FORM.
+    Section Context8.
+      Context {log : logic}.
+      
+      Record extras (dat : data) :=
         Extras {
             CongPolyA : forall (V : obV log), forall (B : FUNCTOR.obA dat), forall (A : FUNCTOR.obA dat),
                         forall (f f' : V(0 V |- A[0 B ~> A ]0 )0),
@@ -1143,7 +1210,7 @@ Module CATEGORY.
                                F[1 Des( [1 f ~> F[0 B ~> A' ]0 ]0 <o F[0 A' ~> g ]1 ) ~> X]0
                                 ~~  DesIn( [0 W ~> F[1 f ~> X ]0 ]1 <o A[1 g ~> X ]0 );
             polyA_unitA : forall (A :  FUNCTOR.obA dat), forall X :  FUNCTOR.obA dat, (@IdenV _ (A[0 A ~> X ]0)) ~~ DesIdenObR( A[1 (@FUNCTOR.unitA _ dat A) ~> X ]0 );
-            polyA_inputUnitA : forall (V : obV log), forall (B :  FUNCTOR.obA dat), forall (A :  FUNCTOR.obA dat),
+            polyF_inputUnitA : forall (V : obV log), forall (B :  FUNCTOR.obA dat), forall (A :  FUNCTOR.obA dat),
                                forall (f : V(0 V |- A[0 B ~> A ]0 )0),
                                  f  ~~ DesIdenObL( (A[1 f ~> A ]0) <o (@FUNCTOR.unitA _ dat A) );
           }.
@@ -1153,10 +1220,10 @@ Module CATEGORY.
       Global Arguments polyA_arrow {_ _} [_ _ _ _] _ _ _ .
       Global Arguments polyF_morphism {_ _} [_ _ _ _ _] _ _ _ .
       Global Arguments polyA_unitA {_ _} _ _ .
-      Global Arguments polyA_inputUnitA {_ _} [_ _ _] _ .
+      Global Arguments polyF_inputUnitA {_ _} [_ _ _] _ .
 
-      Coercion extrasFun_of_extrasCat (d : data) (e : @extras  d)
-      : @FUNCTOR.extras log (dataFun_of_dataCat d) := 
+      Coercion extrasFun_of_extrasCat (dat : data) (ext : @extras  dat)
+      : @FUNCTOR.extras log (dataFun_of_dataCatForm dat) := 
         {|
           FUNCTOR.CongPolyA := CongPolyA;
           FUNCTOR.polyA_arrow := polyA_arrow;
@@ -1164,14 +1231,41 @@ Module CATEGORY.
           FUNCTOR.polyF_morphism := polyF_morphism;
           FUNCTOR.CongPolyF := CongPolyA;
           FUNCTOR.polyA_unitA := polyA_unitA;
-          FUNCTOR.polyA_inputUnitA := polyA_inputUnitA;
-          FUNCTOR.polyF_inputUnitA := polyA_inputUnitA |}.
+          FUNCTOR.polyF_inputUnitA := polyF_inputUnitA |}.
 
       Global Arguments extrasFun_of_extrasCat : simpl never.
-      
-    End Context6.
 
-    Section Context6'.
+      Coercion dataForm_of_dataFun log (dat : @FUNCTOR.data log)
+      : @data log := {|
+                               obA := FUNCTOR.obA dat;
+                               polyA00 := @FUNCTOR.polyA00 _ dat;
+                               polyA := @FUNCTOR.polyA _ dat;
+                               unitA := @FUNCTOR.unitA _ dat |}.
+
+      Global Arguments dataForm_of_dataFun : simpl never.
+
+      Coercion extrasForm_of_extrasFun {log} (dat : @FUNCTOR.data log) (ext : @FUNCTOR.extras log dat)
+      : @FORM.extras log dat :=
+        @FORM.Extras log dat (@FUNCTOR.CongPolyA log dat ext) (@FUNCTOR.polyA_arrow log dat ext)
+                     (@FUNCTOR.polyA_unitA log dat ext).
+
+      Global Arguments extrasForm_of_extrasFun : simpl never.
+
+      Definition form_of_functor {log : logic} (func : @functor log)
+      : @FORM.form log :=  {| FORM.data_of := func ; FORM.extras_of := func |}.
+      Canonical Structure form_of_functor.
+
+(*TODO:ERASE      Coercion extrasForm_of_extrasCat (dat : data) (ext : @extras  dat)
+      : @FORM.extras log dat := 
+        {|
+          FORM.CongPolyA := CongPolyA;
+          FORM.polyA_arrow := polyA_arrow;
+          FORM.polyA_unitA := polyA_unitA; |}.
+
+      Global Arguments extrasForm_of_extrasCat : simpl never.*)
+    End Context8.
+
+    Section Context9.
       Structure category (log : logic) :=
         Category {
             data_of :> @data log;
@@ -1185,20 +1279,39 @@ Module CATEGORY.
       : @FUNCTOR.functor log :=  {| FUNCTOR.data_of := data_of c; FUNCTOR.extras_of := extras_of c |}.
       (* false ambiguity : new coercion produce same output as old coercion ; the new coercion will be used to coerce but also the notational hiddenness/implicitness of old coercion is kept for printing *)
       Canonical Structure functor_of_category.
+
+      (* TODO EREASE
+      Coercion form_of_category {log : logic} (c : @category log)
+      : @FORM.form log :=  {| FORM.data_of := data_of c; FORM.extras_of := extras_of c |}.
+      (* false ambiguity : new coercion produce same output as old coercion ; the new coercion will be used to coerce but also the notational hiddenness/implicitness of old coercion is kept for printing *)
+      Canonical Structure form_of_category. *)
+
+      Coercion category_of_logic (log : logic) : @category log :=
+        @Category log _
+                  (@Extras log
+                           {|
+                             obA := obV log;
+                             polyA00 := @consV00 log;
+                             polyA := @polyV_relV log;
+                             unitA := @unitV log |} (@CongPolyV log) (@polyV_relV_arrow log)
+                           (@polyV_relV_morphism log) (@polyV_relV_unitV log)
+                           (@polyV_relV_inputUnitV log)) .
+
+      Canonical Structure category_of_logic.
       
-    End Context6'.
+    End Context9.
 
     Export FUNCTOR.
 End CATEGORY.
 
 Module FUNCTORTOCAT.
   Export CATEGORY.
-  Import Ex_Notations4.
+  Import FUNCTOR.Ex_Notations4.
   Set Implicit Arguments.
   Unset  Strict Implicit.
 
   Section Context.
-    Context {log : logic} (from : @category log) (to : @category log).
+    Context {log : logic} (from : @form log) (to : @category log).
     
     Record data :=
       Data {
@@ -1211,7 +1324,12 @@ Module FUNCTORTOCAT.
 
     Existing Class data.
 
-    Record extras {dat : data} :=
+  End Context.
+
+  Section Context2.
+    Context {log : logic} {from : @form log} {to : @category log}.
+
+    Record extras (dat : @data log from to) :=
       Extras {
           polyF_arrow :    forall {B : obA to} {A : obA from} {V V' : obV log} 
                            (v : V(0 V' |- V )0) (f : V(0 V |- to .-A[0 B ~> polyF0 dat A ]0 )0)
@@ -1235,8 +1353,12 @@ Module FUNCTORTOCAT.
         }.
 
     Existing Class extras.
+    Global Arguments polyF_arrow {_ _} [_ _ _ _] _ _  _ .
+    Global Arguments polyF_morphism {_ _} [_ _ _ _ _] _ _ _ .
+    Global Arguments CongPolyF {_ _} [_ _ _ _ _] _ _ .
+    Global Arguments polyF_inputUnitA {_ _} [_ _ _] _  .
 
-    Coercion dataFun_of_dataFuntoCat (d : data)
+    Coercion dataFun_of_dataFuntoCat log from to (d : @data log from to)
       : @FUNCTOR.data log :=  {|
                     FUNCTOR.obA := @obA _ from;
                     FUNCTOR.polyA00 := @polyA00 _ from;
@@ -1245,25 +1367,30 @@ Module FUNCTORTOCAT.
                     FUNCTOR.polyB00 := @polyA00 _ to;
                     FUNCTOR.polyB := @polyA _ to;
                     FUNCTOR.polyF0 := polyF0 d;
-                    FUNCTOR.polyF := @polyF d;
+                    FUNCTOR.polyF := @polyF _ _ _ d;
                     FUNCTOR.unitA := @unitA _ from |}.
 
     Global Arguments dataFun_of_dataFuntoCat : simpl never.
 
-    Coercion extrasFun_of_extrasFuntoCat (dat : data) (ext : extras)  :  @FUNCTOR.extras log dat :=
-      FUNCTOR.Extras (dat:=dat) (@CongPolyA _ _ from) (@polyA_arrow _ _ from) (@polyF_arrow dat ext)
-                     (@polyF_morphism _ ext) (@CongPolyF _ ext) (@polyA_unitA _ _ from) (@polyA_inputUnitA _ _ from)
+    Coercion extrasFun_of_extrasFuntoCat (dat : @data log from to) (ext : @extras dat)  :  @FUNCTOR.extras log dat :=
+      FUNCTOR.Extras (dat:=dat) (@FORM.CongPolyA _ _ from) (@FORM.polyA_arrow _ _ from) (@polyF_arrow dat ext)
+                     (@polyF_morphism _ ext) (@CongPolyF _ ext) (@FORM.polyA_unitA _ _ from)
                      (@polyF_inputUnitA _ ext).
 
     Global Arguments extrasFun_of_extrasFuntoCat : simpl never.
-    
+
+  End Context2.
+
+  Section Context3.
+    Context {log : logic} (from : @form log) (to : @category log).
+
     Structure functorToCat :=
       FunctorToCat {
-          data_of :> data;
-          extras_of :> @extras (data_of)
+          data_of :> @data log from to;
+          extras_of :> @extras _ _ _ (data_of)
         }.
 
-      (* is this necessary?*)
+    (* is this necessary?*)
       Global Existing Instance extras_of.
 
       Coercion functor_of_functorToCat (func : functorToCat)
@@ -1282,13 +1409,24 @@ Module FUNCTORTOCAT.
  DesIdenObR (polyF (d:=func) (to) .-uA X)) *)
       Defined.
 
-  End Context.
+  End Context3.
+  
   Module Ex_Notations6.
     Notation "dat .-F|1" := (@polyF_unitB _ _ _ dat) (at level 0, format "dat .-F|1").
   End Ex_Notations6.
   Import Ex_Notations6.
   Notation "F|1" := (_ .-F|1) (at level 0).
-  
+
+  Section Context4.
+      Context {log : logic} (catA : form log) (catB : category log) (funF : functorToCat catA catB) (B : obB catB).
+      
+      Lemma polyF_identitary_rel_polyF_unitB : forall (A X : obA catA),
+                                                 (catB.-F[0 B ~> - ]1) (funF.-F|0 A) (funF.-F|0 X) <o funF.-F|1 A X ~~
+                                                                                                              (funF.-F[0 B ~> - ]1) A X  .
+        (** TODO NEXT11 **)
+      Admitted.
+  End Context4.
+
   (*
      Variables (d : data) (e : @extras  d).
       Definition functor_fromto (*
@@ -1420,12 +1558,12 @@ End FUNCTORTOCAT.
 
 Module TRANSFORMATION.
   Import FUNCTORTOCAT.
-  Import Ex_Notations4.
+  Import FUNCTOR.Ex_Notations4.
   Set Implicit Arguments.
   Unset Strict Implicit.
 
   Section Context.
-    Context {log : logic} {catA : category log} {catB : category log}.
+    Context {log : logic} {catA : @form log} {catB : category log}.
     Variable (funF : functorToCat catA catB).
     Variable (funG : functorToCat catA catB).
 
@@ -1438,17 +1576,14 @@ Module TRANSFORMATION.
 
   End Context.
 
-  Module Ex_Notations5.
+  Module Ex_Notations.
     Notation "dat .-β|1 f" := (@polyβ _ _ _ _ _ dat _ _ _ f) (at level 5, right associativity, format "dat .-β|1  f").
-    Notation "dat .-β|0 A" := (@polyβ _ _ _ _ _ dat _ _ A (@IdenV _)) (at level 4, right associativity, format "dat .-β|0  A").
-  End Ex_Notations5.
-
-  Import Ex_Notations5.
+  End Ex_Notations.
+  Import Ex_Notations.
   Notation "β|1 f" := (_.-β|1 f) (at level 5, right associativity).
-  Notation "β|0 A" := (_.-β|0 A) (at level 4, right associativity).
 
   Section Context2.
-    Context {log : logic} {catA : category log} {catB : category log}.
+    Context {log : logic} {catA : form log} {catB : category log}.
     Variable (funF : functorToCat catA catB).
     Variable (funG : functorToCat catA catB).
   
@@ -1475,7 +1610,10 @@ Module TRANSFORMATION.
         }.
 
     Existing Class extras.
-
+    Global Arguments polyβ_arrow {_ _} [_ _ _ _] _ _ .
+    Global Arguments polyβ_morphism {_ _} [_ _ _ _ _] _ _ .
+    Global Arguments polyβ_morphism_codomain {_ _} [_ _ _ _ _] _ _ .
+    
     Structure transformation :=
       Transf {
           data_of :> data funF funG;
@@ -1490,14 +1628,14 @@ End TRANSFORMATION.
 
 Module FUNCOMP.
   Import FUNCTORTOCAT.
-  Import Ex_Notations4.
+  Import FUNCTOR.Ex_Notations4.
   Set Implicit Arguments.
   Unset Strict Implicit.
 
   Section Context.
-    Context {log : logic} {catA : category log} {catB : category log} {catC : category log}.
+    Context {log : logic} {catA : form log} {catB : category log} {catC : category log}.
     Variable (funF : functorToCat catA catB).
-    Variable (funF' : functorToCat catB catC).
+    Variable (funF' : functorToCat (form_of_functor catB) catC).
 
     Definition composition_F'_after_F :
       forall (V : obV log) (B : obA catB) (A : obA catA),
@@ -1550,21 +1688,568 @@ Module FUNCOMP.
   End Context.
 End FUNCOMP.
 
+Module METAFUNCTOR.
+  Export FUNCTORTOCAT.
+  Set Implicit Arguments.
+  Unset Strict Implicit.
+
+  Section Context.
+    Context {log : logic} (from : form log).
+
+    Record data :=
+      Data {
+          metaF0 : obA from -> obV log;
+          metaF : forall (V : obV log) (A : obA from),
+                    V(0 V |- (metaF0 A) )0 ->
+                    forall X : obA from, V(0 (polyA00 A X)  |- [0 V ~> (metaF0 X) ]0 )0;
+        }.
+    
+    Existing Class data.
+
+  End Context.
+
+  Module Ex_Notations. (* no scoping necessary because definitionally same with poly if same notation, else extra notation*)
+    Notation "dat .-F|0 A" := (@metaF0 _ _ dat A) (at level 4, right associativity).
+    Notation "dat .-F[0 B ~> A ]0" := (V[0 B ~> dat .-F|0 A ]0) (at level 25).
+    Notation "dat .-F[1I b ~> X ]0" := (@metaF _ _ dat _ _ b X) (at level 25).
+  End Ex_Notations.
+  Import Ex_Notations.
+  Notation "F|0 A" := (_ .-F|0 A) (at level 4, right associativity).
+  Notation "F[0 B ~> A ]0" := (_ .-F[0 B ~> A ]0) (at level 25).
+  Notation "F[1I b ~> X ]0" := (_ .-F[1I b ~> X ]0) (at level 25).
+  
+    Section Context2.
+      Context {log : logic}  (from : form log).
+      Context {dat : @data log from}.
+
+      Definition metaF_IdenV : forall A X : obA from, V(0 A[0 A ~> X ]0 |- [0 F|0 A ~> F|0 X ]0 )0
+        :=  (fun A X => @metaF _ _ dat _ A (@IdenV _ _) X).
+
+    End Context2.
+
+    Module Ex_Notations2.
+      Export Ex_Notations.
+      Notation "dat .-F||1" := (@metaF_IdenV _ _ dat _ _) (at level 0).
+    End Ex_Notations2.
+    Import Ex_Notations2.
+    Notation "F||1" := (_ .-F||1) (at level 0).
+
+    Section Context3.
+      Context {log : logic} {from : form log}.
+      
+      Record extras {dat : @data log from} :=
+        Extras {
+            metaF_arrow : forall (A : obA from),
+                                 forall (V V' : obV log) (v : V(0 V' |- V )0),
+                                 forall (f : V(0 V |- F|0 A )0) (X : obA from),
+                                   F[1I f <o v ~> X ]0
+                                    ~~ [1 v ~> F|0 X ]0 <o F[1I f ~> X ]0 ;
+            metaF_morphism : forall (V : obV log),
+                                    forall (A : obA from) (W : obV log) (A' : obA from) (g : V(0 W |- A[0 A ~> A']0 )0),
+                                    forall (f : V(0 V |-F|0 A )0) (X : obA from),
+                                      F[1I Des( [1 f ~> F|0 A' ]0 <o (F||1 <o g) ) ~> X]0
+                                       ~~  DesIn( [0 W ~> F[1I f ~> X ]0 ]1 <o A[1 g ~> X ]0) ;
+            CongMetaF : forall (V : obV log)(A : obA from),
+                               forall (f f' : V(0 V |- F|0 A )0),
+                                 f' ~~ f -> forall X : obA from, F[1I f' ~> X ]0 ~~ F[1I f ~> X ]0 ;
+            metaF_inputUnitA : forall (V : obV log) (A : obA from),
+                                      forall (f : V(0 V |- F|0 A )0),
+                                        f ~~ DesIdenObL( (F[1I f ~> A ]0) <o (@unitA _ from A) ) ;
+          }.
+
+      Existing Class extras. About CongMetaF.
+      Global Arguments metaF_arrow {_ _} [_ _ _] _ _  _ .
+      Global Arguments metaF_morphism {_ _} [_ _ _ _] _ _ _ .
+      Global Arguments CongMetaF {_ _} [_ _ _ _] _ _  .
+     Global Arguments metaF_inputUnitA {_ _} [_ _] _  .
+
+    End Context3.
+    Section Context4.
+      Context {log : logic} (from : form log).
+
+      Structure metafunctor :=
+        Metafunctor {
+            data_of :> @data log from;
+            extras_of :> @extras log from data_of
+          }.
+
+      (* not critical, only for easy proofs without doing (extras_of _) *)
+      Global Existing Instance extras_of. 
+      
+      Coercion dataFunToCat_of_metafunctor  (dat : @metafunctor)
+      : @FUNCTORTOCAT.data log from (CATEGORY.category_of_logic log) :=
+        @FUNCTORTOCAT.Data log
+                           from (CATEGORY.category_of_logic log)
+                           (@metaF0 log from dat)
+                           (fun (V B : obV log) (A : obA from) (b : V(0 V |- F[0 B ~> A ]0 )0)
+                              (X : obA from) => ConsIn (F[1I Des b ~> X ]0)).
+
+      Global Arguments dataFunToCat_of_metafunctor : simpl never.
+
+      Lemma poly_of_metaF_arrow:
+        forall (dat : data from)(ext : @extras log from dat) (B : obV log) (A : obA from) 
+          (V V' : obV log) (v : V(0 V' |- V )0) (f : V(0 V |- F[0 B ~> A ]0 )0)
+          (X : obA from),
+          ConsIn (F[1I Des (f <o v) ~> X ]0) ~~
+                 [1 v ~> F[0 B ~> X ]0 ]0 <o ConsIn (F[1I Des f ~> X ]0).
+      Proof.
+        intros; eapply TransV; [| eapply CongConsIn, CongMetaF, Des_Input ].
+        eapply TransV; [| eapply CongConsIn, metaF_arrow ].
+        apply ConsIn_Output.  
+      Qed.
+
+      Lemma poly_of_metaF_morphism:
+        forall dat : data from, @extras log from dat ->
+                      forall (V B : obV log) (A : obA from) (W : obV log) 
+                        (A' : obA from) (g : V(0 W |- A[0 A ~> A' ]0 )0)
+                        (f : V(0 V |- F[0 B ~> A ]0 )0) (X : obA from),
+                        ConsIn
+                          (F[1I Des
+                                (Des
+                                   ([1 f ~> F[0 B ~> A' ]0 ]0 <o
+                                                                 ConsIn (F[1I Des 1 ~> A' ]0) <o g)) ~> X ]0) ~~
+                          DesIn ([0 W ~> ConsIn (F[1I Des f ~> X ]0) ]1 <o A[1 g ~> X ]0).
+      Proof.
+        (* enough (  [1Assoc ~> P|0 X ]0 <o DesIn ( _ ) ~~  [1Assoc ~> P|0 X ]0 <o DesIn ( _ ) ) *)
+        intros;  eapply TransV; [ eapply TransV | ]; [ apply ConsIn_DesIn | idtac | apply SymV, ConsIn_DesIn].
+        apply CongConsIn, Assoc_Iso.
+
+        (** LHS **)
+        eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply DesIn_ConsIn].
+        eapply TransV; [| eapply SymV, metaF_arrow ].
+        eapply TransV; [| eapply CongMetaF, CongCom; [ eapply CongDes, CongDes, CongCom; [ eapply ReflV | eapply CongCom; [ eapply CongConsIn, CongMetaF, Cat1LeftV | eapply ReflV]  ] | eapply ReflV ] ] .
+        eapply TransV; [| eapply CongMetaF, CongCom; [ eapply CongDes, CongDes, CongCom; [ eapply ReflV | eapply CongCom; [ eapply CongConsIn, metaF_arrow | eapply ReflV]  ] | eapply ReflV ] ] .
+        eapply TransV; [| eapply CongMetaF, CongCom; [ eapply CongDes, CongDes, CongCom; [ eapply ReflV | eapply CongCom; [ eapply ConsIn_Input | eapply ReflV]  ] | eapply ReflV ] ] .
+        eapply TransV; [| eapply CongMetaF, CongCom; [ eapply CongDes, CongDes, CongCom; [ eapply ReflV | eapply Cat2V  ] | eapply ReflV ] ] .
+        eapply TransV; [| eapply CongMetaF, CongCom; [ eapply CongDes, CongDes, SymV, Cat2V  | eapply ReflV ] ] .
+        eapply TransV; [| eapply CongMetaF, CongCom; [ eapply CongDes, Des_Input  | eapply ReflV ] ] .
+        eapply TransV; [| eapply CongMetaF, CongCom; [ eapply Des_Input  | eapply ReflV ] ] .
+        eapply TransV; [| eapply CongMetaF, Cat2V ] .
+        eapply TransV; [| eapply CongMetaF, CongCom; [ eapply ReflV | eapply SymV, Assoc_nat0 ] ] .
+        eapply TransV; [| eapply CongMetaF, SymV, Cat2V ] .
+        eapply TransV; [| eapply CongMetaF, CongCom; [ eapply SymV, Des_consV10_functorial  | eapply ReflV] ] .
+        eapply TransV; [| eapply CongMetaF, CongCom; [|eapply ReflV]; eapply CongDes, CongConsV10, CongDes, SymV, Cat1LeftV ] .
+        eapply TransV; [| eapply CongMetaF, SymV, Des_Input ] .
+
+        (** RHS **)
+        (*extraline*)         eapply TransV; [eapply CongCom; [eapply ReflV|]; eapply CongDesIn; eapply DesIn_Input |].
+        eapply TransV; [eapply CongCom; [eapply ReflV|]; eapply DesIn_Input |].
+        eapply TransV; [eapply CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply CongDesIn, CongDesIn, CongConsV01, CongConsIn, CongMetaF, SymV, Cat1LeftV |].
+        eapply TransV; [eapply CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply CongDesIn, CongDesIn, CongConsV01, CongConsIn, SymV, metaF_arrow  |].
+        eapply TransV; [eapply CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply CongDesIn, CongDesIn, CongConsV01, SymV, ConsIn_Input  |].
+        eapply TransV; [eapply CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply CongDesIn, CongDesIn, SymV, consV01_functorial  |].
+        eapply TransV; [eapply CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply CongDesIn, DesIn_Input  |].
+        eapply TransV; [eapply CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply DesIn_Input  |].
+        eapply TransV; [eapply CongCom; [eapply ReflV|]; eapply SymV, Cat2V  |].
+        eapply TransV; [ eapply Cat2V  |].
+        eapply TransV; [eapply CongCom; [|eapply ReflV]; eapply Assoc_DesIn_DesIn  |].
+        eapply TransV; [ eapply Cat2V  |].
+        eapply TransV; [eapply CongCom; [|eapply ReflV]; eapply SymV, DesIn_Input  |].
+        eapply TransV; [eapply CongCom; [|eapply ReflV]; eapply CongDesIn, consV01_functorial  |].
+        eapply TransV; [eapply CongCom; [|eapply ReflV]; eapply CongDesIn, CongConsV01, metaF_arrow  |].
+        eapply TransV; [eapply CongCom; [|eapply ReflV]; eapply CongDesIn, CongConsV01, CongMetaF, Cat1LeftV  |].
+        (*extraline*)         eapply TransV; [eapply SymV, DesIn_Input |].
+
+        eapply metaF_morphism.
+      Qed.            
+      
+      Lemma Cong_poly_of_metaF:
+        forall dat : data from,
+          @extras log from dat ->
+          forall (V B : obV log) (A : obA from) (f f' : V(0 V |- F[0 B ~> A ]0 )0),
+            f' ~~ f ->
+            forall X : obA from,
+              ConsIn (F[1I Des f' ~> X ]0) ~~ ConsIn (F[1I Des f ~> X ]0).
+      Proof.
+        intros. eapply CongConsIn, CongMetaF, CongDes. assumption.
+      Qed.
+
+      Lemma poly_of_metaF_inputUnitA:
+        forall dat : data from,
+          @extras log from dat ->
+          forall (V B : obV log) (A : obA from) (f : V(0 V |- F[0 B ~> A ]0 )0),
+            f ~~ DesIdenObL (ConsIn (F[1I Des f ~> A ]0) <o uA).
+      Proof.
+        intros ? ext; intros; eapply TransV; [eapply Cons_Des|]. eapply TransV; [|eapply SymV, Cons_Des].
+        eapply CongCons.
+        eapply TransV; [eapply CongDes, CongDesIdenObL, ConsIn_Input|].
+        eapply TransV; [eapply Des_ConsIn|].
+        eapply (@metaF_inputUnitA _ _ _ ext).
+      Qed.
+
+      Coercion extrasFunToCat_of_metafunctor (func : @metafunctor)
+      : @FUNCTORTOCAT.extras log from (CATEGORY.category_of_logic log) (dataFunToCat_of_metafunctor func) :=
+        @FUNCTORTOCAT.Extras log
+                             from (CATEGORY.category_of_logic log)
+                             (dataFunToCat_of_metafunctor func)
+                             (poly_of_metaF_arrow func)
+                             (poly_of_metaF_morphism func) (Cong_poly_of_metaF func)  (poly_of_metaF_inputUnitA func).
+      
+      Coercion functorToCat_of_metafunctor (func : @metafunctor)
+      : @FUNCTORTOCAT.functorToCat log from (CATEGORY.category_of_logic log) :=  {| FUNCTORTOCAT.data_of :=  func; FUNCTORTOCAT.extras_of :=  func |}.
+      Canonical Structure functorToCat_of_metafunctor.
+      
+      (* poly_of_metaF_unitV_metaF_IdenV
+     : forall (func : metafunctor) (A X : METAFUNCTOR.obA func),
+       F|1 A X ~~ F||1 *)  (* solve difference in notation? *)
+      Lemma poly_of_metaF_unitV_metaF_IdenV (func : metafunctor): forall A X : obA from, 
+                                                                    @FUNCTORTOCAT.polyF_unitB log from (CATEGORY.category_of_logic log) func A X ~~ @metaF_IdenV _ _ func A X .
+        Proof.
+          intros.
+          unfold metaF_IdenV.
+          eapply TransV; cycle 1.
+          eapply CongDesIdenObR, CongConsIn, CongMetaF, Cat1LeftV .
+          eapply TransV; [| eapply CongDesIdenObR, CongConsIn, metaF_arrow ].
+          eapply TransV; [| eapply CongDesIdenObR, ConsIn_Input ].
+          eapply TransV; [| eapply DesIdenObR_Input ].
+          eapply TransV; [| eapply CongCom; [eapply SymV, consV10_DesIdenObL | eapply ReflV] ].
+          eapply TransV; [| eapply CongCom; [ eapply CongConsV10, SymV, unitV_IdenV  | eapply ReflV] ].
+          eapply TransV; [| eapply CongCom; [ eapply SymV, consV10_functorial_fun1  | eapply ReflV] ].
+          eapply SymV, Cat1LeftV.
+        Qed.
+
+(*
+        Coercion dataPolyTrans_of_metafunctor  (dat : @metafunctor)
+      : @FUNCTORTOCAT.data log (category_of_metafunctor dat) (CATEGORY.category_of_logic log) :=
+        @FUNCTORTOCAT.Data log
+                           (category_of_metafunctor dat) (CATEGORY.category_of_logic log)
+                           (@metaF0 log dat)
+                           (fun (V B : obV log) (A : obA dat) (b : V(0 V |- F[0 B ~> A ]0 )0)
+                              (X : obA dat) => ConsIn (F[1I Des b ~> X ]0)).
+
+      Global Arguments dataFunToCat_of_metafunctor : simpl never.
+*)
+        
+    End Context4.
+    (*TODO:ERASE
+    Section Context5.
+      Context {log : logic}.
+
+      Coercion dataForm_of_dataFun log (d : @FUNCTOR.data log)
+      : @CATEGORY.data log := {|
+                               CATEGORY.obA := obA d;
+                               CATEGORY.polyA00 := @polyA00 _ d;
+                               CATEGORY.polyA := @polyA _ d;
+                               CATEGORY.unitA := @unitA _ d|}.
+
+      Global Arguments dataForm_of_dataFun : simpl never.
+
+      Coercion extrasForm_of_extrasFun {log} (dat : @FUNCTOR.data log) (ext : @FUNCTOR.extras log dat)
+      : @FORM.extras log dat :=
+        @FORM.Extras log dat (@CongPolyA log dat ext) (@polyA_arrow log dat ext)
+                     (@polyA_unitA log dat ext).
+
+      Global Arguments extrasForm_of_extrasFun : simpl never.
+
+      Coercion form_of_functor {log : logic} (func : @functor log)
+      : @FORM.form log :=  {| FORM.data_of := func ; FORM.extras_of := func |}.
+      (* false ambiguity : new coercion produce same output as old coercion ; the new coercion will be used to coerce but also the notational hiddenness/implicitness of old coercion is kept for printing *)
+      Canonical Structure form_of_functor.
+    End Context5.
+    *)
+    Import FUNCTOR.Ex_Notations4.
+    Import FUNCTORTOCAT.Ex_Notations6.
+    Section Context6.
+      Context {log : logic} (func : functor log)  (B : obB func) .
+
+      Definition dataMetafun_of_functor_at : @METAFUNCTOR.data log (CATEGORY.form_of_functor func)  := {|
+                                                                                   metaF0 := fun A : FUNCTOR.obA (form_of_functor func) => func.-F[0 B ~> A ]0;
+                                                                                   metaF := (fun (V : obV log) (A : obA (form_of_functor func)) (f : V(0 V |- func.-F[0 B ~> A ]0 )0) (X : obA (form_of_functor func)) => func.-F[1 f ~> X ]0  (* @polyF log func V B A f X *)  ) |}.
+
+      (* is this necessary ?*)
+      Global Arguments dataMetafun_of_functor_at : simpl never.
+
+      Definition extrasMetafun_of_functor_at : @METAFUNCTOR.extras log (CATEGORY.form_of_functor func) dataMetafun_of_functor_at  :=
+        (@Extras log (@form_of_functor log func) dataMetafun_of_functor_at
+                 (fun A V V' v f X => @polyF_arrow _ _ func B A V V' v f X)
+                 (fun V A W A' g f X => @polyF_morphism _ _ func V B A W A' g f X)
+                 (fun V A f f' H X =>  @CongPolyF _ _ func V B A f f' H X)
+                 (fun V A f =>  @polyF_inputUnitA _ _ func V B A f)) .
+
+      (* is this necessary **)
+      Global Arguments extrasMetafun_of_functor_at : simpl never.
+
+    End Context6.
+
+    Definition metafunctor_of_functor_at {log : logic} (func : functor log)  (B : @FUNCTOR.obB log func)
+    : @metafunctor log (form_of_functor func) :=  {| data_of := (@dataMetafun_of_functor_at log func B) ; extras_of := (@extrasMetafun_of_functor_at log func B) |}.
+(*    Coercion metafunctor_of_functor_at : FUNCTOR.obB >-> metafunctor. (* coercion ? *)*)
+    Canonical Structure metafunctor_of_functor_at.
+
+    Notation meta_of func B := (@metafunctor_of_functor_at _ func B).
+    
+    Lemma meta_of_polyF_at_identitary_rel_polyF_identitary {log : logic} (func : functor log) (B : @obB log func)
+    : forall A X : obA func, (@metafunctor_of_functor_at log func B).-F||1= func.-F[0 B ~> - ]1 A X .
+    Proof.
+      reflexivity.
+    Qed.
+
+    Lemma meta_of_polyF_at_identitary_rel_polyF_identitary' {log : logic} (func : functor log) (B : @obB log func)
+    : forall A X : obA func, (@metafunctor_of_functor_at log func B).-F||1 ~~ func.-F[0 B ~> - ]1 A X .
+    Proof.
+      intros. apply ReflV.
+    Qed.
+
+    Section Context7.
+      Context {log : logic} (catA : form log) (catB : category log) (funF : functorToCat catA catB) (B : obB catB).
+      
+      Let funF' : functorToCat (form_of_functor catB) (category_of_logic log) := functorToCat_of_metafunctor  ( meta_of catB B ) .
+
+      Lemma polyF_identitary_rel_polyF_unitB : (forall (C : obA log) (A X : obA catA),
+                                              (funF'.-F[0 C ~> - ]1) funF .-F|0 A funF .-F|0 X <o funF.-F|1 A X ~~
+                                                                                                            ((FUNCOMP.funComp funF funF').-F[0 C ~> - ]1) A X ) .
+        exact(@FUNCOMP.composition_F'_after_F_identitary_polyF'_identitary_polyF_unitary log catA catB  (category_of_logic log) funF funF').
+      Qed.
+
+    End Context7.
+    
+    Export FUNCTOR.
+End METAFUNCTOR.
+
+Module METATRANSFORMATION.
+  Import TRANSFORMATION.
+  Export METAFUNCTOR.
+  Import FUNCTOR.Ex_Notations4.
+  Import TRANSFORMATION.Ex_Notations.
+  Import METAFUNCTOR.Ex_Notations2.
+  Set Implicit Arguments.
+  Unset Strict Implicit.
+
+  Section Context.
+    Context {log : logic} {catA : form log}.
+    Variable (funF : metafunctor catA).
+    Variable (funG : metafunctor catA).
+
+    Record data :=
+      Data {
+          metaβ : forall (A : obA catA),
+                            V(0 funF.-F|0 A |- funG.-F|0 A )0
+        }.
+
+  End Context.
+  
+  Module Ex_Notations1.
+    Notation "dat .-β||0 A" := (@metaβ _ _ _ _ dat A) (at level 4, right associativity, format "dat .-β||0  A").
+  End Ex_Notations1.
+  Import Ex_Notations1.
+  Notation "β||0 A" := (_ .-β||0 A) (at level 4, right associativity).
+
+  Section Context2.
+    Context {log : logic} {catA : form log}.
+    Variable (funF : metafunctor catA).
+    Variable (funG : metafunctor catA).  
+
+    Record extras (dat : data funF funG) :=
+      Extras {
+          metaβ_morphism : forall (A : obA catA)  (A' : obA catA),
+                                      [0 funF.-F|0 A ~>  dat.-β||0 A' ]1 <o funF.-F||1
+                                                                ~~ [1 dat.-β||0 A ~> funG.-F|0 A' ]0 <o funG.-F||1;
+        }.
+
+    Existing Class extras.
+    Global Arguments metaβ_morphism {_ _} _ _ .
+    
+    Structure metatransformation :=
+      Metatransf {
+          data_of :> data funF funG;
+          extras_of :> @extras (data_of)
+        }.
+
+    (* is this necessary?*)
+    Global Existing Instance extras_of.
+
+    Coercion dataTransformation_of_dataMetatransformation log catA funF funG (dat : @data log catA funF funG)
+    : @TRANSFORMATION.data log catA (CATEGORY.category_of_logic log) funF funG :=
+      @TRANSFORMATION.Data log catA (CATEGORY.category_of_logic log) funF funG
+                           ( fun (V B : obV log) (A : obA catA) (b : V(0 V |- funF.-F[0 B ~> A ]0 )0) =>
+                               Cons (dat.-β||0 A <o Des b) ).
+
+    Global Arguments dataTransformation_of_dataMetatransformation : simpl never.
+
+    (** lemmas **)
+    Lemma  poly_of_metaβ_arrow:
+      forall dat : data funF funG,
+        @extras dat ->
+        forall (B : obA log) (A : obA catA) (V V' : obV log) 
+          (v : V(0 V' |- V )0) (f : V(0 V |- funF.-F[0 B ~> A ]0 )0),
+          dat.-β|1 (f <o v) ~~ dat.-β|1 f <o v.
+    Proof.
+      intros; eapply TransV; [ eapply Cons_Input  |] .
+      eapply TransV; [ eapply CongCons; eapply SymV, Cat2V  |] .
+      eapply TransV; [ eapply CongCons; eapply CongCom; [ eapply ReflV |  eapply Des_Input  ] |] .
+      eapply ReflV.
+    Qed.
+
+      Lemma poly_of_metaβ_morphism:
+      forall dat : data funF funG,
+        @extras dat ->
+        forall (V : obV log) (B : obA log) (A : obA catA) 
+               (W : obV log) (A' : obA catA) (a : V(0 W |- catA .-A[0 A ~> A' ]0 )0)
+               (f : V(0 V |- funF.-F[0 B ~> A ]0 )0),
+          dat.-β|1 (Des ([1 f ~> funF.-F[0 B ~> A' ]0 ]0 <o funF.-F[1 1 ~> A' ]0 <o a)) ~~
+                    Des ([1 dat.-β|1 f ~> funG.-F[0 B ~> A' ]0 ]0 <o funG.-F[1 1 ~> A' ]0 <o a).
+    Proof.
+      (** LHS **)
+      intros; eapply TransV; [| eapply SymV, Cons_Output ].
+      eapply TransV; [| eapply CongCom; [eapply ReflV| eapply Cons_Des] ].
+      eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply CongConsIn, CongMetaF, Cat1LeftV ].
+      eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply CongConsIn, metaF_arrow ].
+      eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply ConsIn_Input ].
+      eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongCom; [eapply ReflV|]; eapply Cat2V ].
+      eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, SymV, Cat2V ].
+      eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply Des_Input ].
+      eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply CongCom; [|eapply ReflV]; eapply CongDes, SymV, ConsIn_consV10_functorial ].        
+      eapply TransV; [| eapply CongCom; [eapply ReflV|]; eapply SymV, Des_Input ].
+      eapply TransV; [| eapply  SymV, Des_Output ].
+      eapply TransV; [| eapply  CongDes, SymV, Cat2V].
+      eapply TransV; [| eapply  CongDes, CongCom; [|eapply ReflV] ; eapply SymV, ConsIn_Output2 ].
+      eapply TransV; [| eapply  CongDes, CongCom; [|eapply ReflV] ; eapply CongConsIn, consV11_bifunctorial ].
+      eapply TransV; [| eapply  CongDes, CongCom; [|eapply ReflV] ; eapply ConsIn_Input ].
+      eapply TransV; [| eapply  CongDes, Cat2V ].
+      eapply TransV; [| eapply  CongDes, CongCom; [eapply ReflV|] ; eapply SymV, Cat2V ].
+      eapply TransV; [| eapply  CongDes, CongCom; [eapply ReflV|] ; eapply CongCom; [|eapply ReflV]; eapply metaβ_morphism   ].
+      eapply TransV; [| eapply CongDes; eapply SymV, Cat2V]. 
+      eapply TransV; [| eapply CongDes, CongCom; [| eapply ReflV]; eapply SymV, Cat2V].
+
+      (** RHS **)
+      eapply CongDes. eapply TransV; [ eapply Cat2V |]. eapply CongCom; [|eapply ReflV].
+      eapply TransV; [ eapply CongCom; [eapply ReflV|];  eapply CongConsIn , CongMetaF, SymV, Cat1LeftV |].
+      eapply TransV; [ eapply CongCom; [eapply ReflV|];  eapply CongConsIn , SymV, metaF_arrow |].
+      eapply TransV; [ eapply CongCom; [eapply ReflV|];  eapply SymV, ConsIn_Input |].
+      eapply TransV; [ eapply Cat2V |].
+      eapply CongCom; [| eapply ReflV].
+
+      (** more pure logic *)
+      eapply TransV; [| eapply CongCom; [| eapply ReflV]; eapply CongConsIn, CongConsV10, CongDes, SymV, Cat1LeftV].
+      eapply TransV; [| eapply SymV, ConsIn_Input].
+      eapply TransV; [| eapply CongConsIn; eapply SymV, consV10_functorial].
+      eapply TransV; [| eapply CongConsIn, CongConsV10,  SymV, Des_Cons ].
+      eapply TransV; [| eapply CongConsIn, CongConsV10,  CongDes, Cat1LeftV ].
+      eapply ConsIn_consV10_functorial.
+    Qed.
+
+    Lemma poly_of_metaβ_morphism_codomain:
+      forall dat : data funF funG,
+        extras dat ->
+        forall (V : obV log) (B : obA log) (W : obV log) 
+          (B' : obA log) (b : V(0 W |- log .-A[0 B' ~> B ]0 )0) 
+          (A : obA catA) (f : V(0 V |- funF.-F[0 B ~> A ]0 )0),
+          dat.-β|1 (Des (log .-A[1 b ~> funF.-F|0 A ]0 <o f)) ~~
+                    Des (log .-A[1 b ~> funG.-F|0 A ]0 <o dat.-β|1 f).
+    Proof.
+      (** LHS **)
+      intros; eapply TransV; [| eapply SymV, Cons_Output ].
+      eapply TransV; [| eapply CongCom; [eapply ReflV| eapply Cons_Des] ].
+
+      (** RHS **)
+      eapply TransV; [ eapply CongDes, CongCom; [eapply ReflV|];  eapply Cons_Output |].
+      eapply TransV; [ eapply CongDes, CongCom; [eapply ReflV|];  eapply CongCom; [eapply ReflV|]; eapply SymV, Cons_Des |].
+      eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply ConsIn_DesIn |].
+      eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply CongConsIn, polyV_relV_polyV_relT |].
+      eapply TransV; [ eapply CongDes, Cat2V |].
+      eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply ConsIn_Input |].
+      eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply CongConsIn, consV11_bifunctorial |].
+      eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply SymV, ConsIn_Input |].
+      eapply TransV; [ eapply CongDes, SymV, Cat2V  |].
+      eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply CongConsIn, SymV, Cat1RightV |].
+      eapply TransV; [ eapply CongDes, CongCom; [|eapply ReflV]; eapply SymV, ConsIn_Output2 |].
+      eapply TransV; [ eapply CongDes, SymV, Cat2V  |].
+      eapply TransV; [ eapply SymV, Des_Output  |].
+      eapply TransV; [ eapply CongCom; [eapply ReflV |]; eapply CongDes, Cat2V |].
+      eapply TransV; [ eapply CongCom; [eapply ReflV |]; eapply CongDes, CongCom; [|eapply ReflV]; eapply ConsIn_Input  |].
+      eapply TransV; [ eapply CongCom; [eapply ReflV |]; eapply CongDes, CongCom; [|eapply ReflV]; eapply CongConsIn, Cat1LeftV  |].
+      eapply TransV; [ eapply CongCom; [eapply ReflV |]; eapply CongDes, CongCom; [|eapply ReflV]; eapply CongConsIn, SymV, polyV_relV_polyV_relT  |].
+      eapply TransV; [ eapply CongCom; [eapply ReflV |]; eapply CongDes, CongCom; [|eapply ReflV]; eapply SymV, ConsIn_DesIn  |].
+
+      eapply ReflV.
+    Qed.
+
+      
+    (** now extras part**)
+    Coercion extrasTransformation_of_extrasMetatransformation (dat : @data log catA funF funG) (ext : @extras dat)
+    : @TRANSFORMATION.extras log catA (CATEGORY.category_of_logic log) funF funG dat :=
+      @TRANSFORMATION.Extras log catA (CATEGORY.category_of_logic log) funF funG
+                             (dataTransformation_of_dataMetatransformation dat)
+                           (poly_of_metaβ_arrow ext)
+                           (poly_of_metaβ_morphism ext)
+                           (poly_of_metaβ_morphism_codomain ext).
+    
+    Coercion transformation_of_metatransformation (trans : @metatransformation)
+    : @TRANSFORMATION.transformation log catA (CATEGORY.category_of_logic log) funF funG
+      := {| TRANSFORMATION.data_of :=  trans; TRANSFORMATION.extras_of :=  trans |}.
+    Canonical Structure transformation_of_metatransformation.
+    
+    (** theorem **)
+    Import Ex_Notations1.
+    Definition typeof_metaβ_morphism :=  forall (trans : @metatransformation),  forall A A' : obA catA,
+                                          [0 funF.-F|0 A ~> trans.-β||0 A' ]1 <o (funF) .-F||1 ~~
+                                                                                [1 trans.-β||0 A ~> funG.-F|0 A' ]0 <o (funG) .-F||1.
+    Check  (fun trans: @metatransformation => @metaβ_morphism _ trans) : typeof_metaβ_morphism.
+    Definition typeof_polyβ_morphism :=  forall (trans : metatransformation) (V : obV log) 
+                                           (B : obA log) (A : obA catA) (W : obV log) 
+                                           (A' : obA catA) (a : V(0 W |- catA .-A[0 A ~> A' ]0 )0)
+                                           (f : V(0 V |- funF.-F[0 B ~> A ]0 )0),
+                                           trans.-β|1 (Des([1 f ~> funF.-F[0 B ~> A' ]0 ]0 <o funF.-F[1 1 ~> A' ]0 <o a)) ~~
+                                                      Des([1 trans.-β|1 f ~> funG.-F[0 B ~> A' ]0 ]0 <o funG.-F[1 1 ~> A' ]0 <o a).
+    Check (fun trans: @metatransformation => @TRANSFORMATION.polyβ_morphism _ _ _ _  _ _ trans) : typeof_polyβ_morphism .
+
+    Lemma metaβ_morphism_from_poly_of_metaβ : typeof_polyβ_morphism -> typeof_metaβ_morphism.
+    Proof.
+      (** LHS **)
+      unfold typeof_metaβ_morphism, typeof_polyβ_morphism. intro H_poly_morphism. intros.
+      specialize H_poly_morphism with (B := I) (A := A) (A' := A') (a := 1) (f := 1).
+      eapply SymV, TransV, SymV in H_poly_morphism; [| eapply SymV, Cons_Output ].
+      eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply Cons_Des ].
+      eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongCom; [|eapply ReflV]; eapply SymV, consV10_functorial_fun1 ].
+      eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, SymV, Cat1LeftV ].
+      eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, SymV, Cat1RightV ]. 
+      eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongConsIn, CongMetaF, Cat1LeftV ].
+      eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, CongConsIn, metaF_arrow ].
+      eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|]; eapply CongDes, ConsIn_Input ].
+      eapply SymV, TransV, SymV in H_poly_morphism; [| eapply SymV, Des_Output ].
+      eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongDes, SymV, Cat2V ].
+      eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongDes, CongCom; [|eapply ReflV]; eapply SymV, ConsIn_Output2   ].
+      eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongDes, SymV, ConsIn_Input   ].
+
+      (** RHS **)
+      eapply CongCons in H_poly_morphism.
+      eapply SymV, TransV, SymV in H_poly_morphism; [|eapply Cons_Des]. eapply TransV in H_poly_morphism; [|eapply Cons_Des].
+      eapply  TransV in H_poly_morphism; [|eapply CongCom; [eapply ReflV|]; eapply SymV, Cat1RightV ].
+      eapply TransV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|];  eapply CongConsIn, CongMetaF, Cat1LeftV ].
+      eapply TransV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|];  eapply CongConsIn, metaF_arrow].
+      eapply TransV in H_poly_morphism; [| eapply CongCom; [eapply ReflV|];  eapply ConsIn_Input].
+      eapply TransV in H_poly_morphism; [| eapply SymV, Cat2V ].
+      eapply TransV in H_poly_morphism; [| eapply CongCom; [|eapply ReflV]; eapply SymV, ConsIn_consV10_functorial ].
+      eapply TransV in H_poly_morphism; [| eapply SymV, ConsIn_Input].
+      eapply CongDesIn in H_poly_morphism.
+      eapply SymV, TransV, SymV in H_poly_morphism; [|eapply DesIn_ConsIn]. eapply TransV in H_poly_morphism; [|eapply DesIn_ConsIn].        
+      eapply TransV in H_poly_morphism; [| eapply CongCom; [|eapply ReflV];  eapply CongConsV10, CongDes, SymV, Cat1LeftV].
+      eapply TransV in H_poly_morphism; [| eapply CongCom; [|eapply ReflV];  eapply CongConsV10, Des_Cons].
+      eapply TransV in H_poly_morphism; [| eapply CongCom; [|eapply ReflV];  eapply consV10_functorial].
+      eapply TransV in H_poly_morphism; [| eapply Cat2V].
+      eapply SymV, TransV, SymV in H_poly_morphism; [| eapply CongCom; [|eapply ReflV]; eapply consV11_bifunctorial ].
+      eapply SymV, TransV, SymV in H_poly_morphism; [| eapply Cat2V ].
+      eapply Des_I_Iso in H_poly_morphism.
+
+      exact H_poly_morphism.
+    Qed.
+
+  End Context2.
+End METATRANSFORMATION.
 
     (*            >>>---   NEXT IS WHY : ALL THIS WORK OF INTERFACING FOR INSTANCES WAS DONE  ---<<<   
 
 apply this to unfold this as identitary (external-structural) of composition of polyfunctors ( polyV_relV o (poly_of_meta F[0 B ~> - ]1) ) .. ( polyV_relV o (poly_of_meta metaFB) )  ...  show before that
-1. NEXT1 some metafunctor metaFB into catV on top of F[0 B ~> - ]1  by polyF which becomes  metaFB := meta_of_poly F at B,
-2. then get derived polyfunctor from this metafunctor, 
-3. then unitary( |1 ) of this derived polyfunctor is  identitary( ||1 ) of the metafunctor metaFB on top of F[0 B ~> - ]1 
-4. NEXT2 which is  identitary ( [B ~> - ]1 ) of original polyfunctor F
- 
-all: ( V[0 V ~> - ]1 (F[0 B ~> A' ]0) (F[0 B ~> X ]0) ) <o F[0 B ~> - ]1 A' X   
-       ( V[0 V ~> - ]1 (F[0 B ~> A' ]0) (F[0 B ~> X ]0) ) <o (meta_of_poly F at B)||1 A' X    
-       ( V[0 V ~> - ]1 (F[0 B ~> A' ]0) (F[0 B ~> X ]0) ) <o FB||1 A' X    
-       ( V[0 V ~> - ]1 (F[0 B ~> A' ]0) (F[0 B ~> X ]0) ) <o (poly_of_meta metaFB)|1 A' X
-       (polyV_relV o (poly_of_meta metaFB))[0 V ~> - ]1 A' X
-       (meta_of_poly (polyV_relV o (poly_of_meta (meta_of_poly F at B))) at V)||1 A' X
+1.DONE NEXT1 some metafunctor metaFB into catV on top of F[0 B ~> - ]1  by polyF which becomes  metaFB := meta_of_poly F at B,
+2. DONE then get derived polyfunctor from this metafunctor, 
+3. DONE then unitary( |1 ) of this derived polyfunctor is  identitary( ||1 ) of the metafunctor metaFB on top of F[0 B ~> - ]1 
+4. DONE NEXT2 which is  identitary ( [B ~> - ]1 ) of original polyfunctor F  all:
+( V[0 V ~> - ]1 (F[0 B ~> A' ]0) (F[0 B ~> X ]0) ) <o F[0 B ~> - ]1 A' X   (polyF is functor)
+( V[0 V ~> - ]1 (F[0 B ~> A' ]0) (F[0 B ~> X ]0) ) <o (meta_of_ polyF at B)||1 A' X  ( meta_IdenV  ||1 , definitionally )
+(    ( V[0 V ~> - ]1 (F[0 B ~> A' ]0) (F[0 B ~> X ]0) ) <o FB||1 A' X    )
+( V[0 V ~> - ]1 (F[0 B ~> A' ]0) (F[0 B ~> X ]0) ) <o (poly_of_ (meta_of_ polyF at B))|1 A' X (poly_of_meta is functorToCat  ,  propositionally)
+(polyV_relV o (poly_of_meta metaFB))[0 V ~> - ]1 A' X (propositionally funComp_idenV_rel_F'_IdenV_F_unitB... ?may relate functorToCat_unitB  |1 with functor_IdenV  [0 B ~> - ]1 ? )
+(meta_of_poly (polyV_relV o (poly_of_meta (meta_of_poly F at B))) at V)||1 A' X
 
   Definition natural (V : obV) (B : obB) (A : obA) (β : forall X : obA, V(0 A[0 A ~> X ]0  |- [0 V ~> F[0 B ~> X ]0 ]0 )0) :=
                         forall (C X : obA),
@@ -1582,7 +2267,7 @@ all: ( V[0 V ~> - ]1 (F[0 B ~> A' ]0) (F[0 B ~> X ]0) ) <o F[0 B ~> - ]1 A' X
                                  <o (meta_of_poly (polyV_relV o (poly_of_meta (meta_of_poly F at B))) at V)||1 A' X ) .
       ... == natural_metatransformation from (meta_of_poly polyA at A) to (meta_of_poly (polyV_relV o (poly_of_meta (meta_of_poly F at B))) at V) by β at A' at X
 
-NEXT3: naturality of any metatransformation of any metafunctors <-> polymorphism of coresp polytransformation of coresp polyfuntors
+DONENEXT3: naturality of any metatransformation of any metafunctors <-> polymorphism of coresp polytransformation of coresp polyfuntors
 NEXT4: rewrite natural as above
 
      *)
