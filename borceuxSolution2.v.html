@@ -67,6 +67,10 @@
         /* font-lock-keyword-face */
         color: #a020f0;
       }
+      .proof-tacticals-name {
+        /* proof-tacticals-name-face */
+        color: #b452cd;
+      }
       .proof-tactics-name {
         /* proof-tactics-name-face */
         color: #00008b;
@@ -149,8 +153,11 @@ http://1337777.link/ooo/guJAHkwRZYYyuhrh4GyYWv7BPOwNEF-jSeQcYN9WxLk!Zw1GYSFfr6ch
 
  ******************************************)</span>
 
-<span class="keyword">Set Implicit Arguments</span>.
 <span class="type">Set</span> Universe Polymorphism.
+<span class="keyword">Set Implicit Arguments</span>.
+<span class="keyword">Unset Strict Implicit</span>.
+Unset Printing Implicit Defensive.
+
 <span class="doc">(** ** </span><span class="company-coq-coqdoc-h2"><span class="doc">NEXT1: use (+) record structure packaking interface with (+) semi-automatic semi-programmed canonical resolution/synthesis of the polymorphicity extras which is (+) on top of the data of objects and composition. Also note that any instance of the logic interface V shall be passed as parameter to the functor interface</span></span><span class="doc">
  **)</span>
 
@@ -206,10 +213,10 @@ later rename polyF_unitary to polyF_constant because some constant family is sam
   <span class="proof-tactics-name">intros</span>; <span class="proof-tactics-name">eapply</span> eq_trans; <span class="coq-solve-tactics">eassumption</span>.
 <span class="keyword">Qed</span>.
 
-<span class="keyword">Definition</span> <span class="function-name">polyT_relT</span> : <span class="type">forall</span> (<span class="variable-name">T</span> : <span class="type">Type</span>), <span class="type">forall</span> (<span class="variable-name">B</span> : obT), <span class="type">forall</span> (<span class="variable-name">A</span> : obT),
+<span class="keyword">Definition</span> <span class="function-name">polyT_relT</span> : <span class="type">forall</span> (<span class="variable-name">T</span> : obT), <span class="type">forall</span> (<span class="variable-name">B</span> : obT), <span class="type">forall</span> (<span class="variable-name">A</span> : obT),
                           ( T -&gt; T(0 B |- A )0 ) -&gt;
                           <span class="type">forall</span> <span class="variable-name">X</span> : obT, T(0 A |- X )0  -&gt;  ( T -&gt; T(0 B |- X )0 )
-  := (<span class="type">fun</span> (<span class="variable-name">T</span> : <span class="type">Type</span>) (<span class="variable-name">B</span> : obT)  (<span class="variable-name">A</span> : obT) (<span class="variable-name">f</span> : T -&gt; T(0 B |- A )0) 
+  := (<span class="type">fun</span> (<span class="variable-name">T</span> : obT) (<span class="variable-name">B</span> : obT)  (<span class="variable-name">A</span> : obT) (<span class="variable-name">f</span> : T -&gt; T(0 B |- A )0) 
         (<span class="variable-name">X</span> : obT) (<span class="variable-name">g</span> : T(0 A |- X )0) (<span class="variable-name">t</span> : T) (<span class="variable-name">b</span> : B) =&gt;   g (f t b)) .
 
 <span class="doc">(** almost same as the common unitary .. but no unit-picking mentionned **)</span>
@@ -242,7 +249,7 @@ later rename polyF_unitary to polyF_constant because some constant family is sam
 <span class="keyword">Eval</span> <span class="proof-tactics-name">compute</span> <span class="type">in</span>  <span class="type">fun</span> <span class="variable-name">b a</span> =&gt; a &lt;&lt;o b .
 
 <span class="keyword">Lemma</span> <span class="function-name">polyT_relT_arrow</span> :  <span class="type">forall</span> (<span class="variable-name">B</span> : obT), <span class="type">forall</span> (<span class="variable-name">A</span> : obT),
-                          <span class="type">forall</span> (<span class="variable-name">T T'</span> : <span class="type">Type</span>) (<span class="variable-name">b</span> : T' -&gt; T),
+                          <span class="type">forall</span> (<span class="variable-name">T T'</span> : obT) (<span class="variable-name">b</span> : T' -&gt; T),
                           <span class="type">forall</span> (<span class="variable-name">f</span> : T -&gt; T(0 B |- A )0 ) (<span class="variable-name">X</span> : obT),
                           <span class="type">forall</span> (<span class="variable-name">a</span> : T(0 A |- X )0), <span class="type">forall</span> (<span class="variable-name">ttt</span>: T'),
                             T(1 (<span class="type">fun</span> <span class="variable-name">v'</span> =&gt; f (b v')) |- X )0 a ttt
@@ -312,10 +319,24 @@ Qed.</span><span class="comment-delimiter">*)</span>
   <span class="proof-tactics-name">intros</span> ? ? ? v (_v1, _v2). <span class="coq-solve-tactics">exact</span> (v _v1, _v2). <span class="keyword">Defined</span>.
 <span class="keyword">Definition</span> <span class="function-name">consT00</span> : obT -&gt; obT -&gt; obT.
   <span class="proof-tactics-name">intros</span> V1 V2. <span class="coq-solve-tactics">exact</span> ( (V1 -&gt; V2) % type). <span class="keyword">Defined</span>.
-<span class="keyword">Definition</span> <span class="function-name">consT01</span> : <span class="type">forall</span> <span class="variable-name">V1</span> : obT, <span class="type">forall</span> <span class="variable-name">V2 V2'</span>, (polyT_relT00 V2 V2') -&gt; (polyT_relT00 (consT00 V1 V2)  (consT00 V1 V2')).
+<span class="keyword">Definition</span> <span class="function-name">consT01</span> : <span class="type">forall</span> {<span class="variable-name">V1</span> : obT}, <span class="type">forall</span> <span class="variable-name">V2 V2'</span>, (polyT_relT00 V2 V2') -&gt; (polyT_relT00 (consT00 V1 V2)  (consT00 V1 V2')).
   <span class="proof-tactics-name">intros</span> ? ? ? v2 v12.  <span class="coq-solve-tactics">exact</span> (<span class="type">fun</span> _v1 =&gt; v2 ( v12 _v1 ) ). <span class="keyword">Defined</span>.
-<span class="keyword">Definition</span> <span class="function-name">consT10</span> : <span class="type">forall</span> <span class="variable-name">V1' V1</span>, (polyT_relT00 V1' V1) -&gt; <span class="type">forall</span> <span class="variable-name">V2</span> : obT, (polyT_relT00 (consT00 V1 V2) (consT00 V1' V2)).
+<span class="comment-delimiter">(*</span><span class="comment"> (consT01In U v2) is    outgetting (consT01 v2),   ALT innerly/contextually in the contextU,  is action of (consT01 v2) </span><span class="comment-delimiter">*)</span>
+<span class="keyword">Definition</span> <span class="function-name">consT01In</span> : <span class="type">forall</span> <span class="variable-name">U</span> : obT, <span class="type">forall</span> <span class="variable-name">V1</span> : obT, <span class="type">forall</span> <span class="variable-name">V2 V2'</span>, (polyT_relT00 V2 V2') -&gt;
+                                                        (polyT_relT00 U (consT00 V1 V2)) -&gt;  (polyT_relT00 U  (consT00 V1 V2'))  .
+  <span class="proof-tactics-name">intros</span> ? ? ? ? v2.
+  <span class="proof-tactics-name">intros</span> u'v1'v2. <span class="coq-solve-tactics">exact</span> ( (consT01 v2) &lt;&lt;o u'v1'v2 ) || <span class="coq-solve-tactics">exact</span> (<span class="type">fun</span> __u =&gt;  consT01 v2 (u'v1'v2 __u) ). <span class="keyword">Defined</span>.
+<span class="keyword">Check</span> ( <span class="type">fun</span> <span class="variable-name">U</span> : obT =&gt;  <span class="type">fun</span> <span class="variable-name">V1</span> : obT =&gt; <span class="type">fun</span> <span class="variable-name">V2 V2'</span> =&gt; <span class="type">fun</span> <span class="variable-name">v2</span> : (polyT_relT00 V2 V2') =&gt;
+                                           <span class="type">fun</span> <span class="variable-name">u'v1'v2</span> : (polyT_relT00 U (consT00 V1 V2)) =&gt; <span class="type">fun</span> __u =&gt;
+         <span class="type">fun</span> _v1 =&gt; eq_refl :  ( (consT01In v2 u'v1'v2 __u) _v1 = (v2 &lt;&lt;o (u'v1'v2 __u)) _v1 ) ) .
+<span class="keyword">Definition</span> <span class="function-name">consT10</span> : <span class="type">forall</span> <span class="variable-name">V1' V1</span>, (polyT_relT00 V1' V1) -&gt; <span class="type">forall</span> {<span class="variable-name">V2</span> : obT}, (polyT_relT00 (consT00 V1 V2) (consT00 V1' V2)).
   <span class="proof-tactics-name">intros</span> ? ? v1 ? v12 .  <span class="coq-solve-tactics">exact</span> (<span class="type">fun</span> _v1' =&gt; v12 (v1 _v1') ). <span class="keyword">Defined</span>.
+<span class="keyword">Definition</span> <span class="function-name">consT10In</span> : <span class="type">forall</span> <span class="variable-name">U</span> : obT, <span class="type">forall</span> <span class="variable-name">V1' V1</span>, (polyT_relT00 V1' V1) -&gt; <span class="type">forall</span> <span class="variable-name">V2</span> : obT, (polyT_relT00 U (consT00 V1 V2)) -&gt;  (polyT_relT00 U (consT00 V1' V2) ) .
+  <span class="proof-tactics-name">intros</span> ? ? ? v1 ? .
+  <span class="proof-tactics-name">intros</span> u'v1'v2. <span class="coq-solve-tactics">exact</span> ( (consT10 v1) &lt;&lt;o u'v1'v2  ) || <span class="coq-solve-tactics">exact</span> (<span class="type">fun</span> __u =&gt; consT10 v1 (u'v1'v2 __u) ) . <span class="keyword">Defined</span>.
+<span class="keyword">Check</span> ( <span class="type">fun</span> <span class="variable-name">U</span> : obT =&gt; <span class="type">fun</span> <span class="variable-name">V1' V1</span> =&gt; <span class="type">fun</span> <span class="variable-name">v1</span> : (polyT_relT00 V1' V1) =&gt; <span class="type">fun</span> <span class="variable-name">V2</span> : obT =&gt;
+                                                               <span class="type">fun</span> <span class="variable-name">u'v1'v2</span> : (polyT_relT00 U (consT00 V1 V2)) =&gt; <span class="type">fun</span> __u =&gt;
+         <span class="type">fun</span> _v1' =&gt; eq_refl : ( (consT10In v1 u'v1'v2 __u) _v1'  = (v1 o&gt;&gt; (u'v1'v2 __u)) _v1' ) ) .
 <span class="keyword">Definition</span> <span class="function-name">DesT</span>: <span class="type">forall</span> <span class="variable-name">V</span> : obT, <span class="type">forall</span> (<span class="variable-name">U W</span> : obT), (polyT_relT00 U (consT00 V W)) -&gt; (polyT_relT00 (desT00 V U) W) .
   <span class="proof-tactics-name">intros</span> ? ? ? u'v'w. <span class="coq-solve-tactics">exact</span> (<span class="type">fun</span> _u_v =&gt; <span class="type">let</span> (_u, _v) := _u_v <span class="type">in</span> u'v'w _u _v ). <span class="keyword">Defined</span>.
 <span class="keyword">Definition</span> <span class="function-name">ConsT</span> : <span class="type">forall</span> <span class="variable-name">V</span> : obT, <span class="type">forall</span> (<span class="variable-name">U W</span> : obT), (polyT_relT00 (desT00 V U) W) -&gt; (polyT_relT00 U (consT00 V W)).
@@ -381,8 +402,7 @@ Qed.</span><span class="comment-delimiter">*)</span>
   <span class="proof-tactics-name">eapply</span> DesT. <span class="coq-solve-tactics">exact</span> X.
 <span class="keyword">Defined</span>.
 
-<span class="keyword">Axiom</span>  <span class="variable-name">functional_extensionality_dep</span> : <span class="type">forall</span> {A} {<span class="variable-name">B</span> : A -&gt; <span class="type">Type</span>},
-                                       <span class="type">forall</span> (<span class="variable-name">f g</span> : <span class="type">forall</span> <span class="variable-name">x</span> : A, B x),  (<span class="type">forall</span> <span class="variable-name">x</span>, f x = g x) -&gt; f = g.
+<span class="keyword">Axiom</span>  <span class="variable-name">functional_extensionality_T</span> : <span class="type">forall</span> {<span class="variable-name">A B</span> : obT}, <span class="type">forall</span> (<span class="variable-name">f g</span> : T(0 A |- B )0),  (<span class="type">forall</span> <span class="variable-name">x</span>, f x = g x) -&gt; f = g.
 
 <span class="keyword">Lemma</span>  <span class="function-name">polyT_relT_morphism''</span> :   <span class="type">forall</span> (<span class="variable-name">V</span> : obT) (<span class="variable-name">B A</span> : obT) (<span class="variable-name">W</span> : obT) (<span class="variable-name">A'</span> : obT)
                                    (<span class="variable-name">g</span> : T(0 W |- T(0 A |- A' )0 )0) (<span class="variable-name">f</span> : T(0 V |- T(0 B |- idT A )0 )0)
@@ -397,8 +417,8 @@ Qed.</span><span class="comment-delimiter">*)</span>
                                        ([0TW ~&gt; T(1 f |- X )0 ]1) (T(1 g |- X )0)).
     <span class="proof-tactics-name">intros</span>.
     <span class="proof-tactics-name">compute</span>.
-    <span class="proof-tactics-name">apply</span> functional_extensionality_dep. <span class="proof-tactics-name">intro</span>.
-    <span class="proof-tactics-name">apply</span> functional_extensionality_dep. <span class="proof-tactics-name">intro</span>.
+    <span class="proof-tactics-name">apply</span> functional_extensionality_T. <span class="proof-tactics-name">intro</span>.
+    <span class="proof-tactics-name">apply</span> functional_extensionality_T. <span class="proof-tactics-name">intro</span>.
     <span class="proof-tactics-name">simpl</span>. <span class="proof-tactics-name">destruct</span> x0. <span class="coq-solve-tactics">reflexivity</span>.
   <span class="keyword">Qed</span>.
 
@@ -774,7 +794,10 @@ Hypothesis Cong_polyV_relT : forall (B : obV), forall (A : obV),
                                           [1 DesIdenObL  v ~&gt; U ]0  ~~ DesIdenObR( ConsIn( [1 Des v ~&gt; U ]0 ) ) .
         <span class="keyword">Axiom</span> <span class="variable-name">consV10_functorial_fun1</span> : <span class="type">forall</span> <span class="variable-name">V1</span>, <span class="type">forall</span> <span class="variable-name">V2</span> : obV log,
                                           (<span class="constant">@</span>IdenV _ _) ~~    [1 (<span class="constant">@</span>IdenV _ V1) ~&gt; V2 ]0 .
-        
+
+        <span class="keyword">Axiom</span> <span class="variable-name">DesIdenObR_DesIdenObL</span> : <span class="type">forall</span> ( <span class="variable-name">V W X</span> : obV log) (<span class="variable-name">v</span> : V(0 I |- [0 V ~&gt; W ]0 )0),
+                                        [1 DesIdenObL v ~&gt; X ]0 ~~
+                                                              DesIdenObR (ConsIn ([1 Des v ~&gt; X ]0)) .
        
        <span class="comment-delimiter">(*</span><span class="comment"> unitV is not really primitive</span><span class="comment-delimiter">*)</span>
        <span class="keyword">Axiom</span> <span class="variable-name">unitV_IdenV</span> : <span class="type">forall</span> <span class="variable-name">A</span> : obV log,  (<span class="constant">@</span>IdenV log A) ~~ DesIdenObL (<span class="constant">@</span>unitV log A).
@@ -929,44 +952,22 @@ Hypothesis Cong_polyV_relT : forall (B : obV), forall (A : obV),
   Definition polyF0 {log : logic} {obA obB : Type} {polyF0 : obA -&gt; obB} (dat : </span><span class="constant"><span class="comment">@</span></span><span class="comment">data1 log obA obB polyF0) := polyF0.
  </span><span class="comment-delimiter">*)</span>
 
-  <span class="keyword">Notation</span> <span class="string">"A[0 A1 ~&gt; A2 ]0"</span> := (<span class="constant">@</span>polyA00 _ _ A1 A2) (<span class="type">at</span> level 25).
-<span class="comment-delimiter">(*</span><span class="comment">  Notation "A[0 A1 ~&gt; A2 ]0" := ((_.-A[0 A1 ~&gt; A2 ]0)%mys) (at level 25).</span><span class="comment-delimiter">*)</span>
-  <span class="doc">(** therefore "A[1 f ~&gt; X ]0" is similar to ( f o&gt; _ ) **)</span>
-  <span class="comment-delimiter">(*</span><span class="comment">  Notation "A[1 f ~&gt; X ]0" := (</span><span class="constant"><span class="comment">@</span></span><span class="comment">polyA _ _ _ _ _ f X) (at level 25).</span><span class="comment-delimiter">*)</span>
-  <span class="keyword">Notation</span> <span class="string">"A[1 f ~&gt; X ]0"</span> := (<span class="constant">@</span>polyA _ _ _ _ _ f X) (<span class="type">at</span> level 25).
-  <span class="doc">(** therefore "A[0 X ~&gt; g ]1" is similar to the common ( _ &lt;o g ) **)</span>
-  <span class="keyword">Notation</span> <span class="string">"A[0 X ~&gt; g ]1"</span> := (<span class="constant">@</span>polyA _ _ _ _ _ (<span class="constant">@</span>IdenV _ _) X &lt;o (<span class="variable-name">g</span> : V(0 _ |- A[0 _ ~&gt; X ]0 )0)) (<span class="type">at</span> level 25).
-  <span class="keyword">Notation</span> <span class="string">"'uA'"</span> := (<span class="constant">@</span>unitA _ _ _) (<span class="type">at</span> level 0).
-  
-    <span class="keyword">Notation</span> <span class="string">"B[0 B1 ~&gt; B2 ]0"</span> := (<span class="constant">@</span>polyB00 _ _ B1 B2) (<span class="type">at</span> level 25).
-    <span class="doc">(** therefore "B[1 m ~&gt; Y ]0" is similar to ( m o&gt; _ ) **)</span>
-    <span class="keyword">Notation</span> <span class="string">"B[1 m ~&gt; Y ]0"</span> := (<span class="constant">@</span>polyB _ _ _ _ _ m Y) (<span class="type">at</span> level 25).
-    <span class="doc">(** therefore "B[0 Y ~&gt; n ]1" is similar to the common ( _ &lt;o n ) **)</span>
-    <span class="keyword">Notation</span> <span class="string">"B[0 Y ~&gt; n ]1"</span> := (<span class="constant">@</span>polyB _ _ _ _ _ (<span class="constant">@</span>IdenV _ _) Y &lt;o (<span class="variable-name">n</span> : V(0 _ |- B[0 _ ~&gt; Y ]0 )0)) (<span class="type">at</span> level 25).
-
-    <span class="keyword">Module</span> <span class="function-name">Ex_Notations3</span>.
-      <span class="keyword">Notation</span> <span class="string">"dat .-A[0 A1 ~&gt; A2 ]0"</span> := (<span class="constant">@</span>polyA00 _ dat A1 A2) (<span class="type">at</span> level 25).
-      <span class="keyword">Notation</span> <span class="string">"A[0 A1 ~&gt; A2 ]0"</span> := (_  .-A[0 A1 ~&gt; A2 ]0) (<span class="type">at</span> level 25).
-      <span class="comment-delimiter">(*</span><span class="comment">  Notation "A[0 A1 ~&gt; A2 ]0" := ((_.-A[0 A1 ~&gt; A2 ]0)%mys) (at level 25).</span><span class="comment-delimiter">*)</span>
-      <span class="doc">(** therefore "A[1 f ~&gt; X ]0" is similar to ( f o&gt; _ ) **)</span>
-      <span class="comment-delimiter">(*</span><span class="comment">  Notation "A[1 f ~&gt; X ]0" := (</span><span class="constant"><span class="comment">@</span></span><span class="comment">polyA _ _ _ _ _ f X) (at level 25).</span><span class="comment-delimiter">*)</span>
-      <span class="keyword">Notation</span> <span class="string">"dat .-A[1 f ~&gt; X ]0"</span> := (<span class="constant">@</span>polyA _ dat _ _ _ f X) (<span class="type">at</span> level 25).
-      <span class="keyword">Notation</span> <span class="string">"A[1 f ~&gt; X ]0"</span> := (_.-A[1 f ~&gt; X ]0) (<span class="type">at</span> level 25).
-      <span class="doc">(** therefore "A[0 X ~&gt; g ]1" is similar to the common ( _ &lt;o g ) **)</span>
-      <span class="keyword">Notation</span> <span class="string">"dat .-A[0 X ~&gt; g ]1"</span> := (<span class="constant">@</span>polyA _ dat _ _ _ (<span class="constant">@</span>IdenV _ _) X &lt;o (<span class="variable-name">g</span> : V(0 _ |- A[0 _ ~&gt; X ]0 )0)) (<span class="type">at</span> level 25).
-      <span class="keyword">Notation</span> <span class="string">"A[0 X ~&gt; g ]1"</span> := (_.-A[0 X ~&gt; g ]1) (<span class="type">at</span> level 25).
-      <span class="keyword">Notation</span> <span class="string">"dat .-uA"</span> := (<span class="constant">@</span>unitA _ dat _) (<span class="type">at</span> level 0).
-      
-      <span class="keyword">Notation</span> <span class="string">"dat .-B[0 B1 ~&gt; B2 ]0"</span> := (<span class="constant">@</span>polyB00 _ dat B1 B2) (<span class="type">at</span> level 25).
-      <span class="keyword">Notation</span> <span class="string">"B[0 B1 ~&gt; B2 ]0"</span> := (_.-B[0 B1 ~&gt; B2 ]0) (<span class="type">at</span> level 25).
-      <span class="doc">(** therefore "B[1 m ~&gt; Y ]0" is similar to ( m o&gt; _ ) **)</span>
-      <span class="keyword">Notation</span> <span class="string">"dat .-B[1 m ~&gt; Y ]0"</span> := (<span class="constant">@</span>polyB _ dat _ _ _ m Y) (<span class="type">at</span> level 25).
-      <span class="keyword">Notation</span> <span class="string">"B[1 m ~&gt; Y ]0"</span> := (_.-B[1 m ~&gt; Y ]0) (<span class="type">at</span> level 25).
-      <span class="doc">(** therefore "B[0 Y ~&gt; n ]1" is similar to the common ( _ &lt;o n ) **)</span>
-      <span class="keyword">Notation</span> <span class="string">"dat .-B[0 Y ~&gt; n ]1"</span> := (<span class="constant">@</span>polyB _ dat _ _ _ (<span class="constant">@</span>IdenV _ _) Y &lt;o (<span class="variable-name">n</span> : V(0 _ |- B[0 _ ~&gt; Y ]0 )0)) (<span class="type">at</span> level 25).
-      <span class="keyword">Notation</span> <span class="string">"B[0 Y ~&gt; n ]1"</span> := (_.-B[0 Y ~&gt; n ]1) (<span class="type">at</span> level 25).
-    <span class="keyword">End</span> <span class="function-name">Ex_Notations3</span>.
+  <span class="keyword">Module</span> <span class="function-name">Ex_Notations3</span>.
+    <span class="keyword">Notation</span> <span class="string">"dat .-A[0 A1 ~&gt; A2 ]0"</span> := (<span class="constant">@</span>polyA00 _ dat A1 A2) (<span class="type">at</span> level 25, format <span class="string">"dat .-A[0  A1  ~&gt;  A2  ]0"</span>).
+    <span class="doc">(** therefore "A[1 f ~&gt; X ]0" is similar to ( f o&gt; _ ) **)</span>
+    <span class="keyword">Notation</span> <span class="string">"dat .-A[1 f ~&gt; X ]0"</span> := (<span class="constant">@</span>polyA _ dat _ _ _ f X) (<span class="type">at</span> level 25, format <span class="string">"dat .-A[1  f  ~&gt;  X  ]0"</span>).
+    <span class="keyword">Notation</span> <span class="string">"dat .-uA"</span> := (<span class="constant">@</span>unitA _ dat _) (<span class="type">at</span> level 0, format <span class="string">"dat .-uA"</span>).
     
+    <span class="keyword">Notation</span> <span class="string">"dat .-B[0 B1 ~&gt; B2 ]0"</span> := (<span class="constant">@</span>polyB00 _ dat B1 B2) (<span class="type">at</span> level 25, format <span class="string">"dat .-B[0  B1  ~&gt;  B2  ]0"</span>).
+    <span class="keyword">Notation</span> <span class="string">"dat .-B[1 m ~&gt; Y ]0"</span> := (<span class="constant">@</span>polyB _ dat _ _ _ m Y) (<span class="type">at</span> level 25, format <span class="string">"dat .-B[1  m  ~&gt;  Y  ]0"</span>).
+  <span class="keyword">End</span> <span class="function-name">Ex_Notations3</span>.
+  <span class="keyword">Import</span> Ex_Notations3.
+  <span class="keyword">Notation</span> <span class="string">"A[0 A1 ~&gt; A2 ]0"</span> := (_  .-A[0 A1 ~&gt; A2 ]0) (<span class="type">at</span> level 25).
+  <span class="keyword">Notation</span> <span class="string">"A[1 f ~&gt; X ]0"</span> := (_.-A[1 f ~&gt; X ]0) (<span class="type">at</span> level 25).
+  <span class="keyword">Notation</span> <span class="string">"'uA'"</span> := (_ .-uA) (<span class="type">at</span> level 0).
+  <span class="keyword">Notation</span> <span class="string">"B[0 B1 ~&gt; B2 ]0"</span> := (_.-B[0 B1 ~&gt; B2 ]0) (<span class="type">at</span> level 25).
+  <span class="keyword">Notation</span> <span class="string">"B[1 m ~&gt; Y ]0"</span> := (_.-B[1 m ~&gt; Y ]0) (<span class="type">at</span> level 25).
+
     <span class="keyword">Section</span> <span class="function-name">Context2</span>.
       Context {<span class="variable-name">log</span> : logic}.
       Context {<span class="variable-name">dat</span> : <span class="constant">@</span>data log}.
@@ -979,43 +980,61 @@ Hypothesis Cong_polyV_relT : forall (B : obV), forall (A : obV),
                                                  <span class="type">forall</span> <span class="variable-name">X</span> : obB dat, V(0 B[0 A ~&gt; X ]0  |- [0 B[0 B ~&gt; A ]0 ~&gt; B[0 B ~&gt; X ]0 ]0 )0
         := (<span class="type">fun</span> <span class="variable-name">B A X</span> =&gt; <span class="constant">@</span>polyB _ _ (B[0 B ~&gt; A ]0) B A (<span class="constant">@</span>IdenV _ (B[0 B ~&gt; A ]0)) X).
     <span class="keyword">End</span> <span class="function-name">Context2</span>.
-
-    <span class="keyword">Notation</span> <span class="string">"A[0 B ~&gt; - ]1"</span> := (<span class="constant">@</span>polyA_IdenV _ _ B) (<span class="type">at</span> level 25).
-    <span class="keyword">Notation</span> <span class="string">"B[0 B ~&gt; - ]1"</span> := (<span class="constant">@</span>polyB_IdenV _ _ B) (<span class="type">at</span> level 25).
     
-    <span class="keyword">Notation</span> <span class="string">"F|0 A"</span> := (<span class="constant">@</span>polyF0 _ _ A) (<span class="type">at</span> level 4, <span class="proof-tactics-name">right</span> associativity).
-    <span class="doc">(** :^) **)</span>
-    <span class="keyword">Notation</span> <span class="string">"F[0 B ~&gt; A ]0"</span> := (B[0 B ~&gt; F|0 A ]0) (<span class="type">at</span> level 25).
-    <span class="doc">(** therefore "F[1 b ~&gt; X ]0" is similar to   ( b o&gt; ( F|1 _ ) )   , alternatively   ( b o&gt;F _ )   **)</span>
-    <span class="keyword">Notation</span> <span class="string">"F[1 b ~&gt; X ]0"</span> := (<span class="constant">@</span>polyF _ _ _ _ _ b X) (<span class="type">at</span> level 25).
-    <span class="doc">(** therefore "F[0 X ~&gt; a ]1" is similar to   ( B[0 B ~&gt; ( F|1 a ) ]1 ) which is ( _ o&gt; ( F|1 a ) )   , alternatively  ( _ o&gt;F a )   **)</span>
-    <span class="keyword">Notation</span> <span class="string">"F[0 X ~&gt; a ]1"</span> := (<span class="constant">@</span>polyF _ _ _ _ _ (<span class="constant">@</span>IdenV _ _) X &lt;o (<span class="variable-name">a</span> : V(0 _ |- A[0 _ ~&gt; X ]0 )0)) (<span class="type">at</span> level 25).
-
-    <span class="keyword">Module</span> <span class="function-name">Ex_Notations4</span>.
+    <span class="keyword">Module</span> <span class="function-name">Ex_Notations4'</span>.
       <span class="keyword">Export</span> Ex_Notations3.
       <span class="keyword">Notation</span> <span class="string">"dat .-A[0 B ~&gt; - ]1"</span> := (<span class="constant">@</span>polyA_IdenV _ dat B) (<span class="type">at</span> level 25, format  <span class="string">"dat .-A[0  B  ~&gt;  -  ]1"</span>).
+      <span class="doc">(** therefore "A[0 X ~&gt; g ]1" is similar to the common ( _ &lt;o g ) **)</span>
+      <span class="keyword">Notation</span> <span class="string">"dat .-A[0 X ~&gt; a ]1"</span> := ( (dat.-A[0 _ ~&gt; - ]1) _ X &lt;o (<span class="variable-name">a</span> : V(0 _ |- dat.-A[0 _ ~&gt; X ]0 )0)) (<span class="type">at</span> level 25, format <span class="string">"dat .-A[0  X  ~&gt;  a  ]1"</span>).      
+
       <span class="keyword">Notation</span> <span class="string">"dat .-B[0 B ~&gt; - ]1"</span> := (<span class="constant">@</span>polyB_IdenV _ dat B) (<span class="type">at</span> level 25, format <span class="string">"dat .-B[0  B  ~&gt;  -  ]1"</span>).
+      <span class="keyword">Notation</span> <span class="string">"dat .-B[0 Y ~&gt; n ]1"</span> := ( (dat.-B[0 _ ~&gt; - ]1) _ Y &lt;o (<span class="variable-name">n</span> : V(0 _ |- dat.-B[0 _ ~&gt; Y ]0 )0)) (<span class="type">at</span> level 25, format <span class="string">"dat .-B[0  Y  ~&gt;  n  ]1"</span>).
       
       <span class="keyword">Notation</span> <span class="string">"dat .-F|0 A"</span> := (<span class="constant">@</span>polyF0 _ dat A) (<span class="type">at</span> level 4, <span class="proof-tactics-name">right</span> associativity, format <span class="string">"dat .-F|0  A"</span>).
       <span class="doc">(** :^) **)</span>
       <span class="keyword">Notation</span> <span class="string">"dat .-F[0 B ~&gt; A ]0"</span> := (dat.-B[0 B ~&gt; (dat.-F|0 A) ]0) (<span class="type">at</span> level 25, format <span class="string">"dat .-F[0  B  ~&gt;  A  ]0"</span>).
       <span class="doc">(** therefore "F[1 b ~&gt; X ]0" is similar to   ( b o&gt; ( F|1 _ ) )   , alternatively   ( b o&gt;F _ )   **)</span>
       <span class="keyword">Notation</span> <span class="string">"dat .-F[1 b ~&gt; X ]0"</span> := (<span class="constant">@</span>polyF _ dat _ _ _ b X) (<span class="type">at</span> level 25, format <span class="string">"dat .-F[1  b  ~&gt;  X  ]0"</span>).
-      <span class="doc">(** therefore "F[0 X ~&gt; a ]1" is similar to   ( B[0 B ~&gt; ( F|1 a ) ]1 ) which is ( _ o&gt; ( F|1 a ) )   , alternatively  ( _ o&gt;F a )   **)</span>
-      <span class="keyword">Notation</span> <span class="string">"dat .-F[0 X ~&gt; a ]1"</span> := (<span class="constant">@</span>polyF _ dat _ _ _ (<span class="constant">@</span>IdenV _ _) X &lt;o (<span class="variable-name">a</span> : V(0 _ |- A[0 _ ~&gt; X ]0 )0)) (<span class="type">at</span> level 25, format <span class="string">"dat .-F[0  X  ~&gt;  a  ]1"</span>).
-    <span class="keyword">End</span> <span class="function-name">Ex_Notations4</span>.
-    
+    <span class="keyword">End</span> <span class="function-name">Ex_Notations4'</span>.
+    <span class="keyword">Import</span> Ex_Notations4'.
+    <span class="keyword">Notation</span> <span class="string">"A[0 B ~&gt; - ]1"</span> := (_ .-A[0 B ~&gt; - ]1) (<span class="type">at</span> level 25).
+    <span class="keyword">Notation</span> <span class="string">"A[0 X ~&gt; g ]1"</span> := (_.-A[0 X ~&gt; g ]1) (<span class="type">at</span> level 25).
+    <span class="keyword">Notation</span> <span class="string">"B[0 B ~&gt; - ]1"</span> := (_ .-B[0 B ~&gt; - ]1) (<span class="type">at</span> level 25).
+    <span class="keyword">Notation</span> <span class="string">"B[0 Y ~&gt; n ]1"</span> := (_.-B[0 Y ~&gt; n ]1) (<span class="type">at</span> level 25).
+    <span class="keyword">Notation</span> <span class="string">"F|0 A"</span> := (_ .-F|0 A) (<span class="type">at</span> level 4, <span class="proof-tactics-name">right</span> associativity).
+    <span class="keyword">Notation</span> <span class="string">"F[0 B ~&gt; A ]0"</span> := (_ .-F[0 B ~&gt; A ]0) (<span class="type">at</span> level 25).
+    <span class="keyword">Notation</span> <span class="string">"F[1 b ~&gt; X ]0"</span> := (_ .-F[1 b ~&gt; X ]0) (<span class="type">at</span> level 25).
+
     <span class="keyword">Section</span> <span class="function-name">Context3</span>.
       Context {<span class="variable-name">log</span> : logic}.
       Context {<span class="variable-name">dat</span> : <span class="constant">@</span>data log}.
 
       <span class="keyword">Definition</span> <span class="function-name">polyF_IdenV</span> : <span class="type">forall</span> (<span class="variable-name">B</span> : obB dat) (<span class="variable-name">A</span> : obA dat),
                                <span class="type">forall</span> <span class="variable-name">X</span> : obA dat, V(0 A[0 A ~&gt; X ]0  |- [0 F[0 B ~&gt; A ]0 ~&gt; F[0 B ~&gt; X ]0 ]0 )0
-        := (<span class="type">fun</span> <span class="variable-name">B A X</span> =&gt; <span class="constant">@</span>polyF _ _ (F[0 B ~&gt; A ]0) B A (<span class="constant">@</span>IdenV _ (F[0 B ~&gt; A ]0)) X).
-      
+        := (<span class="type">fun</span> <span class="variable-name">B A X</span> =&gt; <span class="constant">@</span>polyF _ dat (F[0 B ~&gt; A ]0) B A (<span class="constant">@</span>IdenV _ (F[0 B ~&gt; A ]0)) X).
+
     <span class="keyword">End</span> <span class="function-name">Context3</span>.
-    <span class="keyword">Notation</span> <span class="string">"dat .-F[0 B ~&gt; - ]1"</span> := (<span class="constant">@</span>polyF_IdenV _ dat B) (<span class="type">at</span> level 25).
+
+    <span class="keyword">Module</span> <span class="function-name">Ex_Notations4</span>.
+      <span class="keyword">Export</span> Ex_Notations4'.
+      <span class="keyword">Notation</span> <span class="string">"dat .-F[0 B ~&gt; - ]1"</span> := (<span class="constant">@</span>polyF_IdenV _ dat B) (<span class="type">at</span> level 25, format <span class="string">"dat .-F[0  B  ~&gt;  -  ]1"</span>).
+      <span class="keyword">Notation</span> <span class="string">"dat .-F[0 X ~&gt; a ]1"</span> := ( (dat.-F[0 _ ~&gt; - ]1) _ X &lt;o (<span class="variable-name">a</span> : V(0 _ |- dat.-A[0 _ ~&gt; X ]0 )0)) (<span class="type">at</span> level 25, format <span class="string">"dat .-F[0  X  ~&gt;  a  ]1"</span>).      
+
+      <span class="doc">(** therefore "F[0 X ~&gt; a ]1" is similar to   ( B[0 B ~&gt; ( F|1 a ) ]1 ) which is ( _ o&gt; ( F|1 a ) )  , alternatively  ( _ o&gt;F a )   **)</span>
+      <span class="keyword">Check</span> <span class="type">fun</span> (<span class="variable-name">log</span> : logic) (<span class="variable-name">dat</span> : data) (<span class="variable-name">B</span> : obB dat) =&gt;
+              ( dat.-F[0 B ~&gt; - ]1 : <span class="type">forall</span> (<span class="variable-name">A X</span> : obA dat), V(0 dat.-A[0 A ~&gt; X ]0 |- [0 dat.-F[0 B ~&gt; A ]0 ~&gt; dat.-F[0 B ~&gt; X ]0 ]0 )0 ).
+      <span class="keyword">Check</span> <span class="type">fun</span> (<span class="variable-name">log</span> : logic) (<span class="variable-name">dat</span> : data) (_B : obB dat) (_A : obA dat) (<span class="variable-name">X</span> : obA dat) (_W : obV log) (<span class="variable-name">a</span> : V(0 _W |- A[0 _A ~&gt; X ]0 )0) =&gt;
+              ( dat.-F[0 X ~&gt; a ]1 : V(0 _W |- [0 dat.-F[0 _B ~&gt; _A ]0 ~&gt; dat.-F[0 _B ~&gt; X ]0 ]0 )0 ).
+
+    <span class="comment-delimiter">(*</span><span class="comment">Lemma dkdkd  : forall (log : logic) (dat : data) (_B : obB dat) (_A : obA dat) (X : obA dat) (_W : obV log) (a : V(0 _W |- dat.-A[0 _A ~&gt; X ]0 )0) ,
+                       ( </span><span class="constant"><span class="comment">@</span></span><span class="comment">eq (V(0 _W |- [0 dat.-F[0 _B ~&gt; _A ]0 ~&gt; dat.-F[0 _B ~&gt; X ]0 ]0 )0)
+                             (dat.-F[0 X ~&gt; a ]1)  (</span><span class="constant"><span class="comment">@</span></span><span class="comment">polyF _ dat _ _ _ (</span><span class="constant"><span class="comment">@</span></span><span class="comment">IdenV _ _) X &lt;o (a : V(0 _ |- A[0 _ ~&gt; X ]0 )0)) ).
+        reflexivity.
+      Qed.</span><span class="comment-delimiter">*)</span>
+    <span class="keyword">End</span> <span class="function-name">Ex_Notations4</span>.
+    <span class="keyword">Import</span> Ex_Notations4.
     <span class="keyword">Notation</span> <span class="string">"F[0 B ~&gt; - ]1"</span> := (_.-F[0 B ~&gt; - ]1) (<span class="type">at</span> level 25).
+    <span class="keyword">Notation</span> <span class="string">"F[0 X ~&gt; a ]1"</span> := (_ .-F[0 X ~&gt; a ]1) (<span class="type">at</span> level 25).
 
     <span class="keyword">Section</span> <span class="function-name">Context4</span>.
       Context {<span class="variable-name">log</span> : logic}.
@@ -1093,35 +1112,35 @@ Hypothesis Cong_polyV_relT : forall (B : obV), forall (A : obV),
       <span class="keyword">Qed</span>.
 
       <span class="keyword">Lemma</span> <span class="function-name">polyF_natural</span> : <span class="type">forall</span> (<span class="variable-name">V</span> : obV log) (<span class="variable-name">B</span> : obB func) (<span class="variable-name">A</span> : obA func) (<span class="variable-name">f</span> : V(0 V |- F[0 B ~&gt; A ]0)0),
-                            <span class="type">forall</span> (<span class="variable-name">C X</span> : obA func),
-                              ( [0 A[0 A ~&gt; C ]0 ~&gt; F[1 f ~&gt; X ]0 ]1
-                                &lt;o A[0 A ~&gt; - ]1 C X )
-                                ~~ ( [1 F[1 f ~&gt; C ]0 ~&gt; [0 V ~&gt; F[0 B ~&gt; X ]0 ]0 ]0
-                                     &lt;o ( V[0 V ~&gt; - ]1 (F[0 B ~&gt; C ]0) (F[0 B ~&gt; X ]0) ) &lt;o F[0 B ~&gt; - ]1 C X ) .
+                            <span class="type">forall</span> (<span class="variable-name">Y X</span> : obA func),
+                              ( [0 A[0 A ~&gt; Y ]0 ~&gt; F[1 f ~&gt; X ]0 ]1
+                                &lt;o A[0 A ~&gt; - ]1 Y X )
+                                ~~ ( [1 F[1 f ~&gt; Y ]0 ~&gt; [0 V ~&gt; F[0 B ~&gt; X ]0 ]0 ]0
+                                     &lt;o ( V[0 V ~&gt; - ]1 (F[0 B ~&gt; Y ]0) (F[0 B ~&gt; X ]0) ) &lt;o F[0 B ~&gt; - ]1 Y X ) .
       <span class="keyword">Proof</span>.
         <span class="comment-delimiter">(*</span><span class="comment"> enough ( DesIn( _ ) ~~ DesIn( _ ) ) </span><span class="comment-delimiter">*)</span>
         <span class="proof-tactics-name">intros</span>;  <span class="proof-tactics-name">eapply</span> TransV; [ <span class="proof-tactics-name">eapply</span> TransV | ]; [ <span class="proof-tactics-name">apply</span> ConsIn_DesIn | <span class="proof-tactics-name">idtac</span> | <span class="proof-tactics-name">apply</span> SymV, ConsIn_DesIn].
         <span class="proof-tactics-name">apply</span> CongConsIn.
 
         <span class="comment-delimiter">(*</span><span class="comment"> convert left hand side : outer polyF_morphism then inner polyF_arrow </span><span class="comment-delimiter">*)</span>
-        <span class="proof-tactics-name">assert</span> ( <span class="variable-name">LHS1</span> : F[1 Des( [1 f ~&gt; F[0 B ~&gt; C ]0 ]0 &lt;o F[0 C ~&gt; (<span class="constant">@</span>IdenV _ (A[0 A ~&gt; C]0)) ]1 ) ~&gt; X ]0
-                         ~~ DesIn( [0 A[0 A ~&gt; C ]0 ~&gt; F[1 f ~&gt; X ]0 ]1 &lt;o A[0 A ~&gt; - ]1 C X ) )
+        <span class="proof-tactics-name">assert</span> ( <span class="variable-name">LHS1</span> : F[1 Des( [1 f ~&gt; F[0 B ~&gt; Y ]0 ]0 &lt;o F[0 Y ~&gt; (<span class="constant">@</span>IdenV _ (A[0 A ~&gt; Y]0)) ]1 ) ~&gt; X ]0
+                         ~~ DesIn( [0 A[0 A ~&gt; Y ]0 ~&gt; F[1 f ~&gt; X ]0 ]1 &lt;o A[0 A ~&gt; - ]1 Y X ) )
           <span class="coq-solve-tactics">by</span> <span class="proof-tactics-name">apply</span> polyF_morphism.
 
-        <span class="proof-tactics-name">assert</span> ( <span class="variable-name">LHS2</span> : F[1 Des( F[1 (<span class="constant">@</span>IdenV _ (F[0 B ~&gt; A ]0)) &lt;o f ~&gt; C ]0 ) ~&gt; X ]0
-                         ~~ F[1 Des( [1 f ~&gt; F[0 B ~&gt; C ]0 ]0 &lt;o F[0 C ~&gt; (<span class="constant">@</span>IdenV _ (A[0 A ~&gt; C ]0)) ]1 ) ~&gt; X ]0 )
+        <span class="proof-tactics-name">assert</span> ( <span class="variable-name">LHS2</span> : F[1 Des( F[1 (<span class="constant">@</span>IdenV _ (F[0 B ~&gt; A ]0)) &lt;o f ~&gt; Y ]0 ) ~&gt; X ]0
+                         ~~ F[1 Des( [1 f ~&gt; F[0 B ~&gt; Y ]0 ]0 &lt;o F[0 Y ~&gt; (<span class="constant">@</span>IdenV _ (A[0 A ~&gt; Y ]0)) ]1 ) ~&gt; X ]0 )
           <span class="coq-solve-tactics">by</span> ( <span class="proof-tactics-name">apply</span> CongPolyF, CongDes;  <span class="proof-tactics-name">eapply</span> TransV; [ <span class="proof-tactics-name">eapply</span> Cat2V | ]; <span class="proof-tactics-name">eapply</span> TransV; [ <span class="proof-tactics-name">eapply</span> Cat1RightV | ];
                <span class="proof-tactics-name">apply</span> polyF_arrow ).
 
         <span class="comment-delimiter">(*</span><span class="comment"> convert right hand side : outer polyV_relV_arrow then outer polyF_arrowIn which is inner form of polyF_arrow </span><span class="comment-delimiter">*)</span>
-        <span class="proof-tactics-name">assert</span> ( <span class="variable-name">RHS1</span> : DesIn( ( V[1 (<span class="constant">@</span>IdenV _ (V[0 V ~&gt; (F[0 B ~&gt; C ]0) ]0)) &lt;o (F[1 f ~&gt; C ]0) ~&gt; (F[0 B ~&gt; X ]0) ]0 ) &lt;o F[0 B ~&gt; - ]1 C X )
-                             ~~ DesIn( [1 F[1 f ~&gt; C ]0 ~&gt; [0 V ~&gt; F[0 B ~&gt; X ]0 ]0 ]0 &lt;o ( V[0 V ~&gt; - ]1 (F[0 B ~&gt; C ]0) (F[0 B ~&gt; X ]0) ) &lt;o F[0 B ~&gt; - ]1 C X ) )
+        <span class="proof-tactics-name">assert</span> ( <span class="variable-name">RHS1</span> : DesIn( ( V[1 (<span class="constant">@</span>IdenV _ (V[0 V ~&gt; (F[0 B ~&gt; Y ]0) ]0)) &lt;o (F[1 f ~&gt; Y ]0) ~&gt; (F[0 B ~&gt; X ]0) ]0 ) &lt;o F[0 B ~&gt; - ]1 Y X )
+                             ~~ DesIn( [1 F[1 f ~&gt; Y ]0 ~&gt; [0 V ~&gt; F[0 B ~&gt; X ]0 ]0 ]0 &lt;o ( V[0 V ~&gt; - ]1 (F[0 B ~&gt; Y ]0) (F[0 B ~&gt; X ]0) ) &lt;o F[0 B ~&gt; - ]1 Y X ) )
           <span class="coq-solve-tactics">by</span> ( <span class="proof-tactics-name">eapply</span> TransV; [ <span class="proof-tactics-name">eapply</span> CongDesIn; <span class="proof-tactics-name">eapply</span> Cat2V | ];
                <span class="proof-tactics-name">apply</span> CongDesIn; <span class="proof-tactics-name">apply</span> CongCom; [ | <span class="proof-tactics-name">apply</span> ReflV];
                <span class="proof-tactics-name">apply</span> polyV_relV_arrow ).
 
-        <span class="proof-tactics-name">assert</span> ( <span class="variable-name">RHS2</span> : ( F[1 (<span class="constant">@</span>IdenV _ (F[0 B ~&gt; C ]0)) &lt;o Des( (<span class="constant">@</span>IdenV _ (V[0 V ~&gt; (F[0 B ~&gt; C ]0) ]0)) &lt;o (F[1 f ~&gt; C ]0) ) ~&gt; X ]0 )
-                          ~~ DesIn( ( V[1 (<span class="constant">@</span>IdenV _ (V[0 V ~&gt; (F[0 B ~&gt; C ]0) ]0)) &lt;o (F[1 f ~&gt; C ]0) ~&gt; (F[0 B ~&gt; X ]0) ]0 ) &lt;o F[0 B ~&gt; - ]1 C X ) )
+        <span class="proof-tactics-name">assert</span> ( <span class="variable-name">RHS2</span> : ( F[1 (<span class="constant">@</span>IdenV _ (F[0 B ~&gt; Y ]0)) &lt;o Des( (<span class="constant">@</span>IdenV _ (V[0 V ~&gt; (F[0 B ~&gt; Y ]0) ]0)) &lt;o (F[1 f ~&gt; Y ]0) ) ~&gt; X ]0 )
+                          ~~ DesIn( ( V[1 (<span class="constant">@</span>IdenV _ (V[0 V ~&gt; (F[0 B ~&gt; Y ]0) ]0)) &lt;o (F[1 f ~&gt; Y ]0) ~&gt; (F[0 B ~&gt; X ]0) ]0 ) &lt;o F[0 B ~&gt; - ]1 Y X ) )
           <span class="coq-solve-tactics">by</span> <span class="proof-tactics-name">apply</span> polyF_arrowIn.
 
         <span class="comment-delimiter">(*</span><span class="comment"> clean right hand side </span><span class="comment-delimiter">*)</span>
@@ -1136,11 +1155,11 @@ Hypothesis Cong_polyV_relT : forall (B : obV), forall (A : obV),
       <span class="keyword">Qed</span>.
 
     <span class="keyword">Definition</span> <span class="function-name">natural</span> (<span class="variable-name">V</span> : obV log) (<span class="variable-name">B</span> : obB func) (<span class="variable-name">A</span> : obA func) (<span class="variable-name">&#946;</span> : <span class="type">forall</span> <span class="variable-name">X</span> : obA func, V(0 A[0 A ~&gt; X ]0  |- [0 V ~&gt; F[0 B ~&gt; X ]0 ]0 )0) :=
-      <span class="type">forall</span> (<span class="variable-name">C X</span> : obA func),
-        ( [0 A[0 A ~&gt; C ]0 ~&gt; &#946; X ]1
-          &lt;o A[0 A ~&gt; - ]1 C X )
-          ~~ ( [1 &#946; C ~&gt; [0 V ~&gt; F[0 B ~&gt; X ]0 ]0 ]0
-               &lt;o ( V[0 V ~&gt; - ]1 (F[0 B ~&gt; C ]0) (F[0 B ~&gt; X ]0) ) &lt;o F[0 B ~&gt; - ]1 C X ) .
+      <span class="type">forall</span> (<span class="variable-name">Y X</span> : obA func),
+        ( [0 A[0 A ~&gt; Y ]0 ~&gt; &#946; X ]1
+          &lt;o A[0 A ~&gt; - ]1 Y X )
+          ~~ ( [1 &#946; Y ~&gt; [0 V ~&gt; F[0 B ~&gt; X ]0 ]0 ]0
+               &lt;o ( V[0 V ~&gt; - ]1 (F[0 B ~&gt; Y ]0) (F[0 B ~&gt; X ]0) ) &lt;o F[0 B ~&gt; - ]1 Y X ) .
 
       <span class="doc">(** for polymorph functor, get this copy-paste same deduction as for polymorph category **)</span>
   <span class="keyword">Lemma</span> <span class="function-name">natural_unitF_explicit</span> : <span class="type">forall</span> (<span class="variable-name">V</span> : obV log) (<span class="variable-name">B</span> : obB func) (<span class="variable-name">A</span> : obA func) (<span class="variable-name">&#966;</span> : <span class="type">forall</span> <span class="variable-name">X</span> : obA func, V(0 A[0 A ~&gt; X ]0  |- [0 V ~&gt; F[0 B ~&gt; X ]0 ]0 )0),
@@ -1221,141 +1240,102 @@ Hypothesis Cong_polyV_relT : forall (B : obV), forall (A : obV),
 
 <span class="keyword">End</span> <span class="function-name">FUNCTOR</span>.
 
-<span class="keyword">Module</span> <span class="function-name">CATEGORY</span>.
+<span class="keyword">Module</span> <span class="function-name">FORM</span>.
   <span class="keyword">Import</span> FUNCTOR.
   <span class="keyword">Set Implicit Arguments</span>.
   <span class="keyword">Unset  Strict Implicit</span>.
 
-    <span class="keyword">Section</span> <span class="function-name">Context6</span>.
-      Context {<span class="variable-name">log</span> : logic}.
+  <span class="keyword">Section</span> <span class="function-name">Context6</span>.
+    Context {<span class="variable-name">log</span> : logic}.
 
-      <span class="keyword">Record</span> <span class="function-name">data</span> :=
-        Data <span class="company-coq-featuresXcode-folding-bullet">{</span>
-            <span class="variable-name">obA</span> : <span class="type">Type</span>;
-            polyA00 : obA -&gt; obA -&gt; obV log;
-            polyA : <span class="type">forall</span> (<span class="variable-name">V</span> : obV log), <span class="type">forall</span> (<span class="variable-name">A2</span> : obA), <span class="type">forall</span> (<span class="variable-name">A1</span> : obA),
-                      V(0 V |- (polyA00 A2 A1) )0 -&gt;
-                      <span class="type">forall</span> <span class="variable-name">X</span> : obA, V(0 (polyA00 A1 X)  |- [0 V ~&gt; (polyA00 A2 X) ]0 )0;
-            unitA : <span class="type">forall</span> <span class="variable-name">A</span> : obA, V(0 I |- polyA00 A A )0;
-          }.
-      Existing <span class="keyword">Class</span> <span class="function-name">data</span>.
+    <span class="keyword">Record</span> <span class="function-name">data</span> :=
+      Data <span class="company-coq-featuresXcode-folding-bullet">{</span>
+          <span class="variable-name">obA</span> : <span class="type">Type</span>;
+          polyA00 : obA -&gt; obA -&gt; obV log;
+          polyA : <span class="type">forall</span> (<span class="variable-name">V</span> : obV log), <span class="type">forall</span> (<span class="variable-name">A2</span> : obA), <span class="type">forall</span> (<span class="variable-name">A1</span> : obA),
+                    V(0 V |- (polyA00 A2 A1) )0 -&gt;
+                    <span class="type">forall</span> <span class="variable-name">X</span> : obA, V(0 (polyA00 A1 X)  |- [0 V ~&gt; (polyA00 A2 X) ]0 )0;
+          unitA : <span class="type">forall</span> <span class="variable-name">A</span> : obA, V(0 I |- polyA00 A A )0;
+        }.
+    Existing <span class="keyword">Class</span> <span class="function-name">data</span>.
 
-      <span class="keyword">Coercion</span> dataFun_of_dataCatForm (<span class="variable-name">d</span> : data)
-      : <span class="constant">@</span>FUNCTOR.data log := {|
-                      FUNCTOR.obA := obA d;
-                      FUNCTOR.polyA00 := <span class="constant">@</span>polyA00 d;
-                      FUNCTOR.polyA := <span class="constant">@</span>polyA d;
-                      FUNCTOR.obB := obA d;
-                      FUNCTOR.polyB00 := <span class="constant">@</span>polyA00 d;
-                      FUNCTOR.polyB := <span class="constant">@</span>polyA d;
-                      FUNCTOR.polyF0 := (<span class="constant">@</span>idT (obA d));
-                      FUNCTOR.polyF := <span class="constant">@</span>polyA d;
-                      FUNCTOR.unitA := <span class="constant">@</span>unitA d|}.
+    <span class="keyword">Coercion</span> dataFun_of_dataCatForm (<span class="variable-name">d</span> : data)
+    : <span class="constant">@</span>FUNCTOR.data log := {|
+                            FUNCTOR.obA := obA d;
+                            FUNCTOR.polyA00 := <span class="constant">@</span>polyA00 d;
+                            FUNCTOR.polyA := <span class="constant">@</span>polyA d;
+                            FUNCTOR.obB := obA d;
+                            FUNCTOR.polyB00 := <span class="constant">@</span>polyA00 d;
+                            FUNCTOR.polyB := <span class="constant">@</span>polyA d;
+                            FUNCTOR.polyF0 := (<span class="constant">@</span>idT (obA d));
+                            FUNCTOR.polyF := <span class="constant">@</span>polyA d;
+                            FUNCTOR.unitA := <span class="constant">@</span>unitA d|}.
 
-      Global Arguments dataFun_of_dataCatForm : <span class="proof-tactics-name">simpl</span> never.
+    Global Arguments dataFun_of_dataCatForm : <span class="proof-tactics-name">simpl</span> never.
 
-    <span class="keyword">End</span> <span class="function-name">Context6</span>.
+  <span class="keyword">End</span> <span class="function-name">Context6</span>.
+  
+  <span class="keyword">Section</span> <span class="function-name">Context7</span>.
+    Context {<span class="variable-name">log</span> : logic}.
     
-    <span class="keyword">Module</span> <span class="function-name">FORM</span>.
-      <span class="keyword">Section</span> <span class="function-name">Context7</span>.
-        Context {<span class="variable-name">log</span> : logic}.
-        
-        <span class="keyword">Record</span> <span class="function-name">extras</span> (<span class="variable-name">dat</span> : data) :=
-          Extras <span class="company-coq-featuresXcode-folding-bullet">{</span>
-              <span class="variable-name">CongPolyA</span> : <span class="type">forall</span> (<span class="variable-name">V</span> : obV log), <span class="type">forall</span> (<span class="variable-name">B</span> : FUNCTOR.obA dat), <span class="type">forall</span> (<span class="variable-name">A</span> : FUNCTOR.obA dat),
-                          <span class="type">forall</span> (<span class="variable-name">f f'</span> : V(0 V |- A[0 B ~&gt; A ]0 )0),
-                            f' ~~ f -&gt; <span class="type">forall</span> <span class="variable-name">X</span> : FUNCTOR.obA dat, polyA f' X ~~ polyA f X;
-              polyA_arrow :  <span class="type">forall</span> (<span class="variable-name">B</span> : FUNCTOR.obA dat), <span class="type">forall</span> (<span class="variable-name">A</span> : FUNCTOR.obA dat),
-                             <span class="type">forall</span> (<span class="variable-name">V V'</span> : obV log) (<span class="variable-name">v</span> : V(0 V' |- V )0),
-                             <span class="type">forall</span> (<span class="variable-name">f</span> : V(0 V |- A[0 B ~&gt; A ]0 )0) (<span class="variable-name">X</span> :  FUNCTOR.obA dat),
-                               A[1 f &lt;o v ~&gt; X ]0
-                                ~~ [1 v ~&gt; A[0 B ~&gt; X ]0 ]0 &lt;o A[1 f ~&gt; X ]0;
-              polyA_unitA : <span class="type">forall</span> (<span class="variable-name">A</span> :  FUNCTOR.obA dat), <span class="type">forall</span> <span class="variable-name">X</span> :  FUNCTOR.obA dat, (<span class="constant">@</span>IdenV _ (A[0 A ~&gt; X ]0)) ~~ DesIdenObR( A[1 (<span class="constant">@</span>FUNCTOR.unitA _ dat A) ~&gt; X ]0 );
-            }.
+    <span class="keyword">Record</span> <span class="function-name">extras</span> (<span class="variable-name">dat</span> : data) :=
+      Extras <span class="company-coq-featuresXcode-folding-bullet">{</span>
+          <span class="variable-name">CongPolyA</span> : <span class="type">forall</span> (<span class="variable-name">V</span> : obV log), <span class="type">forall</span> (<span class="variable-name">B</span> : FUNCTOR.obA dat), <span class="type">forall</span> (<span class="variable-name">A</span> : FUNCTOR.obA dat),
+                      <span class="type">forall</span> (<span class="variable-name">f f'</span> : V(0 V |- A[0 B ~&gt; A ]0 )0),
+                        f' ~~ f -&gt; <span class="type">forall</span> <span class="variable-name">X</span> : FUNCTOR.obA dat, polyA f' X ~~ polyA f X;
+          polyA_arrow :  <span class="type">forall</span> (<span class="variable-name">B</span> : FUNCTOR.obA dat), <span class="type">forall</span> (<span class="variable-name">A</span> : FUNCTOR.obA dat),
+                         <span class="type">forall</span> (<span class="variable-name">V V'</span> : obV log) (<span class="variable-name">v</span> : V(0 V' |- V )0),
+                         <span class="type">forall</span> (<span class="variable-name">f</span> : V(0 V |- A[0 B ~&gt; A ]0 )0) (<span class="variable-name">X</span> :  FUNCTOR.obA dat),
+                           A[1 f &lt;o v ~&gt; X ]0
+                            ~~ [1 v ~&gt; A[0 B ~&gt; X ]0 ]0 &lt;o A[1 f ~&gt; X ]0;
+          polyA_unitA : <span class="type">forall</span> (<span class="variable-name">A</span> :  FUNCTOR.obA dat), <span class="type">forall</span> <span class="variable-name">X</span> :  FUNCTOR.obA dat, (<span class="constant">@</span>IdenV _ (A[0 A ~&gt; X ]0)) ~~ DesIdenObR( A[1 (<span class="constant">@</span>FUNCTOR.unitA _ dat A) ~&gt; X ]0 );
+        }.
 
-        Existing <span class="keyword">Class</span> <span class="function-name">extras</span>.
-        Global Arguments CongPolyA {_ _} [_ _ _ _ _] _ _  .
-        Global Arguments polyA_arrow {_ _} [_ _ _ _] _ _ _ .
-        Global Arguments polyA_unitA {_ _} _ _ .
+    Existing <span class="keyword">Class</span> <span class="function-name">extras</span>.
+    Global Arguments CongPolyA {_ _} [_ _ _ _ _] _ _  .
+    Global Arguments polyA_arrow {_ _} [_ _ _ _] _ _ _ .
+    Global Arguments polyA_unitA {_ _} _ _ .
 
-      <span class="keyword">End</span> <span class="function-name">Context7</span>.
+  <span class="keyword">End</span> <span class="function-name">Context7</span>.
 
-      <span class="keyword">Structure</span> <span class="function-name">form</span> (<span class="variable-name">log</span> : logic) :=
-        Form <span class="company-coq-featuresXcode-folding-bullet">{</span>
-            data_of :&gt; <span class="constant">@</span>data log;
-            extras_of :&gt; <span class="constant">@</span>extras log (data_of)
-          }.
+  <span class="keyword">Section</span> <span class="function-name">Context8</span>.
+    <span class="keyword">Structure</span> <span class="function-name">form</span> (<span class="variable-name">log</span> : logic) :=
+      Form <span class="company-coq-featuresXcode-folding-bullet">{</span>
+          data_of :&gt; <span class="constant">@</span>data log;
+          extras_of :&gt; <span class="constant">@</span>extras log (data_of)
+        }.
 
-        <span class="comment-delimiter">(*</span><span class="comment"> is this necessary?</span><span class="comment-delimiter">*)</span>
-        Global <span class="keyword">Existing Instance</span> <span class="function-name">extras_of</span>.
-    <span class="keyword">End</span> <span class="function-name">FORM</span>.
+    <span class="comment-delimiter">(*</span><span class="comment"> is this necessary?</span><span class="comment-delimiter">*)</span>
+    Global <span class="keyword">Existing Instance</span> <span class="function-name">extras_of</span>.
 
-    <span class="keyword">Export</span> FORM.
-    <span class="keyword">Section</span> <span class="function-name">Context8</span>.
-      Context {<span class="variable-name">log</span> : logic}.
-      
-      <span class="keyword">Record</span> <span class="function-name">extras</span> (<span class="variable-name">dat</span> : data) :=
-        Extras <span class="company-coq-featuresXcode-folding-bullet">{</span>
-            <span class="variable-name">CongPolyA</span> : <span class="type">forall</span> (<span class="variable-name">V</span> : obV log), <span class="type">forall</span> (<span class="variable-name">B</span> : FUNCTOR.obA dat), <span class="type">forall</span> (<span class="variable-name">A</span> : FUNCTOR.obA dat),
-                        <span class="type">forall</span> (<span class="variable-name">f f'</span> : V(0 V |- A[0 B ~&gt; A ]0 )0),
-                          f' ~~ f -&gt; <span class="type">forall</span> <span class="variable-name">X</span> : FUNCTOR.obA dat, polyA f' X ~~ polyA f X;
-            polyA_arrow :  <span class="type">forall</span> (<span class="variable-name">B</span> : FUNCTOR.obA dat), <span class="type">forall</span> (<span class="variable-name">A</span> : FUNCTOR.obA dat),
-                           <span class="type">forall</span> (<span class="variable-name">V V'</span> : obV log) (<span class="variable-name">v</span> : V(0 V' |- V )0),
-                           <span class="type">forall</span> (<span class="variable-name">f</span> : V(0 V |- A[0 B ~&gt; A ]0 )0) (<span class="variable-name">X</span> :  FUNCTOR.obA dat),
-                             A[1 f &lt;o v ~&gt; X ]0
-                              ~~ [1 v ~&gt; A[0 B ~&gt; X ]0 ]0 &lt;o A[1 f ~&gt; X ]0;
-            polyF_morphism : <span class="type">forall</span> (<span class="variable-name">V</span> : obV log) (<span class="variable-name">B</span> :  FUNCTOR.obB dat),
-                             <span class="type">forall</span> (<span class="variable-name">A</span> :  FUNCTOR.obA dat) (<span class="variable-name">W</span> : obV log) (<span class="variable-name">A'</span> :  FUNCTOR.obA dat) (<span class="variable-name">g</span> : V(0 W |- A[0 A ~&gt; A']0 )0),
-                             <span class="type">forall</span> (<span class="variable-name">f</span> : V(0 V |-F[0 B ~&gt; A ]0 )0) (<span class="variable-name">X</span> : obA dat),
-                               F[1 Des( [1 f ~&gt; F[0 B ~&gt; A' ]0 ]0 &lt;o F[0 A' ~&gt; g ]1 ) ~&gt; X]0
-                                ~~  DesIn( [0 W ~&gt; F[1 f ~&gt; X ]0 ]1 &lt;o A[1 g ~&gt; X ]0 );
-            polyA_unitA : <span class="type">forall</span> (<span class="variable-name">A</span> :  FUNCTOR.obA dat), <span class="type">forall</span> <span class="variable-name">X</span> :  FUNCTOR.obA dat, (<span class="constant">@</span>IdenV _ (A[0 A ~&gt; X ]0)) ~~ DesIdenObR( A[1 (<span class="constant">@</span>FUNCTOR.unitA _ dat A) ~&gt; X ]0 );
-            polyF_inputUnitA : <span class="type">forall</span> (<span class="variable-name">V</span> : obV log), <span class="type">forall</span> (<span class="variable-name">B</span> :  FUNCTOR.obA dat), <span class="type">forall</span> (<span class="variable-name">A</span> :  FUNCTOR.obA dat),
-                               <span class="type">forall</span> (<span class="variable-name">f</span> : V(0 V |- A[0 B ~&gt; A ]0 )0),
-                                 f  ~~ DesIdenObL( (A[1 f ~&gt; A ]0) &lt;o (<span class="constant">@</span>FUNCTOR.unitA _ dat A) );
-          }.
+    <span class="keyword">Coercion</span> dataForm_of_dataFun {log} (<span class="variable-name">dat</span> : <span class="constant">@</span>FUNCTOR.data log)
+    : <span class="constant">@</span>data log := {|
+                    obA := FUNCTOR.obA dat;
+                    polyA00 := <span class="constant">@</span>FUNCTOR.polyA00 _ dat;
+                    polyA := <span class="constant">@</span>FUNCTOR.polyA _ dat;
+                    unitA := <span class="constant">@</span>FUNCTOR.unitA _ dat |}.
 
-      Existing <span class="keyword">Class</span> <span class="function-name">extras</span>.
-      Global Arguments CongPolyA {_ _} [_ _ _ _ _] _ _  .
-      Global Arguments polyA_arrow {_ _} [_ _ _ _] _ _ _ .
-      Global Arguments polyF_morphism {_ _} [_ _ _ _ _] _ _ _ .
-      Global Arguments polyA_unitA {_ _} _ _ .
-      Global Arguments polyF_inputUnitA {_ _} [_ _ _] _ .
+    Global Arguments dataForm_of_dataFun : <span class="proof-tactics-name">simpl</span> never.
 
-      <span class="keyword">Coercion</span> extrasFun_of_extrasCat (<span class="variable-name">dat</span> : data) (<span class="variable-name">ext</span> : <span class="constant">@</span>extras  dat)
-      : <span class="constant">@</span>FUNCTOR.extras log (dataFun_of_dataCatForm dat) := 
-        {|
-          FUNCTOR.CongPolyA := CongPolyA;
-          FUNCTOR.polyA_arrow := polyA_arrow;
-          FUNCTOR.polyF_arrow := polyA_arrow;
-          FUNCTOR.polyF_morphism := polyF_morphism;
-          FUNCTOR.CongPolyF := CongPolyA;
-          FUNCTOR.polyA_unitA := polyA_unitA;
-          FUNCTOR.polyF_inputUnitA := polyF_inputUnitA |}.
+    <span class="keyword">Coercion</span> extrasForm_of_extrasFun {log} (<span class="variable-name">dat</span> : <span class="constant">@</span>FUNCTOR.data log) (<span class="variable-name">ext</span> : <span class="constant">@</span>FUNCTOR.extras log dat)
+    : <span class="constant">@</span>FORM.extras log dat :=
+      <span class="constant">@</span>FORM.Extras log dat (<span class="constant">@</span>FUNCTOR.CongPolyA log dat ext) (<span class="constant">@</span>FUNCTOR.polyA_arrow log dat ext)
+                   (<span class="constant">@</span>FUNCTOR.polyA_unitA log dat ext).
 
-      Global Arguments extrasFun_of_extrasCat : <span class="proof-tactics-name">simpl</span> never.
+    Global Arguments extrasForm_of_extrasFun : <span class="proof-tactics-name">simpl</span> never.
 
-      <span class="keyword">Coercion</span> dataForm_of_dataFun log (<span class="variable-name">dat</span> : <span class="constant">@</span>FUNCTOR.data log)
-      : <span class="constant">@</span>data log := {|
-                               obA := FUNCTOR.obA dat;
-                               polyA00 := <span class="constant">@</span>FUNCTOR.polyA00 _ dat;
-                               polyA := <span class="constant">@</span>FUNCTOR.polyA _ dat;
-                               unitA := <span class="constant">@</span>FUNCTOR.unitA _ dat |}.
+    <span class="keyword">Definition</span> <span class="function-name">form_of_functor</span> {<span class="variable-name">log</span> : logic} (<span class="variable-name">func</span> : <span class="constant">@</span>functor log)
+    : <span class="constant">@</span>form log :=  {| data_of := func ; extras_of := func |}.
+    <span class="keyword">Canonical Structure</span> <span class="function-name">form_of_functor</span>. <span class="comment-delimiter">(*</span><span class="comment"> ?? </span><span class="comment-delimiter">*)</span>
 
-      Global Arguments dataForm_of_dataFun : <span class="proof-tactics-name">simpl</span> never.
+    <span class="keyword">Goal</span> <span class="type">forall</span> log (<span class="variable-name">func</span> : <span class="constant">@</span>functor log), 
+           FUNCTOR.data_of func = (<span class="constant">@</span>dataFun_of_dataCatForm log (<span class="constant">@</span>data_of log (<span class="constant">@</span>form_of_functor log func))) .
+      Fail <span class="coq-solve-tactics">reflexivity</span>.
+      <span class="proof-tactics-name">destruct</span> func <span class="type">as</span> [datfunc extfunc]. <span class="proof-tactics-name">simpl</span>. <span class="keyword">Set Printing All</span>.  <span class="keyword">Show</span>. Fail <span class="coq-solve-tactics">reflexivity</span>.
+      <span class="proof-tactics-name">destruct</span> datfunc. <span class="keyword">Unset Printing All</span>.   <span class="proof-tactics-name">compute</span>. Fail <span class="coq-solve-tactics">reflexivity</span>.
+    <span class="keyword">Abort</span>.
 
-      <span class="keyword">Coercion</span> extrasForm_of_extrasFun {log} (<span class="variable-name">dat</span> : <span class="constant">@</span>FUNCTOR.data log) (<span class="variable-name">ext</span> : <span class="constant">@</span>FUNCTOR.extras log dat)
-      : <span class="constant">@</span>FORM.extras log dat :=
-        <span class="constant">@</span>FORM.Extras log dat (<span class="constant">@</span>FUNCTOR.CongPolyA log dat ext) (<span class="constant">@</span>FUNCTOR.polyA_arrow log dat ext)
-                     (<span class="constant">@</span>FUNCTOR.polyA_unitA log dat ext).
-
-      Global Arguments extrasForm_of_extrasFun : <span class="proof-tactics-name">simpl</span> never.
-
-      <span class="keyword">Definition</span> <span class="function-name">form_of_functor</span> {<span class="variable-name">log</span> : logic} (<span class="variable-name">func</span> : <span class="constant">@</span>functor log)
-      : <span class="constant">@</span>FORM.form log :=  {| FORM.data_of := func ; FORM.extras_of := func |}.
-      <span class="keyword">Canonical Structure</span> <span class="function-name">form_of_functor</span>.
-
-<span class="comment-delimiter">(*</span><span class="comment">TODO:ERASE      Coercion extrasForm_of_extrasCat (dat : data) (ext : </span><span class="constant"><span class="comment">@</span></span><span class="comment">extras  dat)
+  <span class="comment-delimiter">(*</span><span class="comment">TODO:ERASE      Coercion extrasForm_of_extrasCat (dat : data) (ext : </span><span class="constant"><span class="comment">@</span></span><span class="comment">extras  dat)
       : </span><span class="constant"><span class="comment">@</span></span><span class="comment">FORM.extras log dat := 
         {|
           FORM.CongPolyA := CongPolyA;
@@ -1363,45 +1343,98 @@ Hypothesis Cong_polyV_relT : forall (B : obV), forall (A : obV),
           FORM.polyA_unitA := polyA_unitA; |}.
 
       Global Arguments extrasForm_of_extrasCat : simpl never.</span><span class="comment-delimiter">*)</span>
-    <span class="keyword">End</span> <span class="function-name">Context8</span>.
+  <span class="keyword">End</span> <span class="function-name">Context8</span>.
 
-    <span class="keyword">Section</span> <span class="function-name">Context9</span>.
-      <span class="keyword">Structure</span> <span class="function-name">category</span> (<span class="variable-name">log</span> : logic) :=
-        Category <span class="company-coq-featuresXcode-folding-bullet">{</span>
-            data_of :&gt; <span class="constant">@</span>data log;
-            extras_of :&gt; <span class="constant">@</span>extras  log (data_of)
-          }.
+  <span class="keyword">Notation</span> form_of func := (<span class="constant">@</span>form_of_functor _ func).
 
-      <span class="comment-delimiter">(*</span><span class="comment"> is this necessary?</span><span class="comment-delimiter">*)</span>
-      Global <span class="keyword">Existing Instance</span> <span class="function-name">extras_of</span>.
+  <span class="keyword">Export</span> FUNCTOR.
+<span class="keyword">End</span> <span class="function-name">FORM</span>.
 
-      <span class="keyword">Coercion</span> functor_of_category {<span class="variable-name">log</span> : logic} (<span class="variable-name">c</span> : <span class="constant">@</span>category log)
-      : <span class="constant">@</span>FUNCTOR.functor log :=  {| FUNCTOR.data_of := data_of c; FUNCTOR.extras_of := extras_of c |}.
-      <span class="comment-delimiter">(*</span><span class="comment"> false ambiguity : new coercion produce same output as old coercion ; the new coercion will be used to coerce but also the notational hiddenness/implicitness of old coercion is kept for printing </span><span class="comment-delimiter">*)</span>
-      <span class="keyword">Canonical Structure</span> <span class="function-name">functor_of_category</span>.
+<span class="keyword">Module</span> <span class="function-name">CATEGORY</span>.
+  <span class="keyword">Export</span> FORM.
+  <span class="keyword">Set Implicit Arguments</span>.
+  <span class="keyword">Unset  Strict Implicit</span>.
 
-      <span class="comment-delimiter">(*</span><span class="comment"> TODO EREASE
-      Coercion form_of_category {log : logic} (c : </span><span class="constant"><span class="comment">@</span></span><span class="comment">category log)
-      : </span><span class="constant"><span class="comment">@</span></span><span class="comment">FORM.form log :=  {| FORM.data_of := data_of c; FORM.extras_of := extras_of c |}.
-      (* false ambiguity : new coercion produce same output as old coercion ; the new coercion will be used to coerce but also the notational hiddenness/implicitness of old coercion is kept for printing *)
-      Canonical Structure form_of_category. </span><span class="comment-delimiter">*)</span>
+  <span class="keyword">Section</span> <span class="function-name">Context8</span>.
+    Context {<span class="variable-name">log</span> : logic}.
+    
+    <span class="keyword">Record</span> <span class="function-name">extras</span> (<span class="variable-name">dat</span> : FORM.data) :=
+      Extras <span class="company-coq-featuresXcode-folding-bullet">{</span>
+          <span class="variable-name">CongPolyA</span> : <span class="type">forall</span> (<span class="variable-name">V</span> : obV log), <span class="type">forall</span> (<span class="variable-name">B</span> : FUNCTOR.obA dat), <span class="type">forall</span> (<span class="variable-name">A</span> : FUNCTOR.obA dat),
+                      <span class="type">forall</span> (<span class="variable-name">f f'</span> : V(0 V |- A[0 B ~&gt; A ]0 )0),
+                        f' ~~ f -&gt; <span class="type">forall</span> <span class="variable-name">X</span> : FUNCTOR.obA dat, polyA f' X ~~ polyA f X;
+          polyA_arrow :  <span class="type">forall</span> (<span class="variable-name">B</span> : FUNCTOR.obA dat), <span class="type">forall</span> (<span class="variable-name">A</span> : FUNCTOR.obA dat),
+                         <span class="type">forall</span> (<span class="variable-name">V V'</span> : obV log) (<span class="variable-name">v</span> : V(0 V' |- V )0),
+                         <span class="type">forall</span> (<span class="variable-name">f</span> : V(0 V |- A[0 B ~&gt; A ]0 )0) (<span class="variable-name">X</span> :  FUNCTOR.obA dat),
+                           A[1 f &lt;o v ~&gt; X ]0
+                            ~~ [1 v ~&gt; A[0 B ~&gt; X ]0 ]0 &lt;o A[1 f ~&gt; X ]0;
+          polyF_morphism : <span class="type">forall</span> (<span class="variable-name">V</span> : obV log) (<span class="variable-name">B</span> :  FUNCTOR.obB dat),
+                           <span class="type">forall</span> (<span class="variable-name">A</span> :  FUNCTOR.obA dat) (<span class="variable-name">W</span> : obV log) (<span class="variable-name">A'</span> :  FUNCTOR.obA dat) (<span class="variable-name">g</span> : V(0 W |- A[0 A ~&gt; A']0 )0),
+                           <span class="type">forall</span> (<span class="variable-name">f</span> : V(0 V |-F[0 B ~&gt; A ]0 )0) (<span class="variable-name">X</span> : obA dat),
+                             F[1 Des( [1 f ~&gt; F[0 B ~&gt; A' ]0 ]0 &lt;o F[0 A' ~&gt; g ]1 ) ~&gt; X]0
+                              ~~  DesIn( [0 W ~&gt; F[1 f ~&gt; X ]0 ]1 &lt;o A[1 g ~&gt; X ]0 );
+          polyA_unitA : <span class="type">forall</span> (<span class="variable-name">A</span> :  FUNCTOR.obA dat), <span class="type">forall</span> <span class="variable-name">X</span> :  FUNCTOR.obA dat, (<span class="constant">@</span>IdenV _ (A[0 A ~&gt; X ]0)) ~~ DesIdenObR( A[1 (<span class="constant">@</span>FUNCTOR.unitA _ dat A) ~&gt; X ]0 );
+          polyF_inputUnitA : <span class="type">forall</span> (<span class="variable-name">V</span> : obV log), <span class="type">forall</span> (<span class="variable-name">B</span> :  FUNCTOR.obA dat), <span class="type">forall</span> (<span class="variable-name">A</span> :  FUNCTOR.obA dat),
+                             <span class="type">forall</span> (<span class="variable-name">f</span> : V(0 V |- A[0 B ~&gt; A ]0 )0),
+                               f  ~~ DesIdenObL( (A[1 f ~&gt; A ]0) &lt;o (<span class="constant">@</span>FUNCTOR.unitA _ dat A) );
+        }.
 
-      <span class="keyword">Coercion</span> category_of_logic (<span class="variable-name">log</span> : logic) : <span class="constant">@</span>category log :=
-        <span class="constant">@</span>Category log _
-                  (<span class="constant">@</span>Extras log
-                           {|
-                             obA := obV log;
-                             polyA00 := <span class="constant">@</span>consV00 log;
-                             polyA := <span class="constant">@</span>polyV_relV log;
-                             unitA := <span class="constant">@</span>unitV log |} (<span class="constant">@</span>CongPolyV log) (<span class="constant">@</span>polyV_relV_arrow log)
-                           (<span class="constant">@</span>polyV_relV_morphism log) (<span class="constant">@</span>polyV_relV_unitV log)
-                           (<span class="constant">@</span>polyV_relV_inputUnitV log)) .
+    Existing <span class="keyword">Class</span> <span class="function-name">extras</span>.
+    Global Arguments CongPolyA {_ _} [_ _ _ _ _] _ _  .
+    Global Arguments polyA_arrow {_ _} [_ _ _ _] _ _ _ .
+    Global Arguments polyF_morphism {_ _} [_ _ _ _ _] _ _ _ .
+    Global Arguments polyA_unitA {_ _} _ _ .
+    Global Arguments polyF_inputUnitA {_ _} [_ _ _] _ .
 
-      <span class="keyword">Canonical Structure</span> <span class="function-name">category_of_logic</span>.
-      
-    <span class="keyword">End</span> <span class="function-name">Context9</span>.
+    <span class="keyword">Coercion</span> extrasFun_of_extrasCat (<span class="variable-name">dat</span> : <span class="constant">@</span>FORM.data log) (<span class="variable-name">ext</span> : <span class="constant">@</span>extras  dat)
+    : <span class="constant">@</span>FUNCTOR.extras log (dataFun_of_dataCatForm dat) := 
+      {|
+        FUNCTOR.CongPolyA := CongPolyA;
+        FUNCTOR.polyA_arrow := polyA_arrow;
+        FUNCTOR.polyF_arrow := polyA_arrow;
+        FUNCTOR.polyF_morphism := polyF_morphism;
+        FUNCTOR.CongPolyF := CongPolyA;
+        FUNCTOR.polyA_unitA := polyA_unitA;
+        FUNCTOR.polyF_inputUnitA := polyF_inputUnitA |}.
 
-    <span class="keyword">Export</span> FUNCTOR.
+    Global Arguments extrasFun_of_extrasCat : <span class="proof-tactics-name">simpl</span> never.
+
+  <span class="keyword">End</span> <span class="function-name">Context8</span>.
+
+  <span class="keyword">Section</span> <span class="function-name">Context9</span>.
+    <span class="keyword">Structure</span> <span class="function-name">category</span> (<span class="variable-name">log</span> : logic) :=
+      Category <span class="company-coq-featuresXcode-folding-bullet">{</span>
+          data_of :&gt; <span class="constant">@</span>FORM.data log;
+          extras_of :&gt; <span class="constant">@</span>extras  log (data_of)
+        }.
+
+    <span class="comment-delimiter">(*</span><span class="comment"> is this necessary?</span><span class="comment-delimiter">*)</span>
+    Global <span class="keyword">Existing Instance</span> <span class="function-name">extras_of</span>.
+
+    <span class="keyword">Coercion</span> functor_of_category {<span class="variable-name">log</span> : logic} (<span class="variable-name">c</span> : <span class="constant">@</span>category log)
+    : <span class="constant">@</span>FUNCTOR.functor log :=  {| FUNCTOR.data_of := data_of c; FUNCTOR.extras_of :=  extras_of c |}.
+    <span class="comment-delimiter">(*</span><span class="comment"> false ambiguity : new coercion produce same output as old coercion ; the new coercion will be used to coerce but also the notational hiddenness/implicitness of old coercion is kept for printing </span><span class="comment-delimiter">*)</span>
+    <span class="keyword">Canonical Structure</span> <span class="function-name">functor_of_category</span>.
+
+    <span class="keyword">Goal</span> <span class="type">forall</span> (<span class="variable-name">log</span> : logic) (<span class="variable-name">func</span> : <span class="constant">@</span>category log),
+           FUNCTOR.data_of func = (<span class="constant">@</span>dataFun_of_dataCatForm log (<span class="constant">@</span>FORM.data_of log (<span class="constant">@</span>form_of_functor log func))) .
+      <span class="coq-solve-tactics">reflexivity</span>.
+    <span class="keyword">Qed</span>.
+    
+    <span class="keyword">Coercion</span> category_of_logic (<span class="variable-name">log</span> : logic) : <span class="constant">@</span>category log :=
+      <span class="constant">@</span>Category log _
+                (<span class="constant">@</span>Extras log
+                         {|
+                           FORM.obA := obV log;
+                           FORM.polyA00 := <span class="constant">@</span>consV00 log;
+                           FORM.polyA := <span class="constant">@</span>polyV_relV log;
+                           FORM.unitA := <span class="constant">@</span>unitV log |} (<span class="constant">@</span>CongPolyV log) (<span class="constant">@</span>polyV_relV_arrow log)
+                         (<span class="constant">@</span>polyV_relV_morphism log) (<span class="constant">@</span>polyV_relV_unitV log)
+                         (<span class="constant">@</span>polyV_relV_inputUnitV log)) .
+
+    <span class="keyword">Canonical Structure</span> <span class="function-name">category_of_logic</span>.
+  <span class="keyword">End</span> <span class="function-name">Context9</span>.
+  <span class="keyword">Export</span> FUNCTOR.
 <span class="keyword">End</span> <span class="function-name">CATEGORY</span>.
 
 <span class="keyword">Module</span> <span class="function-name">FUNCTORTOCAT</span>.
@@ -1423,7 +1456,6 @@ Hypothesis Cong_polyV_relT : forall (B : obV), forall (A : obV),
         }.
 
     Existing <span class="keyword">Class</span> <span class="function-name">data</span>.
-
   <span class="keyword">End</span> <span class="function-name">Context</span>.
 
   <span class="keyword">Section</span> <span class="function-name">Context2</span>.
@@ -1519,12 +1551,23 @@ Hypothesis Cong_polyV_relT : forall (B : obV), forall (A : obV),
 
   <span class="keyword">Section</span> <span class="function-name">Context4</span>.
       Context {<span class="variable-name">log</span> : logic} (<span class="variable-name">catA</span> : form log) (<span class="variable-name">catB</span> : category log) (<span class="variable-name">funF</span> : functorToCat catA catB) (<span class="variable-name">B</span> : obB catB).
-      
-      <span class="keyword">Lemma</span> <span class="function-name">polyF_identitary_rel_polyF_unitB</span> : <span class="type">forall</span> (<span class="variable-name">A X</span> : obA catA),
+
+      <span class="comment-delimiter">(*</span><span class="comment"> functors are very primitive therefore no reason for this sequencing lemma to hold,         but later polyF_identitary_rel_polyF_unitB do hold    for alone functorToCat_of_metafunctor    or   for funComp composition of two functors </span><span class="comment-delimiter">*)</span>
+      <span class="keyword">Lemma</span> <span class="function-name">polyF_identitary_rel_polyF_unitB_ABORT</span> : <span class="type">forall</span> (<span class="variable-name">A X</span> : obA catA),
                                                  (catB.-F[0 B ~&gt; - ]1) (funF.-F|0 A) (funF.-F|0 X) &lt;o funF.-F|1 A X ~~
                                                                                                               (funF.-F[0 B ~&gt; - ]1) A X  .
-        <span class="doc">(** TODO NEXT11 **)</span>
-      <span class="coq-cheat">Admitted</span>.
+      <span class="keyword">Proof</span>. <span class="comment-delimiter">(*</span><span class="comment">intros.
+        Check  (funF.-F[0 B ~&gt; - ]1) A X . Check F|1 A X. Check  (catB.-F[0 B ~&gt; - ]1).
+        Set Printing Coercions. intros. Show.
+        intros. simpl.   simpl. Unset Printing Implicit Defensive. Show. unfold polyF_unitB. simpl. 
+        eapply TransV; [| eapply SymV, DesIdenObR_output ].
+        
+        unfold polyF_IdenV.
+        eapply CongDesIdenObR.
+         apply DesIdenObR_output.
+      Qed.</span><span class="comment-delimiter">*)</span>
+      <span class="keyword">Abort</span>.
+
   <span class="keyword">End</span> <span class="function-name">Context4</span>.
 
   <span class="comment-delimiter">(*</span><span class="comment">
@@ -1603,7 +1646,7 @@ Hypothesis Cong_polyV_relT : forall (B : obV), forall (A : obV),
         (*            Open Scope Ex_scope. *)
       Import Ex_Notations.
       Import Ex_Notations2.
-Axiom      functional_extensionality_dep : forall {A} {B : A -&gt; Type},
+Axiom      functional_extensionality_T : forall {A} {B : A -&gt; Type},
   forall (f g : forall x : A, B x),
   (forall x, f x = g x) -&gt; f = g.
       Definition catV (logV : logic ) (pf : </span><span class="constant"><span class="comment">@</span></span><span class="comment">convV logV = fun V1 V2 =&gt; (eq : V(0 V1 |- V2 )0 -&gt; V(0 V1 |- V2 )0 -&gt; Prop) )
@@ -1634,14 +1677,14 @@ a1 ~~ a2 -&gt;
       simpl.  generalize (</span><span class="constant"><span class="comment">@</span></span><span class="comment">polyV_relT_arrow (LOGIC.data_of logV) (LOGIC.extras_of logV)) .
       intros.  erewrite  !pf in *.
       simpl. unfold polyT_relT. unfold consT10. simpl.
-      apply functional_extensionality_dep. intro.
-      apply functional_extensionality_dep. intro. apply H.
+      apply functional_extensionality_T. intro.
+      apply functional_extensionality_T. intro. apply H.
 Show Proof.
       simpl.  generalize (</span><span class="constant"><span class="comment">@</span></span><span class="comment">polyV_relT_morphism (LOGIC.data_of logV) (LOGIC.extras_of logV)) .
       intros.  erewrite  !pf in *.
       simpl. unfold polyT_relT. unfold consT10, consT01. 
-      apply functional_extensionality_dep. intro.
-      apply functional_extensionality_dep. intro. simpl. unfold DesT. simpl.  unfold DesIn.  unfold Cons. unfold Des. simpl.
+      apply functional_extensionality_T. intro.
+      apply functional_extensionality_T. intro. simpl. unfold DesT. simpl.  unfold DesIn.  unfold Cons. unfold Des. simpl.
       unfold DesT. simpl. unfold ConsT. simpl. unfold polyT_relT. simpl.   unfold polyV_relT_unitary in *. unfold polyV_relT_identitary in *.   simpl in *.  eapply   H. erewrite &lt;- H. 
 
       simpl.
@@ -1733,28 +1776,28 @@ Show Proof.
   <span class="keyword">Unset Strict Implicit</span>.
 
   <span class="keyword">Section</span> <span class="function-name">Context</span>.
-    Context {<span class="variable-name">log</span> : logic} {<span class="variable-name">catA</span> : form log} {<span class="variable-name">catB</span> : category log} {<span class="variable-name">catC</span> : category log}.
-    <span class="keyword">Variable</span> (<span class="variable-name">funF</span> : functorToCat catA catB).
-    <span class="keyword">Variable</span> (<span class="variable-name">funF'</span> : functorToCat (form_of_functor catB) catC).
+    Context {<span class="variable-name">log</span> : logic} (<span class="variable-name">catA</span> : form log) (<span class="variable-name">catB</span> : category log) (<span class="variable-name">catC</span> : category log).
+    <span class="keyword">Definition</span> <span class="function-name">data</span> := prod (FUNCTORTOCAT.data catA catB) (FUNCTORTOCAT.data (form_of_functor catB) catC).
+    <span class="keyword">Variable</span> <span class="variable-name">data_funF_data_funF'</span> : data.
 
     <span class="keyword">Definition</span> <span class="function-name">composition_F'_after_F</span> :
       <span class="type">forall</span> (<span class="variable-name">V</span> : obV log) (<span class="variable-name">B</span> : obA catB) (<span class="variable-name">A</span> : obA catA),
-      <span class="type">forall</span> (<span class="variable-name">b</span> : V(0 V |- catB.-A[0 B ~&gt; funF.-F|0 A ]0 )0),
+      <span class="type">forall</span> (<span class="variable-name">b</span> : V(0 V |- catB.-A[0 B ~&gt; (data_funF_data_funF'.(fst)).-F|0 A ]0 )0),
       <span class="type">forall</span> (<span class="variable-name">W</span> : obV log) (<span class="variable-name">C</span> : obA catC),
-      <span class="type">forall</span> (<span class="variable-name">c</span> : V(0 W |- catC.-A[0 C ~&gt; funF'.-F|0 B]0 )0),
-      <span class="type">forall</span> <span class="variable-name">X</span> : obA catA, V(0 A[0 A ~&gt; X ]0  |- [0 V ~&gt; [0 W ~&gt; catC.-A[0 C ~&gt; funF'.-F|0 funF.-F|0 X ]0 ]0 ]0 )0.
+      <span class="type">forall</span> (<span class="variable-name">c</span> : V(0 W |- catC.-A[0 C ~&gt; (data_funF_data_funF'.(snd)).-F|0 B]0 )0),
+      <span class="type">forall</span> <span class="variable-name">X</span> : obA catA, V(0 A[0 A ~&gt; X ]0  |- [0 V ~&gt; [0 W ~&gt; catC.-A[0 C ~&gt; (data_funF_data_funF'.(snd)).-F|0 (data_funF_data_funF'.(fst)).-F|0 X ]0 ]0 ]0 )0.
     <span class="keyword">Proof</span>.
       <span class="proof-tactics-name">intros</span>.
       <span class="proof-tactics-name">eapply</span> <span class="constant">@</span>polyV_relT_identitary <span class="comment-delimiter">(*</span><span class="comment"> _ &lt;o _ </span><span class="comment-delimiter">*)</span>. <span class="proof-tactics-name">apply</span> consV01.
-      <span class="proof-tactics-name">eapply</span> (<span class="constant">@</span>FUNCTOR.polyF log funF' _ _ _ c).
-      <span class="proof-tactics-name">eapply</span> (<span class="constant">@</span>FUNCTOR.polyF log funF _ _ _ b).
+      <span class="proof-tactics-name">eapply</span> (<span class="constant">@</span>FUNCTOR.polyF log (data_funF_data_funF'.(snd)) _ _ _ c).
+      <span class="proof-tactics-name">eapply</span> (<span class="constant">@</span>FUNCTOR.polyF log (data_funF_data_funF'.(fst)) _ _ _ b).
     <span class="keyword">Defined</span>.
 
     <span class="keyword">Definition</span> <span class="function-name">composition_F'_after_F_simple</span> :
       <span class="type">forall</span>  (<span class="variable-name">A</span> : obA catA),
       <span class="type">forall</span> (<span class="variable-name">W</span> : obV log) (<span class="variable-name">C</span> : obA catC),
-      <span class="type">forall</span> (<span class="variable-name">c</span> : V(0 W |- catC.-A[0 C ~&gt; funF'.-F|0 funF.-F|0 A ]0 )0),
-      <span class="type">forall</span> <span class="variable-name">X</span> : obA catA, V(0 A[0 A ~&gt; X ]0  |- [0 W ~&gt; catC.-A[0 C ~&gt; funF'.-F|0 funF.-F|0 X ]0 ]0 )0.
+      <span class="type">forall</span> (<span class="variable-name">c</span> : V(0 W |- catC.-A[0 C ~&gt; (data_funF_data_funF'.(snd)).-F|0 (data_funF_data_funF'.(fst)).-F|0 A ]0 )0),
+      <span class="type">forall</span> <span class="variable-name">X</span> : obA catA, V(0 A[0 A ~&gt; X ]0  |- [0 W ~&gt; catC.-A[0 C ~&gt; (data_funF_data_funF'.(snd)).-F|0 (data_funF_data_funF'.(fst)).-F|0 X ]0 ]0 )0.
     <span class="keyword">Proof</span>.
       <span class="proof-tactics-name">intros</span>.
       <span class="proof-tactics-name">apply</span> DesIdenObR.
@@ -1763,29 +1806,68 @@ Show Proof.
       <span class="coq-solve-tactics">exact</span> c.
     <span class="keyword">Defined</span>.
 
-     Unset Printing Implicit Defensive.
-     <span class="keyword">Definition</span> <span class="function-name">data_of_funComp</span> : FUNCTORTOCAT.data catA catC :=
+     <span class="keyword">Definition</span> <span class="function-name">dataFunToCat_of_dataFunComp</span> : FUNCTORTOCAT.data catA catC :=
        {|
-         FUNCTORTOCAT.polyF0 := <span class="type">fun</span> <span class="variable-name">A</span>  =&gt; funF'.-F|0 funF.-F|0 A;
+         FUNCTORTOCAT.polyF0 := <span class="type">fun</span> <span class="variable-name">A</span>  =&gt; (data_funF_data_funF'.(snd)).-F|0 (data_funF_data_funF'.(fst)).-F|0 A;
          FUNCTORTOCAT.polyF := <span class="type">fun</span> <span class="variable-name">V C A c X</span> =&gt;  composition_F'_after_F_simple c X |}.
      <span class="comment-delimiter">(*</span><span class="comment"> econstructor.
-     Unshelve. 2: intro A; exact (funF'.-F|0 funF.-F|0 A).
+     Unshelve. 2: intro A; exact ((data_funF_data_funF'.(snd)).-F|0 (data_funF_data_funF'.(fst)).-F|0 A).
      intros; eapply composition_F'_after_F_simple. assumption.
-     </span><span class="comment-delimiter">*)</span>
-     <span class="keyword">Definition</span> <span class="function-name">extras_of_funComp</span> : <span class="constant">@</span>FUNCTORTOCAT.extras _ _ _ data_of_funComp.
-       <span class="coq-cheat">Admitted</span>.
-
-     <span class="keyword">Definition</span> <span class="function-name">funComp</span> : functorToCat catA catC :=
-       {|
-         FUNCTORTOCAT.data_of := data_of_funComp;
-         FUNCTORTOCAT.extras_of := extras_of_funComp |}.
-
-     <span class="keyword">Lemma</span> <span class="function-name">composition_F'_after_F_identitary_polyF'_identitary_polyF_unitary</span> :    <span class="type">forall</span> (<span class="variable-name">C</span> : obA catC) (<span class="variable-name">A X</span> : obA catA),
-                                                                                    (funF'.-F[0 C ~&gt; - ]1) funF.-F|0 A funF.-F|0 X &lt;o F|1 A X ~~ (funComp.-F[0 C ~&gt; - ]1) A X.
-     <span class="keyword">Proof</span>.
-       <span class="proof-tactics-name">intros</span>. <span class="proof-tactics-name">apply</span> SymV, DesIdenObR_output.
-     <span class="keyword">Qed</span>.
+      </span><span class="comment-delimiter">*)</span>
   <span class="keyword">End</span> <span class="function-name">Context</span>.
+  <span class="keyword">Coercion</span> <span class="variable-name">dataFunToCat_of_dataFunComp</span> : data &gt;-&gt; FUNCTORTOCAT.data.
+
+  <span class="keyword">Section</span> <span class="function-name">Context2</span>.
+    Context {<span class="variable-name">log</span> : logic} {<span class="variable-name">catA</span> : form log} {<span class="variable-name">catB</span> : category log} {<span class="variable-name">catC</span> : category log}.
+
+    <span class="keyword">Definition</span> <span class="function-name">extras</span> (<span class="variable-name">data_funF_data_funF'</span> : data catA catB catC ) := prod (FUNCTORTOCAT.extras  (data_funF_data_funF'.(fst))) (FUNCTORTOCAT.extras (data_funF_data_funF'.(snd))).
+    Existing <span class="keyword">Class</span> <span class="function-name">extras</span>.
+    
+    <span class="keyword">Variable</span>  (<span class="variable-name">data_funF_data_funF'</span> : data catA catB catC ).
+    <span class="keyword">Variable</span> (<span class="variable-name">extras_funF_extras_funF'</span> : extras data_funF_data_funF').
+
+    <span class="keyword">Definition</span> <span class="function-name">extrasFunToCat_of_extrasFunComp</span> : <span class="constant">@</span>FUNCTORTOCAT.extras _ _ _ (dataFunToCat_of_dataFunComp data_funF_data_funF') .
+    <span class="coq-cheat">Admitted</span>.
+  <span class="keyword">End</span> <span class="function-name">Context2</span>.
+  <span class="keyword">Coercion</span> <span class="variable-name">extrasFunToCat_of_extrasFunComp</span> : extras &gt;-&gt; FUNCTORTOCAT.extras.
+  
+  <span class="keyword">Section</span> <span class="function-name">Context3</span>.
+    Context {<span class="variable-name">log</span> : logic} {<span class="variable-name">catA</span> : form log} {<span class="variable-name">catB</span> : category log} {<span class="variable-name">catC</span> : category log}.
+
+    <span class="keyword">Structure</span> <span class="function-name">funComp</span> :=
+      FunComp <span class="company-coq-featuresXcode-folding-bullet">{</span>
+          data_of :&gt; data catA catB catC;
+          extras_of :&gt; extras data_of; }.
+
+    Global <span class="keyword">Existing Instance</span> <span class="function-name">extras_of</span>.
+    
+    <span class="keyword">Coercion</span> funtorToCat_of_funComp (<span class="variable-name">funC</span> : funComp) : functorToCat catA catC :=
+      {| FUNCTORTOCAT.data_of := dataFunToCat_of_dataFunComp funC;
+         FUNCTORTOCAT.extras_of := extrasFunToCat_of_extrasFunComp funC |}.
+
+    <span class="keyword">Variable</span> (<span class="variable-name">funF</span> : FUNCTORTOCAT.functorToCat catA catB).
+    <span class="keyword">Variable</span> (<span class="variable-name">funF'</span> : FUNCTORTOCAT.functorToCat (form_of_functor catB) catC ).
+
+    <span class="keyword">Definition</span> <span class="function-name">funComp_of_seq_functorToCat</span> : funComp :=
+      {| data_of := (FUNCTORTOCAT.data_of funF, FUNCTORTOCAT.data_of funF');
+         extras_of := (FUNCTORTOCAT.extras_of funF, FUNCTORTOCAT.extras_of funF') |}.
+  <span class="keyword">End</span> <span class="function-name">Context3</span>.
+  
+  <span class="keyword">Notation</span> funCom funF funF' := (funtorToCat_of_funComp (funComp_of_seq_functorToCat funF funF')).
+
+  <span class="keyword">Import</span> FUNCTORTOCAT.Ex_Notations6.
+  <span class="keyword">Section</span> <span class="function-name">Context4</span>.
+    Context {<span class="variable-name">log</span> : logic} {<span class="variable-name">catA</span> : form log} {<span class="variable-name">catB</span> : category log} {<span class="variable-name">catC</span> : category log}.
+    <span class="keyword">Variable</span> (<span class="variable-name">funF</span> : FUNCTORTOCAT.functorToCat catA catB).
+    <span class="keyword">Variable</span> (<span class="variable-name">funF'</span> : FUNCTORTOCAT.functorToCat (form_of_functor catB) catC ).
+
+    <span class="keyword">Lemma</span> <span class="function-name">composition_F'_after_F_identitary_polyF'_identitary_polyF_unitary</span> :    <span class="type">forall</span> (<span class="variable-name">C</span> : obA catC) (<span class="variable-name">A X</span> : obA catA),
+                                                                                   (funF'.-F[0 C ~&gt; - ]1) funF.-F|0 A funF.-F|0 X &lt;o funF.-F|1 A X ~~ ((funCom funF funF').-F[0 C ~&gt; - ]1) A X.
+    <span class="keyword">Proof</span>.
+      <span class="proof-tactics-name">intros</span>. <span class="proof-tactics-name">apply</span> SymV, DesIdenObR_output.
+    <span class="keyword">Qed</span>.
+  <span class="keyword">End</span> <span class="function-name">Context4</span>.
+
 <span class="keyword">End</span> <span class="function-name">FUNCOMP</span>.
 
 <span class="keyword">Module</span> <span class="function-name">METAFUNCTOR</span>.
@@ -1808,14 +1890,18 @@ Show Proof.
 
   <span class="keyword">End</span> <span class="function-name">Context</span>.
 
-  <span class="keyword">Module</span> <span class="function-name">Ex_Notations</span>. <span class="comment-delimiter">(*</span><span class="comment"> no scoping necessary because definitionally same with poly if same notation, else extra notation</span><span class="comment-delimiter">*)</span>
-    <span class="keyword">Notation</span> <span class="string">"dat .-F|0 A"</span> := (<span class="constant">@</span>metaF0 _ _ dat A) (<span class="type">at</span> level 4, <span class="proof-tactics-name">right</span> associativity).
-    <span class="keyword">Notation</span> <span class="string">"dat .-F[0 B ~&gt; A ]0"</span> := (V[0 B ~&gt; dat .-F|0 A ]0) (<span class="type">at</span> level 25).
+  <span class="keyword">Delimit Scope</span> meta <span class="type">with</span> meta.
+  <span class="keyword">Local Open Scope</span> meta.
+  <span class="keyword">Module</span> <span class="function-name">Ex_Notations</span>.
+    <span class="comment-delimiter">(*</span><span class="comment"> no scoping necessary for duplicate because definitionally same with poly for same notations     dat .-F|0 A   ,    dat .-F[0 B ~&gt; A ]0, 
+      else extra notation  dat .-F[1I b ~&gt; X ]0 </span><span class="comment-delimiter">*)</span>
+    <span class="keyword">Notation</span> <span class="string">"dat .-F|0 A"</span> := (<span class="constant">@</span>metaF0 _ _ dat A) (<span class="type">at</span> level 4, <span class="proof-tactics-name">right</span> associativity) : meta.
+    <span class="keyword">Notation</span> <span class="string">"dat .-F[0 B ~&gt; A ]0"</span> := (V[0 B ~&gt; dat .-F|0 A ]0) (<span class="type">at</span> level 25) : meta.
     <span class="keyword">Notation</span> <span class="string">"dat .-F[1I b ~&gt; X ]0"</span> := (<span class="constant">@</span>metaF _ _ dat _ _ b X) (<span class="type">at</span> level 25).
   <span class="keyword">End</span> <span class="function-name">Ex_Notations</span>.
   <span class="keyword">Import</span> Ex_Notations.
-  <span class="keyword">Notation</span> <span class="string">"F|0 A"</span> := (_ .-F|0 A) (<span class="type">at</span> level 4, <span class="proof-tactics-name">right</span> associativity).
-  <span class="keyword">Notation</span> <span class="string">"F[0 B ~&gt; A ]0"</span> := (_ .-F[0 B ~&gt; A ]0) (<span class="type">at</span> level 25).
+  <span class="keyword">Notation</span> <span class="string">"F|0 A"</span> := (_ .-F|0 A) (<span class="type">at</span> level 4, <span class="proof-tactics-name">right</span> associativity) : meta.
+  <span class="keyword">Notation</span> <span class="string">"F[0 B ~&gt; A ]0"</span> := (_ .-F[0 B ~&gt; A ]0) (<span class="type">at</span> level 25) : meta.
   <span class="keyword">Notation</span> <span class="string">"F[1I b ~&gt; X ]0"</span> := (_ .-F[1I b ~&gt; X ]0) (<span class="type">at</span> level 25).
   
     <span class="keyword">Section</span> <span class="function-name">Context2</span>.
@@ -2052,14 +2138,14 @@ Show Proof.
     <span class="keyword">Section</span> <span class="function-name">Context6</span>.
       Context {<span class="variable-name">log</span> : logic} (<span class="variable-name">func</span> : functor log)  (<span class="variable-name">B</span> : obB func) .
 
-      <span class="keyword">Definition</span> <span class="function-name">dataMetafun_of_functor_at</span> : <span class="constant">@</span>METAFUNCTOR.data log (CATEGORY.form_of_functor func)  := {|
+      <span class="keyword">Definition</span> <span class="function-name">dataMetafun_of_functor_at</span> : <span class="constant">@</span>METAFUNCTOR.data log (FORM.form_of_functor func)  := {|
                                                                                    metaF0 := <span class="type">fun</span> <span class="variable-name">A</span> : FUNCTOR.obA (form_of_functor func) =&gt; func.-F[0 B ~&gt; A ]0;
                                                                                    metaF := (<span class="type">fun</span> (<span class="variable-name">V</span> : obV log) (<span class="variable-name">A</span> : obA (form_of_functor func)) (<span class="variable-name">f</span> : V(0 V |- func.-F[0 B ~&gt; A ]0 )0) (<span class="variable-name">X</span> : obA (form_of_functor func)) =&gt; func.-F[1 f ~&gt; X ]0  <span class="comment-delimiter">(*</span><span class="comment"> </span><span class="constant"><span class="comment">@</span></span><span class="comment">polyF log func V B A f X </span><span class="comment-delimiter">*)</span>  ) |}.
 
       <span class="comment-delimiter">(*</span><span class="comment"> is this necessary ?</span><span class="comment-delimiter">*)</span>
       Global Arguments dataMetafun_of_functor_at : <span class="proof-tactics-name">simpl</span> never.
 
-      <span class="keyword">Definition</span> <span class="function-name">extrasMetafun_of_functor_at</span> : <span class="constant">@</span>METAFUNCTOR.extras log (CATEGORY.form_of_functor func) dataMetafun_of_functor_at  :=
+      <span class="keyword">Definition</span> <span class="function-name">extrasMetafun_of_functor_at</span> : <span class="constant">@</span>METAFUNCTOR.extras log (FORM.form_of_functor func) dataMetafun_of_functor_at  :=
         (<span class="constant">@</span>Extras log (<span class="constant">@</span>form_of_functor log func) dataMetafun_of_functor_at
                  (<span class="type">fun</span> <span class="variable-name">A V V' v f X</span> =&gt; <span class="constant">@</span>polyF_arrow _ _ func B A V V' v f X)
                  (<span class="type">fun</span> <span class="variable-name">V A W A' g f X</span> =&gt; <span class="constant">@</span>polyF_morphism _ _ func V B A W A' g f X)
@@ -2095,14 +2181,48 @@ Show Proof.
       
       <span class="keyword">Let</span> <span class="function-name">funF'</span> : functorToCat (form_of_functor catB) (category_of_logic log) := functorToCat_of_metafunctor  ( meta_of catB B ) .
 
-      <span class="keyword">Lemma</span> <span class="function-name">polyF_identitary_rel_polyF_unitB</span> : (<span class="type">forall</span> (<span class="variable-name">C</span> : obA log) (<span class="variable-name">A X</span> : obA catA),
+      <span class="keyword">Lemma</span> <span class="function-name">polyF_identitary_rel_polyF_unitB_funComp</span> : (<span class="type">forall</span> (<span class="variable-name">C</span> : obA log) (<span class="variable-name">A X</span> : obA catA),
                                               (funF'.-F[0 C ~&gt; - ]1) funF .-F|0 A funF .-F|0 X &lt;o funF.-F|1 A X ~~
-                                                                                                            ((FUNCOMP.funComp funF funF').-F[0 C ~&gt; - ]1) A X ) .
+                                                                                                            ((FUNCOMP.funCom funF funF').-F[0 C ~&gt; - ]1) A X ) .
         <span class="coq-solve-tactics">exact</span>(<span class="constant">@</span>FUNCOMP.composition_F'_after_F_identitary_polyF'_identitary_polyF_unitary log catA catB  (category_of_logic log) funF funF').
       <span class="keyword">Qed</span>.
 
     <span class="keyword">End</span> <span class="function-name">Context7</span>.
-    
+
+    <span class="keyword">Section</span> <span class="function-name">Context8</span>.
+      Context {<span class="variable-name">log</span> : logic} (<span class="variable-name">from</span> : form log) (<span class="variable-name">func</span> : <span class="constant">@</span>metafunctor log from).
+      <span class="keyword">Let</span> <span class="function-name">funF</span> : functorToCat from (category_of_logic log) := functorToCat_of_metafunctor func.
+      <span class="keyword">Variable</span> (<span class="variable-name">B</span> : obB (category_of_logic log)).
+
+      Local Unset Printing Implicit Defensive.
+      <span class="keyword">Lemma</span> <span class="function-name">polyF_identitary_rel_polyF_unitB_metaFunc</span> : <span class="type">forall</span> (<span class="variable-name">A X</span> : obA from),
+                                                 ( (category_of_logic log).-F[0 B ~&gt; - ]1) (funF.-F|0 A) (funF.-F|0 X) &lt;o funF.-F|1 A X ~~
+                                                                                                                (funF.-F[0 B ~&gt; - ]1) A X  .
+      <span class="keyword">Proof</span>.
+        <span class="proof-tactics-name">intros</span>. <span class="proof-tactics-name">simpl</span>. <span class="proof-tactics-name">unfold</span> polyV_relV. <span class="proof-tactics-name">unfold</span> polyF_unitB. <span class="proof-tactics-name">simpl</span>.
+        <span class="proof-tactics-name">eapply</span> TransV; [| <span class="proof-tactics-name">eapply</span> SymV, ConsIn_Input ].
+        <span class="proof-tactics-name">eapply</span> CongConsIn.
+
+        <span class="comment-delimiter">(*</span><span class="comment"> LHS </span><span class="comment-delimiter">*)</span>
+        <span class="proof-tactics-name">eapply</span> TransV; [| <span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV|]; <span class="proof-tactics-name">eapply</span> CongDesIdenObR, CongConsIn, CongMetaF, Cat1LeftV ].
+        <span class="proof-tactics-name">eapply</span> TransV; [| <span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV|]; <span class="proof-tactics-name">eapply</span> CongDesIdenObR, CongConsIn, metaF_arrow ].
+        <span class="proof-tactics-name">eapply</span> TransV; [| <span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV|]; <span class="proof-tactics-name">eapply</span> CongDesIdenObR, ConsIn_Input ].
+        <span class="proof-tactics-name">eapply</span> TransV; [| <span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV|]; <span class="proof-tactics-name">eapply</span> DesIdenObR_Input ].
+        <span class="proof-tactics-name">eapply</span> TransV; [| <span class="proof-tactics-name">eapply</span> SymV, Cat2V ].
+
+        <span class="comment-delimiter">(*</span><span class="comment"> RHS </span><span class="comment-delimiter">*)</span>
+        <span class="proof-tactics-name">eapply</span> TransV; [<span class="proof-tactics-name">eapply</span> CongMetaF, SymV, Cat1LeftV  |].
+        <span class="proof-tactics-name">eapply</span> TransV; [<span class="proof-tactics-name">eapply</span> SymV, metaF_arrow  |].
+
+        <span class="comment-delimiter">(*</span><span class="comment"> pure logic </span><span class="comment-delimiter">*)</span>
+        <span class="proof-tactics-name">eapply</span> CongCom; [| <span class="proof-tactics-name">eapply</span> ReflV].
+        <span class="proof-tactics-name">eapply</span> TransV; [ <span class="proof-tactics-name">eapply</span> SymV, Cat1RightV |]. <span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV|].
+        <span class="proof-tactics-name">eapply</span> TransV; [| <span class="proof-tactics-name">eapply</span> SymV, DesIdenObR_DesIdenObL].
+        <span class="proof-tactics-name">eapply</span> TransV; [| <span class="proof-tactics-name">eapply</span> CongConsV10, SymV, unitV_IdenV  ].
+        <span class="proof-tactics-name">eapply</span> SymV, consV10_functorial_fun1.
+      <span class="keyword">Qed</span>.
+    <span class="keyword">End</span> <span class="function-name">Context8</span>.
+
     <span class="keyword">Export</span> FUNCTOR.
 <span class="keyword">End</span> <span class="function-name">METAFUNCTOR</span>.
 
@@ -2128,10 +2248,10 @@ Show Proof.
 
   <span class="keyword">End</span> <span class="function-name">Context</span>.
   
-  <span class="keyword">Module</span> <span class="function-name">Ex_Notations1</span>.
+  <span class="keyword">Module</span> <span class="function-name">Ex_Notations</span>.
     <span class="keyword">Notation</span> <span class="string">"dat .-&#946;||0 A"</span> := (<span class="constant">@</span>meta&#946; _ _ _ _ dat A) (<span class="type">at</span> level 4, <span class="proof-tactics-name">right</span> associativity, format <span class="string">"dat .-&#946;||0  A"</span>).
-  <span class="keyword">End</span> <span class="function-name">Ex_Notations1</span>.
-  <span class="keyword">Import</span> Ex_Notations1.
+  <span class="keyword">End</span> <span class="function-name">Ex_Notations</span>.
+  <span class="keyword">Import</span> Ex_Notations.
   <span class="keyword">Notation</span> <span class="string">"&#946;||0 A"</span> := (_ .-&#946;||0 A) (<span class="type">at</span> level 4, <span class="proof-tactics-name">right</span> associativity).
 
   <span class="keyword">Section</span> <span class="function-name">Context2</span>.
@@ -2280,7 +2400,7 @@ Show Proof.
     <span class="keyword">Canonical Structure</span> <span class="function-name">transformation_of_metatransformation</span>.
     
     <span class="doc">(** theorem **)</span>
-    <span class="keyword">Import</span> Ex_Notations1.
+    <span class="keyword">Import</span> Ex_Notations.
     <span class="keyword">Definition</span> <span class="function-name">typeof_meta&#946;_morphism</span> :=  <span class="type">forall</span> (<span class="variable-name">trans</span> : <span class="constant">@</span>metatransformation),  <span class="type">forall</span> <span class="variable-name">A A'</span> : obA catA,
                                           [0 funF.-F|0 A ~&gt; trans.-&#946;||0 A' ]1 &lt;o (funF) .-F||1 ~~
                                                                                 [1 trans.-&#946;||0 A ~&gt; funG.-F|0 A' ]0 &lt;o (funG) .-F||1.
@@ -2335,9 +2455,59 @@ Show Proof.
     <span class="keyword">Qed</span>.
 
   <span class="keyword">End</span> <span class="function-name">Context2</span>.
+
+  <span class="keyword">Import</span> METATRANSFORMATION.Ex_Notations. <span class="comment-delimiter">(*</span><span class="comment">BUG , not working as expected</span><span class="comment-delimiter">*)</span>
+  <span class="keyword">Section</span> <span class="function-name">Context3</span>.
+    Context {<span class="variable-name">log</span> : logic} {<span class="variable-name">catA</span> : category log} {<span class="variable-name">catB</span> : category log}.
+    <span class="keyword">Variable</span> (<span class="variable-name">funF</span> : functorToCat (form_of_functor catA) catB).
+    <span class="keyword">Variables</span> (<span class="variable-name">V</span> : obV log) (<span class="variable-name">B</span> : obB funF) (<span class="variable-name">A</span> : obB catA).
+    <span class="keyword">Variable</span> ( <span class="variable-name">image&#946;</span> : <span class="type">forall</span> <span class="variable-name">X</span> : obA catA, V(0 ((<span class="constant">@</span>metafunctor_of_functor_at _ catA A).-F|0 X)%meta |-
+                                          ((<span class="constant">@</span>metafunctor_of_functor_at _ (<span class="constant">@</span>functorToCat_of_metafunctor _ _ (<span class="constant">@</span>metafunctor_of_functor_at _ funF B)) V).-F|0 X)%meta )0 ).
+    <span class="keyword">Let</span> <span class="function-name">image&#946;_as_data</span> := <span class="constant">@</span>Data log (<span class="constant">@</span>form_of_functor _ catA) (<span class="constant">@</span>metafunctor_of_functor_at _ catA A) (<span class="constant">@</span>metafunctor_of_functor_at _ (<span class="constant">@</span>functorToCat_of_metafunctor _ _ (<span class="constant">@</span>metafunctor_of_functor_at _ funF B)) V) image&#946;
+                          : <span class="constant">@</span>data log (<span class="constant">@</span>form_of catA) (meta_of catA A) (meta_of (meta_of funF B) V).
+    
+    <span class="keyword">Check</span> eq_refl : ( <span class="constant">@</span>natural = ( <span class="type">fun</span> (<span class="variable-name">log</span> : logic) (<span class="variable-name">dat_</span> : FUNCTOR.data) (<span class="variable-name">func</span> : FUNCTOR.extras dat_)
+            (<span class="variable-name">V</span> : obV log) (<span class="variable-name">B</span> : obB func) (<span class="variable-name">A</span> : obA func)
+            (<span class="variable-name">&#946;</span> : <span class="type">forall</span> <span class="variable-name">X</span> : obA func, V(0 func.-A[0 A ~&gt; X ]0 |- [0 V ~&gt; func.-F[0 B ~&gt; X ]0 ]0 )0) =&gt; <span class="type">forall</span> <span class="variable-name">Y X</span> : obA func,
+             ( [0 func.-A[0 A ~&gt; Y ]0 ~&gt; &#946; X ]1 &lt;o (func.-A[0 A ~&gt; - ]1) Y X
+               : V(0 func.-A[0 Y ~&gt; X ]0  |- [0 func.-A[0 A ~&gt; Y ]0 ~&gt; [0 V ~&gt; func.-F[0 B ~&gt; X ]0 ]0 ]0 )0 )
+               ~~ [1 &#946; Y ~&gt; [0 V ~&gt; func.-F[0 B ~&gt; X ]0 ]0 ]0 &lt;o V[0 V ~&gt; - ]1 _ _ &lt;o (func.-F[0 B ~&gt; - ]1) Y X ) ).
+    <span class="keyword">Eval</span> <span class="proof-tactics-name">unfold</span> natural <span class="type">in</span> <span class="constant">@</span>natural log funF funF V B A image&#946;.
+
+    <span class="keyword">Definition</span> <span class="function-name">typeof_meta&#946;_morphism_of_image&#946;</span> := <span class="type">forall</span> <span class="variable-name">A0 A'</span> : <span class="constant">@</span>obA log (form_of catA),
+       [0 (meta_of catA A).-F|0 A0 ~&gt; image&#946;_as_data.-&#946;||0 A' ]1 &lt;o
+       (meta_of catA A) .-F||1 ~~
+       [1 image&#946;_as_data.-&#946;||0 A0 ~&gt; (meta_of (meta_of funF B) V).-F|0 A' ]0 &lt;o
+       (meta_of (meta_of funF B) V) .-F||1 .
+    <span class="keyword">Check</span> (<span class="constant">@</span>meta&#946;_morphism log (<span class="constant">@</span>form_of catA) (meta_of catA A) (meta_of (meta_of funF B) V) image&#946;_as_data _) : typeof_meta&#946;_morphism_of_image&#946; .
+
+    <span class="keyword">Lemma</span> <span class="function-name">soundness_natural_is_meta_polymorphism</span> :  <span class="constant">@</span>natural log funF funF V B A image&#946; -&gt; typeof_meta&#946;_morphism_of_image&#946; .
+      <span class="proof-tactics-name">unfold</span> natural. <span class="proof-tactics-name">unfold</span> typeof_meta&#946;_morphism_of_image&#946;.
+      <span class="proof-tactics-name">intros</span> H_natural Y X. 
+      <span class="proof-tacticals-name">do</span> 2 <span class="proof-tactics-name">rewrite</span> meta_of_polyF_at_identitary_rel_polyF_identitary.
+      <span class="proof-tactics-name">eapply</span> TransV; [<span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV|]; <span class="proof-tactics-name">eapply</span> polyF_identitary_rel_polyF_unitB_metaFunc |]. 
+      <span class="comment-delimiter">(*</span><span class="comment">FASTER eapply TransV; [eapply CongCom; [eapply ReflV|]; eapply (</span><span class="constant"><span class="comment">@</span></span><span class="comment">polyF_identitary_rel_polyF_unitB_metaFunc log _ _ (meta_of funF B) V Y X) |]. </span><span class="comment-delimiter">*)</span>
+       <span class="proof-tactics-name">eapply</span> TransV; [<span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV|]; <span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV|]; <span class="proof-tactics-name">eapply</span> SymV, poly_of_metaF_unitV_metaF_IdenV  |].
+       <span class="proof-tactics-name">rewrite</span> meta_of_polyF_at_identitary_rel_polyF_identitary.
+       <span class="proof-tactics-name">eapply</span> H_natural.
+    <span class="keyword">Qed</span>.
+
+    <span class="keyword">Lemma</span> <span class="function-name">soundness_meta_polymorphism_is_natural</span> :  typeof_meta&#946;_morphism_of_image&#946; -&gt; <span class="constant">@</span>natural log funF funF V B A image&#946; .
+      <span class="proof-tactics-name">unfold</span> natural. <span class="proof-tactics-name">unfold</span> typeof_meta&#946;_morphism_of_image&#946;.
+      <span class="proof-tactics-name">intros</span> H_poly_morphism Y X. 
+      <span class="proof-tactics-name">specialize</span> H_poly_morphism <span class="type">with</span>  (A0 := Y) (A' := X).
+      <span class="proof-tacticals-name">do</span> 2 <span class="proof-tactics-name">rewrite</span> meta_of_polyF_at_identitary_rel_polyF_identitary <span class="type">in</span> H_poly_morphism.
+      <span class="proof-tactics-name">eapply</span> TransV <span class="type">in</span> H_poly_morphism; [|<span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV|]; <span class="proof-tactics-name">eapply</span> SymV, polyF_identitary_rel_polyF_unitB_metaFunc ].
+       <span class="proof-tactics-name">eapply</span> TransV <span class="type">in</span> H_poly_morphism; [|<span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV|]; <span class="proof-tactics-name">eapply</span> CongCom; [<span class="proof-tactics-name">eapply</span> ReflV|]; <span class="proof-tactics-name">eapply</span> poly_of_metaF_unitV_metaF_IdenV].
+       <span class="proof-tactics-name">rewrite</span> meta_of_polyF_at_identitary_rel_polyF_identitary <span class="type">in</span> H_poly_morphism.
+       <span class="proof-tactics-name">eapply</span> H_poly_morphism.
+    <span class="keyword">Qed</span>.
+  <span class="keyword">End</span>  <span class="function-name">Context3</span>.
+
 <span class="keyword">End</span> <span class="function-name">METATRANSFORMATION</span>.
 
-    <span class="comment-delimiter">(*</span><span class="comment">            &gt;&gt;&gt;---   NEXT IS WHY : ALL THIS WORK OF INTERFACING FOR INSTANCES WAS DONE  ---&lt;&lt;&lt;   
+
+<span class="comment-delimiter">(*</span><span class="comment">            &gt;&gt;&gt;---   NEXT IS WHY : ALL THIS WORK OF INTERFACING FOR INSTANCES WAS DONE  ---&lt;&lt;&lt;   
 
 apply this to unfold this as identitary (external-structural) of composition of polyfunctors ( polyV_relV o (poly_of_meta F[0 B ~&gt; - ]1) ) .. ( polyV_relV o (poly_of_meta metaFB) )  ...  show before that
 1.DONE NEXT1 some metafunctor metaFB into catV on top of F[0 B ~&gt; - ]1  by polyF which becomes  metaFB := meta_of_poly F at B,
@@ -2348,8 +2518,10 @@ apply this to unfold this as identitary (external-structural) of composition of 
 ( V[0 V ~&gt; - ]1 (F[0 B ~&gt; A' ]0) (F[0 B ~&gt; X ]0) ) &lt;o (meta_of_ polyF at B)||1 A' X  ( meta_IdenV  ||1 , definitionally )
 (    ( V[0 V ~&gt; - ]1 (F[0 B ~&gt; A' ]0) (F[0 B ~&gt; X ]0) ) &lt;o FB||1 A' X    )
 ( V[0 V ~&gt; - ]1 (F[0 B ~&gt; A' ]0) (F[0 B ~&gt; X ]0) ) &lt;o (poly_of_ (meta_of_ polyF at B))|1 A' X (poly_of_meta is functorToCat  ,  propositionally)
-(polyV_relV o (poly_of_meta metaFB))[0 V ~&gt; - ]1 A' X (propositionally funComp_idenV_rel_F'_IdenV_F_unitB... </span><span class="variable-name"><span class="comment">?may</span></span><span class="comment"> relate functorToCat_unitB  |1 with functor_IdenV  [0 B ~&gt; - ]1 ? )
-(meta_of_poly (polyV_relV o (poly_of_meta (meta_of_poly F at B))) at V)||1 A' X
+(poly_of_meta metaFB)[0 V ~&gt; - ]1 A' X   ALT   (polyV_relV_funToCat o (poly_of_meta metaFB))[0 V ~&gt; - ]1 A' X (propositionally funComp_idenV_rel_F'_IdenV_F_unitB... </span><span class="variable-name"><span class="comment">?may</span></span><span class="comment"> relate functorToCat_unitB  |1 with functor_IdenV  [0 B ~&gt; - ]1 ? )
+(meta_of_poly (poly_of_meta (meta_of_poly F at B)) at V)||1 A' X   ALT  (meta_of_poly (polyV_relV_funToCat o (poly_of_meta (meta_of_poly F at B))) at V)||1 A' X
+.... V( A[A' ~&gt; X] |- [ V[V ~&gt; F[B ~&gt; A']] ~&gt; V[V ~&gt; F[B ~&gt; X]] ] )  .... as above
+
 
   Definition natural (V : obV) (B : obB) (A : obA) (&#946; : forall X : obA, V(0 A[0 A ~&gt; X ]0  |- [0 V ~&gt; F[0 B ~&gt; X ]0 ]0 )0) :=
                         forall (C X : obA),
