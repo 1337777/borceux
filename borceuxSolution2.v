@@ -18,7 +18,7 @@ ___MATHCOMP___
 [6] <<A Machine-Checked Proof of the Odd Order Theorem>> , https://hal.inria.fr/hal-00816699/
 [7] <<A Small Scale Reflection Extension for the Coq system>> , https://hal.inria.fr/inria-00258384/
 
-Also the public ( who wants to be secretary ? @eriehl ) may now stake for the nondependent Solution Programme Reviews , which has motivation to publish reviews, by the publishers-own-motion, which may be held as timed-tutoring tools; and the MATHCOMP database is best start for such reviews :
+Also the public may now stake for the nondependent Solution Programme Reviews , which has motivation to publish reviews, by the publishers-own-motion, which may be held as timed-tutoring tools; and the MATHCOMP database is best start for such reviews :
     paypal 1337777.OOO@gmail.com , wechatpay 2796386464@qq.com , irc #OOO1337777
 
 Initial review : mathcomp motivation is to finding the good coordinates to describe mathematical things. One common tool is the notations technique for infix notations and for hiding or showing arguments which may or may not be implicit. Another common tool is the <<data-class interfaces>>  and the <<sharings constraints>> and the <<automatic declassifications>>  ("inheritance", "coercion")  and the automatic classification ("canonical structures") of data.
