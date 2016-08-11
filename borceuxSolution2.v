@@ -12,50 +12,55 @@ ___MATHCOMP___
 
 [1] <<Canonical Structures for the working Coq user>> , https://hal.inria.fr/hal-00816703/
 [2] <<A Modular Formalisation of Finite Group Theory>> , https://hal.inria.fr/inria-00139131/ 
-[3] <<Packaging Mathematical Structures>> , https://hal.inria.fr/inria-00368403/
-[4] <<Point-Free, Set-Free Concrete Linear Algebra>> , https://hal.inria.fr/hal-00805966/
-[5] <<A Machine-Checked Proof of the Odd Order Theorem>> , https://hal.inria.fr/hal-00816699/
-[6] <<A Small Scale Reflection Extension for the Coq system>> , https://hal.inria.fr/inria-00258384/
+[3] <<Canonical Big Operators>> , https://hal.inria.fr/inria-00331193/
+[4] <<Packaging Mathematical Structures>> , https://hal.inria.fr/inria-00368403/
+[5] <<Point-Free, Set-Free Concrete Linear Algebra>> , https://hal.inria.fr/hal-00805966/
+[6] <<A Machine-Checked Proof of the Odd Order Theorem>> , https://hal.inria.fr/hal-00816699/
+[7] <<A Small Scale Reflection Extension for the Coq system>> , https://hal.inria.fr/inria-00258384/
 
-Also the nondependent public may stake for the <<1337777.OOO Programme Reviews>> , whose motivation is to publish reviews, by the publishers-own-motion, which may be held as timed-tutoring tools; and the MATHCOMP database is best start for such reviews :
+Also the public ( who wants to be secretary ? @eriehl ) may now stake for the nondependent Solution Programme Reviews , which has motivation to publish reviews, by the publishers-own-motion, which may be held as timed-tutoring tools; and the MATHCOMP database is best start for such reviews :
     paypal 1337777.OOO@gmail.com , wechatpay 2796386464@qq.com , irc #OOO1337777
 
 Initial review : mathcomp motivation is to finding the good coordinates to describe mathematical things. One common tool is the notations technique for infix notations and for hiding or showing arguments which may or may not be implicit. Another common tool is the <<data-class interfaces>>  and the <<sharings constraints>> and the <<automatic declassifications>>  ("inheritance", "coercion")  and the automatic classification ("canonical structures") of data.
-    Maybe Gonthier's initial enabling angle of view is : constract from numeric motivations into recursive-logical motivations. For example instead of inverse of matrix (numeric) motivation, then get adjugate of matrix (purely recursive) and determinant (purely logical) motivations. For example instead of the Guass LUP encoding (numeric) motivation, then get Gonthier CrR encoding (purely recursive) and rank (purely logical) motivations.
-    Most things interact with 3 themes : the numeric (example, Z/nZ) and the combinatorial (example, Sym_n) and the geometric characterization/representation (example, isometries of n-polygon)  ...
+    Maybe Gonthier's initial enabling angle of view is : constrast from numeric motivations into recursive-logical motivations. For example instead of inverse of matrix (numeric) motivation, then get adjugate of matrix (purely recursive) and determinant (purely logical) motivations. For example instead of the Gauss LUP encoding (numeric) motivation, then get Gonthier CrR encoding (purely recursive) and rank (purely logical) motivations.
+    Most things interact with 3 themes : the numeric (for example, integers Z/nZ) and the combinatorial (for example, permutations Sym_n) and the geometric characterization/representation (for example, isometries of n-polygon)  ...
 
 ___POLYMORPHISM___
 
-6. Now [7] is successor of some earlier text which describes how to program <<polymorphism>> ("enriched categories"). The finding is that some functor or category (identity functor) is given by the data
+6. Now [8] is successor of some earlier text which describes how to program <<polymorphism>> ("enriched categories"). The finding is that some functor or category (identity functor) is given by the data
 
 polyF : forall (log : logic) (dat : data log) (V : obV log) (B : obB dat) (A : obA dat),
 log.-V(0 V |- dat.-F[0 B ~> A ]0 )0 ->
 forall X : obA dat, log.-V(0 dat.-A[0 A ~> X ]0 |- log.-[0 V ~> dat.-F[0 B ~> X ]0 ]0 )0 
 
-, where dat.-F[0 B ~> A ]0  denotes  dat.-B[0 B ~> dat.-F|0 A ]0 , which is polymorph in V and polymorph in A . And the Coq meta logic and the functors logic and the yoneda lemma are now described fully only within this new polymorphism phrasing.
+, where dat.-F[0 B ~> A ]0  denotes  dat.-B[0 B ~> dat.-F|0 A ]0 , which is polymorph in the variable V and polymorph in the variable A . And the Coq meta logic and the functors logic and the yoneda lemma are now described fully only within this new polymorphism terminology .
 
-7. TL;DR: Following [9], this may be described by the notation ( ( _1 _3 ) o>F _2 ) which is not reality, and polymorph/commuting/natural/associativity in A says
+7. TL;DR: solves some question of ฅ( ̳• ◡ • ̳)ฅ-Ye [11] which is how thought is affected by the new notation ( ( _1 _3 ) o>F _2 ) for functors, which is not reality. Now polymorph/commuting/natural/associativity in variable A says
 ( ((b _v) o>F (a _w)) o>F a' )   ~~   ( (b _v) o>F ((a _w) o>A a') )
 
-8. This solution may be viewed as continuing the programme of Gentzen natural (=polymorphic) deduction and Dosen cut elimination for adjunctions, where Dosen critically did replace the counit by the primitive ( counit o> _ ) .
+8. This solution may be viewed as continuing the programme of Gentzen natural (=polymorphic) deduction and Dosen cut elimination for adjunctions, where Dosen critically did replace the counit by the primitive ( _ o> counit ) .
     Therefore this solution also shows <<cut elimination/desintegration for these polymorph functors/categories>> and eventually for polymorph adjunctions and polymorph monads . 
 
 9. And that any category is some identity functor is precisely mirrored in the <<data-class interfaces>>  and the <<sharings constraints>> and the <<automatic declassifications>>  ("packaging  interfaces and their inheritance coercions", "structure vs property") .
 
-10. And this new polymorphism thing is better for the  <<semi-programmed semi-automatic classification of data>> ("canonical structures", "garbage collector") .
-    Also remember that the purely-logical non-polymorphism parts of in the deductions are automatically solved by some small-scale reflection into the decision-dissolvers enabled by the Dosen cut elimination in adjunctions technique [8] and the Maclane associativity coherence technique and any other coherence technique [9].
-    Also, eventually one shall get some alternative presentation of the logic which is mostly functional instead of being in the common monoidal form, for example, always hold the ( U |- [ I ~> U] ) arrow data instead of the common ( U & I |- U ) arrow data. And eventually one may extend this presentation with some monad on the collection of objects of the functor.
+10. And this new polymorphism thing is better for the  <<semi-programmed semi-automatic classification of data>> (Coq "canonical structures" or Matita "unification hints", "garbage collector") .
+    Also remember that the purely-logical non-polymorphism parts of in the deductions in this Coq text shall be automatically solved by some small-scale reflection into the decision-dissolvers enabled by the Dosen cut elimination in adjunctions technique [9] and the Maclane associativity coherence technique and any other coherence technique [10].
+    Also, eventually one shall get some alternative presentation of the logic which is mostly functional instead of being in the common monoidal form, for example, always hold the ( U |- [ I ~> U] ) arrow data instead of the common ( U & I |- U ) arrow data. And eventually one may extend this presentation with some monad on the collection of objects of the functor ...
 
-___QUESTION___ ( collocated near CT2016 friday 11:25 AM )
+___QUESTION___ ( friday 11:25 AM collocated near CT2016 and irc #OOO1337777 )
 
-11. One question which is unresolved is how to describe that any functor's polymorphism is actually some (more common) polymorphism of some metatransformation inside the Coq meta logic. This question is related to the question of how to really define functor and composition of functors, while knowing that the yoneda lemma does not require polymorphism in B and does not require composition of functors.
-    ? How does this fully-general data ( (c _w) o>F' ( (b _v) o>F a ) ) define any single-functor or composition-of-functors thing, without assuming [polymorphism in B and post-unit for catB] ?
+11. One question which is unresolved is how to describe that any functor's polymorphism is actually some (more common) polymorphism of some metatransformation inside the Coq meta logic. This question is related to the question of how to really define functor and composition of functors, while knowing that the yoneda lemma does not require polymorphism in the variable B and does not require composition of functors .
+    ? How does this fully-general data ( (c _w) o>F' ( (b _v) o>F a ) ) define any single-functor or composition-of-functors thing, without assuming [ polymorphism in variable B and post-unit for form catB ] ?
 
+___WEBCITATIONS/REVIEWS/TIMEDTUTORING___
 
-[7] 1337777.OOO , https://web.archive.org/web/*/https://github.com/1337777/borceux/blob/master/borceuxSolution2.v
-[8] <<Cut Elimination in Categories>> , https://books.google.com/books?isbn=9401712077
-[9] <<Proof-net Categories>> , https://books.google.com/books?isbn=8876990801
-[10] ฅ( ̳• ◡ • ̳)ฅ-Ye , https://github.com/hypotext/notation
+[8] 1337777.OOO , https://web.archive.org/web/*/github.com/1337777/borceux/blob/master/borceuxSolution2.v
+[9] <<Cut Elimination in Categories>> , https://books.google.com/books?isbn=9401712077
+[10] <<Proof-net Categories>> , https://books.google.com/books?isbn=8876990801
+[11] ฅ( ̳• ◡ • ̳)ฅ-Ye , https://github.com/hypotext/notation
+
+* use this webcitations/reviews tool and this authorizing-geolocated-timed-tutoring tool to play these links as TV !
+http://1337777.link/ooo/guJAHkwRZYYyuhrh4GyYWv7BPOwNEF-jSeQcYN9WxLk!Zw1GYSFfr6cheRhkPhTPCnsog7DFPZQUCcv7ZEKh22s/2016/1/1/1/1/1/1
 
 _____________________________________________________________________________**)
 
