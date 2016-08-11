@@ -4,9 +4,29 @@
 
 Proph,
 
-archive.org  https://github.com/1337777/borceux/blob/master/borceuxSolution2.v
+https://github.com/1337777/borceux/blob/master/borceuxSolution2.v
 
-1. is successor of some earlier text which describes how to program <<polymorphism>> ("enriched categories"). The finding is that some functor or category (identity functor) is given by the data
+___MATHCOMP___
+
+5. Some possible timed-tutoring sequence for the mathcomp
+
+[1] <<Canonical Structures for the working Coq user>> , https://hal.inria.fr/hal-00816703/
+[2] <<A Modular Formalisation of Finite Group Theory>> , https://hal.inria.fr/inria-00139131/ 
+[3] <<Packaging Mathematical Structures>> , https://hal.inria.fr/inria-00368403/
+[4] <<Point-Free, Set-Free Concrete Linear Algebra>> , https://hal.inria.fr/hal-00805966/
+[5] <<A Machine-Checked Proof of the Odd Order Theorem>> , https://hal.inria.fr/hal-00816699/
+[6] <<A Small Scale Reflection Extension for the Coq system>> , https://hal.inria.fr/inria-00258384/
+
+Also the nondependent public may stake for the <<1337777.OOO Programme Reviews>> , whose motivation is to publish reviews, by the publishers-own-motion, which may be held as timed-tutoring tools; and the MATHCOMP database is best start for such reviews :
+    paypal 1337777.OOO@gmail.com , wechatpay 2796386464@qq.com , irc #OOO1337777
+
+Initial review : mathcomp motivation is to finding the good coordinates to describe mathematical things. One common tool is the notations technique for infix notations and for hiding or showing arguments which may or may not be implicit. Another common tool is the <<data-class interfaces>>  and the <<sharings constraints>> and the <<automatic declassifications>>  ("inheritance", "coercion")  and the automatic classification ("canonical structures") of data.
+    Maybe Gonthier's initial enabling angle of view is : constract from numeric motivations into recursive-logical motivations. For example instead of inverse of matrix (numeric) motivation, then get adjugate of matrix (purely recursive) and determinant (purely logical) motivations. For example instead of the Guass LUP encoding (numeric) motivation, then get Gonthier CrR encoding (purely recursive) and rank (purely logical) motivations.
+    Most things interact with 3 themes : the numeric (example, Z/nZ) and the combinatorial (example, Sym_n) and the geometric characterization/representation (example, isometries of n-polygon)  ...
+
+___POLYMORPHISM___
+
+6. Now [7] is successor of some earlier text which describes how to program <<polymorphism>> ("enriched categories"). The finding is that some functor or category (identity functor) is given by the data
 
 polyF : forall (log : logic) (dat : data log) (V : obV log) (B : obB dat) (A : obA dat),
 log.-V(0 V |- dat.-F[0 B ~> A ]0 )0 ->
@@ -14,114 +34,103 @@ forall X : obA dat, log.-V(0 dat.-A[0 A ~> X ]0 |- log.-[0 V ~> dat.-F[0 B ~> X 
 
 , where dat.-F[0 B ~> A ]0  denotes  dat.-B[0 B ~> dat.-F|0 A ]0 , which is polymorph in V and polymorph in A . And the Coq meta logic and the functors logic and the yoneda lemma are now described fully only within this new polymorphism phrasing.
 
-2. TL;DR: Following [1], this may be described by the notation ( ( _1 _3 ) o>F _2 ) which is not reality, and polymorph/commuting/natural/associativity in A says
+7. TL;DR: Following [9], this may be described by the notation ( ( _1 _3 ) o>F _2 ) which is not reality, and polymorph/commuting/natural/associativity in A says
 ( ((b _v) o>F (a _w)) o>F a' )   ~~   ( (b _v) o>F ((a _w) o>A a') )
 
-3. This solution may be viewed as continuing the programme of Gentzen natural (=polymorphic) deduction and Dosen cut elimination for adjunctions, where Dosen critically did replace the counit by the primitive ( counit o> _ ) .
+8. This solution may be viewed as continuing the programme of Gentzen natural (=polymorphic) deduction and Dosen cut elimination for adjunctions, where Dosen critically did replace the counit by the primitive ( counit o> _ ) .
     Therefore this solution also shows <<cut elimination/desintegration for these polymorph functors/categories>> and eventually for polymorph adjunctions and polymorph monads . 
 
-4. And that any category is some identity functor is precisely mirrored in the <<data-class interfaces>>  and the <<sharings constraints>> and the <<automatic declassifications>>  ("packaging  interfaces and their inheritance coercions", "structure vs property") .
+9. And that any category is some identity functor is precisely mirrored in the <<data-class interfaces>>  and the <<sharings constraints>> and the <<automatic declassifications>>  ("packaging  interfaces and their inheritance coercions", "structure vs property") .
 
-5. And this new polymorphism thing is better for the  <<semi-programmed semi-automatic classification of data>> ("canonical structures", "garbage collector") . Also remember that the purely-logical non-polymorphism parts of in the deductions are automatically solved by some small-scale reflection into the decision-dissolvers enabled by the Dosen cut elimination in adjunctions technique and the Maclane associativity coherence technique and any other coherence technique.
+10. And this new polymorphism thing is better for the  <<semi-programmed semi-automatic classification of data>> ("canonical structures", "garbage collector") .
+    Also remember that the purely-logical non-polymorphism parts of in the deductions are automatically solved by some small-scale reflection into the decision-dissolvers enabled by the Dosen cut elimination in adjunctions technique [8] and the Maclane associativity coherence technique and any other coherence technique [9].
+    Also, eventually one shall get some alternative presentation of the logic which is mostly functional instead of being in the common monoidal form, for example, always hold the ( U |- [ I ~> U] ) arrow data instead of the common ( U & I |- U ) arrow data. And eventually one may extend this presentation with some monad on the collection of objects of the functor.
 
-6. One question which is lacking is to describe  how any functor's polymorphism is actually some (more common) polymorphism of some metatransformation inside the Coq meta logic. This question is related to the question of how to really define functor and composition of functors.
-    QUESTION:
+___QUESTION___ ( collocated near CT2016 friday 11:25 AM )
 
-7. Another question is how to get some alternative presentation of the logic which is mostly functional instead of being in the common monoidal form.
-
-8. tutoring mathcomp mathcomp overview main techniques [2] [3] [4] including notations and canonical structures
-
-    , new programme of 133777.ooo reviews  and com following functional alternative instead of monoidal  of Dosen coherence books involves combinatorics geometry and numbers.
-
-9. ct2016 friday question and announce programme ,  paypal wechatpay irc,  1337777.ooo/links
-
-[1] ฅ( ̳• ◡ • ̳)ฅ-Ye ,  https://github.com/hypotext/notation
-[2] mathcomp1
-[3] mathcomp2
-[4] mathcomp3
+11. One question which is unresolved is how to describe that any functor's polymorphism is actually some (more common) polymorphism of some metatransformation inside the Coq meta logic. This question is related to the question of how to really define functor and composition of functors, while knowing that the yoneda lemma does not require polymorphism in B and does not require composition of functors.
+    ? How does this fully-general data ( (c _w) o>F' ( (b _v) o>F a ) ) define any single-functor or composition-of-functors thing, without assuming [polymorphism in B and post-unit for catB] ?
 
 
-__USER MANUAL__
+[7] 1337777.OOO , https://web.archive.org/web/*/https://github.com/1337777/borceux/blob/master/borceuxSolution2.v
+[8] <<Cut Elimination in Categories>> , https://books.google.com/books?isbn=9401712077
+[9] <<Proof-net Categories>> , https://books.google.com/books?isbn=8876990801
+[10] ฅ( ̳• ◡ • ̳)ฅ-Ye , https://github.com/hypotext/notation
 
-__notation for polyF
+_____________________________________________________________________________**)
+
+(**_____________________________________________________________________________
+
+___USER MANUAL___
+
+____(1) notation for polyF says
 
 (f _v) o>F g    ... f logical-indexing in the codomain ... g change of morphism-index in the domain
 
-__polymorph in B says
-
-b : log.-V(0 W |- dat.-B[0 B' ~> B ]0 )0
-
- ... ( (f _v) <o b ) o>F g   ~~  ( (f _v) o>F g ) <o b
-
-( (b _w) o>B (f _v) ) o>F g   ~~  (b _w) o>B ( (f _v) o>F g )
-
-____ and particular when f is unitB constance and polyB_inputUnitB present
-
-(b _w) o>B ( unitB o>F g ) ~~ ( (b _w) o>B unitB ) o>F g
-                           ~~ (b _w) o>F g
-
-then get B[B ~> -] <o F|1 A X ~~ F[B ~> -] A X
-
-__polymorph in V says
+____(2) polymorph in V says
 
 ((f <<o v) _v')) o>F g  ~~  (f (v _v')) o>F g   /!\ argument _v' is inputed only later /!\
 
-__polymorph in A says
+____(3) polymorph in A says
 
 ((f _v) o>F (a _w)) o>F g ~~  (f _v) o>F ((a _w) o>A g)
 
-__composition of functors says
+____(4) functor unit
+
+(f _v) o>F unitA ~~ (f _v)
+
+____(5) form unit
+
+unitA o>A g ~~ g
+
+____(6) polymorph in B says
+
+( (b _w) o>B (f _v) ) o>F g   ~~   (b _w) o>B ( (f _v) o>F g )
+
+_____(6.1) and particular when f is unitB constance and polyB_inputUnitB is present
+
+(b _w) o>B ( unitB o>F g )   ~~   ( (b _w) o>B unitB ) o>F g   ~~   (b _w) o>F g
+
+then get B[B ~> -] <o F|1 A X ~~ F[B ~> -] A X
+
+____(7) composition of functors says
 
 (f' _w) o>F' ( (f _v) o>F g )
 
-++ (f' _w) o>F'Fnew ( (f _v) ; g ) assuming some associativity axiom(s), then can do the generality above by only right inputing into F and left-right-inputing into F':
-(f' _w) o>F' ( (f _v) o>F g )  ~~ (f' _w) o>F' ( (f _v) o>B (1 o>F g) ) 
-( (f' _w) o>F' (f _v) ) o>F' (1 o>F g)
-= ( (f' _w) o>F' (f _v) ) o>F'Fold g
+_____(7.1)  (f' _w) o>F'Fnew ( (f _v) ; g ) assuming some associativity axiom(s) which is polymorph in B and polyB_inputUnitB (for example when B is category), then can do the generality above by only right inputing into F and left-right-inputing into F' :
+(f' _w) o>F' ( (f _v) o>F g )  ~~ (f' _w) o>F' ( (f _v) o>B (unitB o>F g) ) 
+~~ ( (f' _w) o>F' (f _v) ) o>F' (unitB o>F g)  =: ( (f' _w) o>F' (f _v) ) o>F'Fold g
 
+now yoneda does not require these extra associativity axiom(s): polymorphism in B and does not require composition of functors. 
+therefore may be some new notion of functor or composition of functor
 
-++ now yoneda does not require this extra associativity axiom(s), therefore may be some new notion of functor or composition of functor
+____(8) cut desintegration
 
+primo, memo that polymorphisms in V is not really useful
 
-__functor unit
-(f _v) o>F 1 ~~ (f _v)
+_____(8.1) functor o>F cut desintegration
 
-__form unit
-1 o>A g ~~ g
-
-__cut desintegration , memo that polymorphisms in V is not really useful
-
-+ functor o>F cut desintegration
 (f _v) o>F g
 
-++ (f _v) o>F 1  ~~  (f _v)  ... o>F not linked
++ (f _v) o>F 1  ~~  (f _v)  ... o>F not linked
++ (f _v) o>F (g'' o>A g')  ~~  ((f _v) o>F g'') o>A g'  ... o>F linked to o>F
++ g generative
+++ 1 o>F ggen  ... atomic
+++ ((f _v) o>F g') o>F ggen  ~~ (f _v) o>F (g o>A ggen)  ...  o>F linked to o>A
+++ (fgen _v) o>F ggen  ... atomic
 
-++ (f _v) o>F (g'' o>A g')  ~~  ((f _v) o>F g'') o>A g'  ... o>F linked to o>F
+_____(8.2) category o>A cut desintegration
 
-++ g generative
+g1 o>A g2  ... cut desintegration of o>F only for now, if want cut desintegration of o>A then require more properties on catA than polyA_unitA, for example polyA_morphism
 
-+++ 1 o>F ggen  ... atomic
-
-+++ ((f _v) o>F g') o>F ggen  ~~ (f _v) o>F (g o>A ggen)  ...  o>F linked to o>A
-
-+++ (fgen _v) o>F ggen  ... atomic
-
-+ category o>A cut desintegration
-g1 o>A g2  ... cut desintegration of o>F only now, if want cut desintegration of o>A then require more properties on catA than polyA_unitA, for example polyA_morphism
-
-++ g1 o>A 1   ???
-
-++ g1 o>A (g2'' o>A g2')  ???
-
-++ g2 generative
-
-+++ 1 o>A g2gen  ~~ g2gen   ... atomic
-
-+++ (g1' o>A g1'') o>A g2gen  ???
-
-+++ g1gen o>A g2gen  ... atomic
-
++ g1 o>A 1   ???
++ g1 o>A (g2'' o>A g2')  ???
++ g2 generative
+++ 1 o>A g2gen  ~~ g2gen   ... atomic
+++ (g1' o>A g1'') o>A g2gen  ???
+++ g1gen o>A g2gen  ... atomic
 _____________________________________________________________________________**)
+
 
 Module METALOGIC.
   Global Set Universe Polymorphism.
